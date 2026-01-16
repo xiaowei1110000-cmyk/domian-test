@@ -1456,6 +1456,77 @@
             padding: 8px 12px;
             white-space: nowrap;
         }
+        
+        /* 新增：@人物标签样式 */
+        .mention-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .mention-tag {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        .mention-tag i {
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        
+        .mention-tag i:hover {
+            color: var(--danger-color);
+        }
+        
+        /* 新增：二次@设置区域样式 */
+        .secondary-mention-settings {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+            border: 2px solid #e3f2fd;
+        }
+        
+        .secondary-mention-settings h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .secondary-mention-settings .form-row {
+            margin-bottom: 10px;
+        }
+        
+        .mention-delay-input {
+            max-width: 200px;
+        }
+        
+        .mention-message-preview {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+        
+        .mention-message-preview .mention-users {
+            color: #bb86fc;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -1596,6 +1667,45 @@
                                     </div>
                                 </div>
                                 
+                                <!-- 新增：发送后@人物设置 -->
+                                <div class="form-group">
+                                    <label for="mentionUsers"><i class="fas fa-at"></i> 发送后二次@人物（多个用逗号分隔）</label>
+                                    <div class="multi-size-input">
+                                        <input type="text" id="mentionUsers" placeholder="例如: username1, username2, username3">
+                                        <button class="btn" id="addMentionBtn">添加</button>
+                                    </div>
+                                    <small>发送链接消息后，将等待指定秒数再@这些用户（输入用户名，不需要@符号）</small>
+                                    
+                                    <div class="mention-tags" id="mentionTags">
+                                        <!-- @人物标签将通过JavaScript动态生成 -->
+                                    </div>
+                                </div>
+                                
+                                <!-- 新增：二次@设置 -->
+                                <div class="secondary-mention-settings">
+                                    <h4><i class="fas fa-clock"></i> 二次@设置</h4>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="mentionDelay">@人物延迟（秒）</label>
+                                            <input type="number" id="mentionDelay" class="mention-delay-input" value="3" min="1" max="60">
+                                            <small>发送链接消息后等待多少秒再@人物</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="mentionMessage">@人物消息</label>
+                                            <input type="text" id="mentionMessage" value="链接已更新，请相关人员查看">
+                                            <small>@人物时发送的消息内容</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label><i class="fas fa-eye"></i> @人物消息预览</label>
+                                        <div class="mention-message-preview" id="mentionMessagePreview">
+                                            <!-- @人物消息预览将通过JavaScript动态生成 -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="form-group">
                                     <label for="testMessage">测试消息</label>
                                     <textarea id="testMessage" placeholder="发送测试消息内容（可选）"></textarea>
@@ -1633,14 +1743,17 @@
                             <div class="bind-method-content active" id="textBind">
                                 <div class="form-group">
                                     <label for="batchGroupInput"><i class="fas fa-users"></i> 批量添加群组</label>
-                                    <textarea id="batchGroupInput" placeholder="每行一个群组，格式：渠道名称|渠道标识|Chat ID|CID|图片尺寸(多个用逗号分隔)
+                                    <textarea id="batchGroupInput" placeholder="每行一个群组，格式：渠道名称|渠道标识|Chat ID|CID|图片尺寸(多个用逗号分隔)|@人物(多个用逗号分隔)|@延迟(秒)|@消息
 例如：
-爱液|aiyec|-1001234567890|5100525|100-100,200-200
-悟空站|wukong|-1009876543210|5547607|300-250,728-90
-八戒站|bajie|-1001122334455|5547608|468-60,320-50,250-250
+爱液|aiyec|-1001234567890|5100525|100-100,200-200|admin1,manager|3|链接已更新，请相关人员查看
+悟空站|wukong|-1009876543210|5547607|300-250,728-90|admin1|5|新链接已发布
+八戒站|bajie|-1001122334455|5547608|468-60,320-50,250-250|user1,user2,user3|2|请查看最新链接
 ..."></textarea>
                                     <small>Chat ID必须是负数（Telegram群组ID格式）</small>
                                     <small>图片尺寸格式：宽度-高度（多个用逗号分隔）</small>
+                                    <small>@人物：多个用户名用逗号分隔，不需要@符号</small>
+                                    <small>@延迟：发送链接后等待多少秒再@人物（1-60秒）</small>
+                                    <small>@消息：@人物时发送的消息内容</small>
                                 </div>
                                 
                                 <button class="btn btn-block" id="addBatchGroups">
@@ -1657,7 +1770,7 @@
                                         <ul>
                                             <li>JSON文件：包含群组信息的JSON数组</li>
                                             <li>CSV文件：逗号分隔的群组数据</li>
-                                            <li>TXT文件：每行一个群组（名称|标识|ID|CID|尺寸）</li>
+                                            <li>TXT文件：每行一个群组（名称|标识|ID|CID|尺寸|@人物|延迟|消息）</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -1896,7 +2009,18 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                                 </div>
                             </div>
                             
+                            <!-- 新增：二次@发送选项 -->
                             <div class="form-group" style="margin-top: 15px;">
+                                <label for="sendSecondaryMention"><i class="fas fa-at"></i> 发送后二次@人物</label>
+                                <select id="sendSecondaryMention">
+                                    <option value="all">全部发送（链接+@人物）</option>
+                                    <option value="link-only">仅发送链接消息</option>
+                                    <option value="mention-only">仅发送@人物消息</option>
+                                </select>
+                                <small>选择发送模式：全部发送、仅发送链接、仅发送@人物</small>
+                            </div>
+                            
+                            <div class="form-group">
                                 <label for="sendDelay"><i class="fas fa-clock"></i> 发送延迟（毫秒）</label>
                                 <input type="number" id="sendDelay" value="1000" min="0" max="10000" step="500">
                                 <small>每条消息之间的延迟时间，避免发送过快被封禁</small>
@@ -1953,6 +2077,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             <pre>渠道名称
 旧 旧链接
 新 新链接</pre>
+                            <p><strong>二次@人物：</strong>发送链接消息后，等待指定秒数再发送@人物消息</p>
                             <p><strong>匹配逻辑：</strong></p>
                             <ul>
                                 <li>如果链接包含CID参数，优先按CID匹配群组</li>
@@ -2134,7 +2259,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
 例如：
 2860906|https://7147niredb.effectsk.com/imp04/?cid=2860906|https://4ipt8ik9v4.yearsc.com/imp04/?cid=2860906
 100-100|https://example.com/100-100/image.gif|https://newexample.com/100-100/image.gif
-200-200|https://example.com/200-200/image.gif|https://newexample.com/200-200/image.gif
+200-200|https://example.com/200-200/banner.jpg|https://newexample.com/200-200/banner.jpg
 100-100,200-200|https://example.com/multi-size.gif|https://newexample.com/multi-size.gif"></textarea>
                                 
                                 <div class="batch-add-format">
@@ -2365,6 +2490,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             let currentSendMethod = 'selected';
             let telegramBot = null;
             let selectedSizes = []; // 存储当前选中的尺寸
+            let selectedMentions = []; // 存储当前选中的@人物
             
             // DOM元素
             const bindTabBadge = document.getElementById('bindTabBadge');
@@ -2393,6 +2519,15 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             const bindMethodContents = document.querySelectorAll('.bind-method-content');
             const bindMethodSelect = document.getElementById('bindMethod');
             const sendMethodOptions = document.querySelectorAll('.send-method-option');
+            
+            // @人物相关DOM元素
+            const mentionUsersInput = document.getElementById('mentionUsers');
+            const mentionTagsContainer = document.getElementById('mentionTags');
+            const addMentionBtn = document.getElementById('addMentionBtn');
+            const mentionDelayInput = document.getElementById('mentionDelay');
+            const mentionMessageInput = document.getElementById('mentionMessage');
+            const mentionMessagePreview = document.getElementById('mentionMessagePreview');
+            const sendSecondaryMentionSelect = document.getElementById('sendSecondaryMention');
             
             // 链接管理相关DOM元素
             const singleOldUrlInput = document.getElementById('singleOldUrl');
@@ -2618,6 +2753,46 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 });
             }
             
+            // @人物管理功能
+            function updateMentionTags() {
+                mentionTagsContainer.innerHTML = '';
+                selectedMentions.forEach((mention, index) => {
+                    const tag = document.createElement('span');
+                    tag.className = 'mention-tag';
+                    tag.innerHTML = `
+                        @${mention}
+                        <i class="fas fa-times" data-index="${index}"></i>
+                    `;
+                    mentionTagsContainer.appendChild(tag);
+                });
+                
+                // 添加删除事件
+                mentionTagsContainer.querySelectorAll('.mention-tag i').forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        selectedMentions.splice(index, 1);
+                        updateMentionTags();
+                        updateMentionMessagePreview();
+                    });
+                });
+            }
+            
+            // 更新@人物消息预览
+            function updateMentionMessagePreview() {
+                const delay = mentionDelayInput.value || 3;
+                const message = mentionMessageInput.value || '链接已更新，请相关人员查看';
+                const mentions = selectedMentions.map(m => `@${m}`).join(' ');
+                
+                let preview = '';
+                if (selectedMentions.length > 0) {
+                    preview = `等待 ${delay} 秒后发送：\n${message}\n${mentions}`;
+                } else {
+                    preview = '未设置@人物';
+                }
+                
+                mentionMessagePreview.textContent = preview;
+            }
+            
             // 添加尺寸按钮
             addSizeBtn.addEventListener('click', function() {
                 const size = imageSizeInput.value.trim();
@@ -2635,6 +2810,29 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 imageSizeInput.value = '';
                 updateSizeTags();
             });
+            
+            // 添加@人物按钮
+            addMentionBtn.addEventListener('click', function() {
+                const mention = mentionUsersInput.value.trim();
+                if (!mention) return;
+                
+                // 支持多个@人物逗号分隔
+                const mentions = mention.split(',').map(m => m.trim().replace('@', '')).filter(m => m);
+                
+                mentions.forEach(m => {
+                    if (m && !selectedMentions.includes(m)) {
+                        selectedMentions.push(m);
+                    }
+                });
+                
+                mentionUsersInput.value = '';
+                updateMentionTags();
+                updateMentionMessagePreview();
+            });
+            
+            // 监听@人物设置变化
+            mentionDelayInput.addEventListener('input', updateMentionMessagePreview);
+            mentionMessageInput.addEventListener('input', updateMentionMessagePreview);
             
             // 快速添加尺寸按钮
             sizeQuickButtons.forEach(btn => {
@@ -2870,6 +3068,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     updateBindStats();
                     renderBindHistory();
                     updateLinkMatchStats();
+                    updateMentionMessagePreview();
                 } catch (error) {
                     console.error('加载数据失败:', error);
                     showNotification('数据加载失败', '可能数据已损坏，将使用默认数据', 'error', 5000);
@@ -2907,7 +3106,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 }
             }
             
-            // 初始化示例群组数据（支持多尺寸）
+            // 初始化示例群组数据（支持多尺寸和@人物）
             function initSampleGroups() {
                 groups = [
                     { 
@@ -2916,6 +3115,9 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         channel: "aiyec",
                         cid: "5100525", 
                         sizes: ["100-100", "200-200"],
+                        mentionUsers: ["admin1", "manager"],
+                        mentionDelay: 3,
+                        mentionMessage: "链接已更新，请相关人员查看",
                         bound: true,
                         boundDate: "2023-10-01",
                         selected: false,
@@ -2928,6 +3130,9 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         channel: "wukong",
                         cid: "5547607", 
                         sizes: ["300-250", "728-90"],
+                        mentionUsers: ["admin1"],
+                        mentionDelay: 5,
+                        mentionMessage: "新链接已发布",
                         bound: true,
                         boundDate: "2023-10-02",
                         selected: false,
@@ -2940,6 +3145,9 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         channel: "bajie",
                         cid: "5547608", 
                         sizes: ["468-60", "320-50"],
+                        mentionUsers: ["user1", "user2", "user3"],
+                        mentionDelay: 2,
+                        mentionMessage: "请查看最新链接",
                         bound: false,
                         boundDate: null,
                         selected: false,
@@ -2952,6 +3160,9 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         channel: "shaseng",
                         cid: "5547609", 
                         sizes: ["728-90"],
+                        mentionUsers: [],
+                        mentionDelay: 3,
+                        mentionMessage: "链接已更新",
                         bound: true,
                         boundDate: "2023-10-03",
                         selected: false,
@@ -2964,6 +3175,9 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         channel: "tangseng",
                         cid: "5547610", 
                         sizes: ["100-100", "250-250", "120-600"],
+                        mentionUsers: [],
+                        mentionDelay: 3,
+                        mentionMessage: "链接已更新",
                         bound: false,
                         boundDate: null,
                         selected: false,
@@ -3565,10 +3779,21 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     preview = `${exampleGroup.name}\n(没有匹配的链接对)`;
                 }
                 
+                // 如果有@人物设置，添加到预览中
+                if (exampleGroup.mentionUsers && exampleGroup.mentionUsers.length > 0) {
+                    const delay = exampleGroup.mentionDelay || 3;
+                    const message = exampleGroup.mentionMessage || '链接已更新，请相关人员查看';
+                    const mentions = exampleGroup.mentionUsers.map(m => `@${m}`).join(' ');
+                    
+                    preview += `\n\n--- 二次@人物 (${delay}秒后) ---\n${message}\n${mentions}`;
+                }
+                
                 const highlightedPreview = preview
                     .replace(exampleGroup.name, `<span class="channel-name">${exampleGroup.name}</span>`)
                     .replace(/旧 (https?:\/\/[^\s]+)/g, `<span class="old-url">旧 $1</span>`)
                     .replace(/新 (https?:\/\/[^\s]+)/g, `<span class="new-url">新 $1</span>`)
+                    .replace(/--- 二次@人物 \([\d]+秒后\) ---/g, '<span style="color: #bb86fc;">--- 二次@人物 ---</span>')
+                    .replace(/@([\w_]+)/g, '<span class="mention-users">@$1</span>')
                     .replace(/\n/g, '<br>');
                 
                 messagePreview.innerHTML = highlightedPreview;
@@ -3592,10 +3817,17 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 recentGroups.forEach(group => {
                     const historyItem = document.createElement('div');
                     historyItem.className = 'history-item';
+                    
+                    let mentionInfo = '';
+                    if (group.mentionUsers && group.mentionUsers.length > 0) {
+                        mentionInfo = `<div style="font-size: 0.8rem; color: #7b1fa2;">@${group.mentionUsers.join(', @')} (${group.mentionDelay}秒后)</div>`;
+                    }
+                    
                     historyItem.innerHTML = `
                         <div>
                             <strong>${group.name}</strong> (${group.channel})
                             <div style="font-size: 0.8rem; color: #666;">${group.boundDate}</div>
+                            ${mentionInfo}
                         </div>
                         <div style="font-family: monospace; font-size: 0.9rem;">
                             CID: ${group.cid || '无'} ${group.sizes && group.sizes.length > 0 ? `[${group.sizes.join(', ')}]` : ''}
@@ -3616,7 +3848,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         group.channel.toLowerCase().includes(term) ||
                         group.id.toLowerCase().includes(term) ||
                         (group.cid && group.cid.toLowerCase().includes(term)) ||
-                        (group.sizes && group.sizes.some(s => s.toLowerCase().includes(term)))
+                        (group.sizes && group.sizes.some(s => s.toLowerCase().includes(term))) ||
+                        (group.mentionUsers && group.mentionUsers.some(m => m.toLowerCase().includes(term)))
                     );
                 }
                 
@@ -3642,6 +3875,23 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         
                         const groupItem = document.createElement('div');
                         groupItem.className = `group-item ${group.selected ? 'selected' : ''} ${group.bound ? 'bound' : ''}`;
+                        
+                        let mentionInfo = '';
+                        if (group.mentionUsers && group.mentionUsers.length > 0) {
+                            mentionInfo = `
+                                <div class="group-detail">
+                                    <i class="fas fa-at"></i>
+                                    <div class="mention-tags">
+                                        ${group.mentionUsers.map(mention => `<span class="mention-tag">@${mention}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <div class="group-detail">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${group.mentionDelay || 3}秒后@</span>
+                                </div>
+                            `;
+                        }
+                        
                         groupItem.innerHTML = `
                             <input type="checkbox" class="group-checkbox" data-index="${originalIndex}" ${group.selected ? 'checked' : ''}>
                             <div class="group-info">
@@ -3670,6 +3920,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         </div>
                                     </div>
                                     ` : ''}
+                                    ${mentionInfo}
                                     ${group.boundDate ? `
                                     <div class="group-detail">
                                         <i class="fas fa-calendar-alt"></i>
@@ -3743,7 +3994,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         group.name.toLowerCase().includes(term) ||
                         group.channel.toLowerCase().includes(term) ||
                         (group.cid && group.cid.toLowerCase().includes(term)) ||
-                        (group.sizes && group.sizes.some(s => s.toLowerCase().includes(term)))
+                        (group.sizes && group.sizes.some(s => s.toLowerCase().includes(term))) ||
+                        (group.mentionUsers && group.mentionUsers.some(m => m.toLowerCase().includes(term)))
                     );
                 }
                 
@@ -3771,6 +4023,23 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         
                         const groupItem = document.createElement('div');
                         groupItem.className = `group-item ${group.selected ? 'selected' : ''} ${group.bound ? 'bound' : ''}`;
+                        
+                        let mentionInfo = '';
+                        if (group.mentionUsers && group.mentionUsers.length > 0) {
+                            mentionInfo = `
+                                <div class="group-detail">
+                                    <i class="fas fa-at"></i>
+                                    <div class="mention-tags">
+                                        ${group.mentionUsers.map(mention => `<span class="mention-tag">@${mention}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <div class="group-detail">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${group.mentionDelay || 3}秒后@</span>
+                                </div>
+                            `;
+                        }
+                        
                         groupItem.innerHTML = `
                             <input type="checkbox" class="group-checkbox" data-index="${originalIndex}" ${group.selected ? 'checked' : ''} ${!group.bound ? 'disabled' : ''}>
                             <div class="group-info">
@@ -3799,6 +4068,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         <i class="fas fa-hashtag"></i>
                                         <span>Chat ID: ${group.id.substring(0, 10)}...</span>
                                     </div>
+                                    ${mentionInfo}
                                     ${hasLinks ? `
                                     <div class="group-detail">
                                         <i class="fas fa-exchange-alt"></i>
@@ -3895,7 +4165,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 const channel = document.getElementById('channelName').value.trim();
                 const chatId = document.getElementById('chatId').value.trim();
                 const cid = document.getElementById('cid').value.trim();
-                const sizes = [...selectedSizes]; // 使用选中的尺寸数组
+                const sizes = [...selectedSizes];
+                const mentionUsers = [...selectedMentions];
+                const mentionDelay = parseInt(mentionDelayInput.value) || 3;
+                const mentionMessage = mentionMessageInput.value.trim() || '链接已更新，请相关人员查看';
                 
                 if (!name || !channel || !chatId) {
                     showNotification('信息不全', '请填写所有必填字段', 'error');
@@ -3924,6 +4197,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     groups[existingIndex].channel = channel;
                     groups[existingIndex].cid = cid || groups[existingIndex].cid;
                     groups[existingIndex].sizes = sizes.length > 0 ? sizes : groups[existingIndex].sizes;
+                    groups[existingIndex].mentionUsers = mentionUsers;
+                    groups[existingIndex].mentionDelay = mentionDelay;
+                    groups[existingIndex].mentionMessage = mentionMessage;
                     groups[existingIndex].bound = true;
                     groups[existingIndex].boundDate = new Date().toISOString().split('T')[0];
                     
@@ -3935,6 +4211,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         channel: channel,
                         cid: cid || null,
                         sizes: sizes.length > 0 ? sizes : [],
+                        mentionUsers: mentionUsers,
+                        mentionDelay: mentionDelay,
+                        mentionMessage: mentionMessage,
                         bound: true,
                         boundDate: new Date().toISOString().split('T')[0],
                         selected: false,
@@ -3951,7 +4230,12 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 document.getElementById('chatId').value = '';
                 document.getElementById('cid').value = '';
                 selectedSizes = [];
+                selectedMentions = [];
                 updateSizeTags();
+                updateMentionTags();
+                document.getElementById('mentionDelay').value = 3;
+                document.getElementById('mentionMessage').value = '链接已更新，请相关人员查看';
+                updateMentionMessagePreview();
                 document.getElementById('testMessage').value = '';
                 
                 saveToStorage();
@@ -3992,7 +4276,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 }
             });
             
-            // 批量添加群组（支持多尺寸）
+            // 批量添加群组（支持多尺寸和@人物）
             document.getElementById('addBatchGroups').addEventListener('click', function() {
                 const input = document.getElementById('batchGroupInput').value.trim();
                 if (!input) {
@@ -4018,9 +4302,18 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     
                     const [name, channel, id, cid] = parts;
                     const sizesStr = parts[4] || '';
+                    const mentionUsersStr = parts[5] || '';
+                    const mentionDelay = parseInt(parts[6]) || 3;
+                    const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
                     
                     // 解析尺寸（支持多个尺寸逗号分隔）
                     const sizes = sizesStr.split(',').map(s => s.trim()).filter(s => s);
+                    
+                    // 解析@人物（支持逗号分隔）
+                    const mentionUsers = mentionUsersStr
+                        .split(',')
+                        .map(user => user.trim().replace('@', ''))
+                        .filter(user => user);
                     
                     // 验证群组ID格式
                     if (!id.startsWith('-100')) {
@@ -4042,6 +4335,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         groups[existingIndex].channel = channel;
                         groups[existingIndex].cid = cid || groups[existingIndex].cid;
                         groups[existingIndex].sizes = sizes.length > 0 ? sizes : groups[existingIndex].sizes;
+                        groups[existingIndex].mentionUsers = mentionUsers;
+                        groups[existingIndex].mentionDelay = mentionDelay;
+                        groups[existingIndex].mentionMessage = mentionMessage;
                         groups[existingIndex].bound = true;
                         groups[existingIndex].boundDate = new Date().toISOString().split('T')[0];
                         updatedCount++;
@@ -4052,6 +4348,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                             channel,
                             cid: cid || null,
                             sizes: sizes,
+                            mentionUsers: mentionUsers,
+                            mentionDelay: mentionDelay,
+                            mentionMessage: mentionMessage,
                             bound: true,
                             boundDate: new Date().toISOString().split('T')[0],
                             selected: false,
@@ -4106,8 +4405,25 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 const newSizes = prompt('请输入新的图片尺寸 (多个用逗号分隔):', group.sizes?.join(', ') || '');
                 if (newSizes === null) return;
                 
+                const newMentionUsers = prompt('请输入发送后要@的人物 (多个用逗号分隔):', group.mentionUsers?.join(', ') || '');
+                if (newMentionUsers === null) return;
+                
+                const newMentionDelay = prompt('请输入@人物延迟时间 (秒):', group.mentionDelay || 3);
+                if (newMentionDelay === null) return;
+                
+                const newMentionMessage = prompt('请输入@人物消息内容:', group.mentionMessage || '链接已更新，请相关人员查看');
+                if (newMentionMessage === null) return;
+                
                 // 解析尺寸
                 const sizes = newSizes.split(',').map(s => s.trim()).filter(s => s);
+                
+                // 解析@人物
+                const mentionUsers = newMentionUsers
+                    .split(',')
+                    .map(user => user.trim().replace('@', ''))
+                    .filter(user => user);
+                
+                const mentionDelay = parseInt(newMentionDelay) || 3;
                 
                 // 验证尺寸格式
                 const invalidSizes = sizes.filter(size => !/^\d{2,4}-\d{2,4}$/.test(size));
@@ -4120,6 +4436,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 groups[index].channel = newChannel.trim();
                 groups[index].cid = newCid.trim() || null;
                 groups[index].sizes = sizes;
+                groups[index].mentionUsers = mentionUsers;
+                groups[index].mentionDelay = mentionDelay;
+                groups[index].mentionMessage = newMentionMessage.trim();
                 
                 saveToStorage();
                 renderManageGroups(manageSearchInput.value);
@@ -5054,12 +5373,16 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                             if (item.id && item.name) {
                                                 // 兼容旧版本（size字段）和新版本（sizes字段）
                                                 const sizes = item.sizes || (item.size ? [item.size] : []);
+                                                const mentionUsers = item.mentionUsers || [];
                                                 groups.push({
                                                     id: item.id,
                                                     name: item.name,
                                                     channel: item.channel || item.name.toLowerCase().replace(/\s+/g, ''),
                                                     cid: item.cid || null,
                                                     sizes: sizes,
+                                                    mentionUsers: mentionUsers,
+                                                    mentionDelay: item.mentionDelay || 3,
+                                                    mentionMessage: item.mentionMessage || '链接已更新，请相关人员查看',
                                                     bound: item.bound || true,
                                                     boundDate: item.boundDate || new Date().toISOString().split('T')[0],
                                                     selected: false,
@@ -5080,7 +5403,15 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                             if (parts.length >= 4) {
                                 const [name, channel, id, cid] = parts;
                                 const sizesStr = parts[4] || '';
+                                const mentionUsersStr = parts[5] || '';
+                                const mentionDelay = parseInt(parts[6]) || 3;
+                                const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
+                                
                                 const sizes = sizesStr.split(',').map(s => s.trim()).filter(s => s);
+                                const mentionUsers = mentionUsersStr
+                                    .split(',')
+                                    .map(user => user.trim().replace('@', ''))
+                                    .filter(user => user);
                                 
                                 const existingIndex = groups.findIndex(g => g.id === id);
                                 
@@ -5089,6 +5420,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                     groups[existingIndex].channel = channel;
                                     groups[existingIndex].cid = cid || groups[existingIndex].cid;
                                     groups[existingIndex].sizes = sizes.length > 0 ? sizes : groups[existingIndex].sizes;
+                                    groups[existingIndex].mentionUsers = mentionUsers;
+                                    groups[existingIndex].mentionDelay = mentionDelay;
+                                    groups[existingIndex].mentionMessage = mentionMessage;
                                 } else {
                                     groups.push({
                                         id,
@@ -5096,6 +5430,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         channel,
                                         cid: cid || null,
                                         sizes: sizes,
+                                        mentionUsers: mentionUsers,
+                                        mentionDelay: mentionDelay,
+                                        mentionMessage: mentionMessage,
                                         bound: true,
                                         boundDate: new Date().toISOString().split('T')[0],
                                         selected: false,
@@ -5183,6 +5520,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         channel: channelName || `group${Date.now()}`,
                                         cid: null,
                                         sizes: [],
+                                        mentionUsers: [],
+                                        mentionDelay: 3,
+                                        mentionMessage: '链接已更新，请相关人员查看',
                                         bound: true,
                                         boundDate: new Date().toISOString().split('T')[0],
                                         selected: false,
@@ -5232,7 +5572,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     return;
                 }
                 
-                showNotification('测试中', `正在测试发送到 ${selectedGroups.length} 个群组...`, 'info');
+                const sendMode = sendSecondaryMentionSelect.value;
+                
+                showNotification('测试中', `正在测试${sendMode === 'link-only' ? '链接' : sendMode === 'mention-only' ? '@人物' : '链接+@人物'}发送到 ${selectedGroups.length} 个群组...`, 'info');
                 
                 try {
                     if (!telegramBot || telegramBot.botToken !== botToken) {
@@ -5244,18 +5586,36 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     
                     for (const group of testGroups) {
                         try {
-                            const matchedPairs = getGroupLinkPairs(group);
-                            
-                            if (matchedPairs.length === 0) {
-                                const message = `测试消息 - ${group.name}\n这是一条测试消息，用于验证发送功能。`;
-                                await telegramBot.sendMessage(group.id, message);
-                                successCount++;
-                            } else {
-                                const pair = matchedPairs[0];
-                                const message = `${group.name}\n旧 ${pair.oldUrl}\n新 ${pair.newUrl}`;
-                                await telegramBot.sendMessage(group.id, message);
-                                successCount++;
+                            // 发送链接消息（如果需要）
+                            if (sendMode === 'all' || sendMode === 'link-only') {
+                                const matchedPairs = getGroupLinkPairs(group);
+                                
+                                if (matchedPairs.length === 0) {
+                                    const message = `测试消息 - ${group.name}\n这是一条测试消息，用于验证发送功能。`;
+                                    await telegramBot.sendMessage(group.id, message);
+                                } else {
+                                    const pair = matchedPairs[0];
+                                    const message = `${group.name}\n旧 ${pair.oldUrl}\n新 ${pair.newUrl}`;
+                                    await telegramBot.sendMessage(group.id, message);
+                                }
                             }
+                            
+                            // 发送@人物消息（如果需要）
+                            if (sendMode === 'all' || sendMode === 'mention-only') {
+                                if (group.mentionUsers && group.mentionUsers.length > 0) {
+                                    const delay = group.mentionDelay || 3;
+                                    const message = group.mentionMessage || '链接已更新，请相关人员查看';
+                                    const mentions = group.mentionUsers.map(m => `@${m}`).join(' ');
+                                    const mentionMessage = `${message}\n${mentions}`;
+                                    
+                                    // 等待指定秒数
+                                    await new Promise(resolve => setTimeout(resolve, delay * 1000));
+                                    
+                                    await telegramBot.sendMessage(group.id, mentionMessage);
+                                }
+                            }
+                            
+                            successCount++;
                         } catch (error) {
                             console.error(`发送到 ${group.name} 失败:`, error);
                         }
@@ -5268,7 +5628,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 }
             });
             
-            // 批量发送消息
+            // 批量发送消息（支持二次@人物）
             document.getElementById('sendBatchBtn').addEventListener('click', async function() {
                 let selectedGroups;
                 
@@ -5283,7 +5643,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     return;
                 }
                 
-                if (linkPairs.length === 0) {
+                if (linkPairs.length === 0 && sendSecondaryMentionSelect.value !== 'mention-only') {
                     showNotification('没有链接对', '请先添加链接对', 'error');
                     return;
                 }
@@ -5295,6 +5655,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 }
                 
                 const sendDelay = parseInt(document.getElementById('sendDelay').value) || 1000;
+                const sendMode = sendSecondaryMentionSelect.value;
                 
                 groups.forEach(group => {
                     if (selectedGroups.includes(group)) {
@@ -5329,12 +5690,15 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 
                 addLogToOutput('开始批量发送消息...', 'info');
                 addLogToOutput(`发送方式: ${currentSendMethod === 'all' ? '所有已绑定群组' : '选中群组'}`, 'info');
+                addLogToOutput(`发送模式: ${sendMode === 'all' ? '链接+@人物' : sendMode === 'link-only' ? '仅链接' : '仅@人物'}`, 'info');
                 addLogToOutput(`共 ${selectedGroups.length} 个群组`, 'info');
                 addLogToOutput(`发送延迟: ${sendDelay}ms`, 'info');
                 addLogToOutput(`可用链接对: ${linkPairs.length}个`, 'info');
                 
                 let successCount = 0;
                 let failCount = 0;
+                let linkSuccessCount = 0;
+                let mentionSuccessCount = 0;
                 
                 try {
                     if (!telegramBot || telegramBot.botToken !== botToken) {
@@ -5355,40 +5719,77 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         addLogToOutput(`发送到 ${group.name} (${i+1}/${selectedGroups.length})...`, 'info');
                         
                         try {
-                            const matchedPairs = getGroupLinkPairs(group);
+                            let linkSent = false;
+                            let mentionSent = false;
                             
-                            let linksToSend = matchedPairs;
-                            if (matchedPairs.length === 0) {
-                                const generalLinks = linkPairs.filter(pair => !pair.cid && pair.sizes.length === 0);
-                                linksToSend = generalLinks;
-                                if (generalLinks.length > 0) {
-                                    addLogToOutput(`  使用通用链接: ${generalLinks.length}个`, 'info');
+                            // 发送链接消息（如果需要）
+                            if (sendMode === 'all' || sendMode === 'link-only') {
+                                const matchedPairs = getGroupLinkPairs(group);
+                                
+                                let linksToSend = matchedPairs;
+                                if (matchedPairs.length === 0) {
+                                    const generalLinks = linkPairs.filter(pair => !pair.cid && pair.sizes.length === 0);
+                                    linksToSend = generalLinks;
+                                    if (generalLinks.length > 0) {
+                                        addLogToOutput(`  使用通用链接: ${generalLinks.length}个`, 'info');
+                                    }
+                                }
+                                
+                                if (linksToSend.length === 0) {
+                                    addLogToOutput(`  没有匹配的链接对，跳过链接发送`, 'warning');
+                                } else {
+                                    addLogToOutput(`  发送 ${linksToSend.length} 个链接对`, 'info');
+                                    
+                                    let message = `${group.name}\n`;
+                                    linksToSend.forEach((pair, index) => {
+                                        message += `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`;
+                                        if (index < linksToSend.length - 1) {
+                                            message += '\n\n';
+                                        }
+                                    });
+                                    
+                                    await telegramBot.sendMessage(group.id, message);
+                                    linkSent = true;
+                                    linkSuccessCount++;
+                                    addLogToOutput(`  ✓ 链接发送成功`, 'success');
                                 }
                             }
                             
-                            if (linksToSend.length === 0) {
-                                addLogToOutput(`✗ ${group.name} 没有匹配的链接对，跳过`, 'warning');
-                                continue;
+                            // 发送@人物消息（如果需要）
+                            if (sendMode === 'all' || sendMode === 'mention-only') {
+                                if (group.mentionUsers && group.mentionUsers.length > 0) {
+                                    const delay = group.mentionDelay || 3;
+                                    const message = group.mentionMessage || '链接已更新，请相关人员查看';
+                                    const mentions = group.mentionUsers.map(m => `@${m}`).join(' ');
+                                    const mentionMessage = `${message}\n${mentions}`;
+                                    
+                                    addLogToOutput(`  等待 ${delay} 秒后@ ${group.mentionUsers.length} 个人物...`, 'info');
+                                    
+                                    // 等待指定秒数
+                                    await new Promise(resolve => setTimeout(resolve, delay * 1000));
+                                    
+                                    await telegramBot.sendMessage(group.id, mentionMessage);
+                                    mentionSent = true;
+                                    mentionSuccessCount++;
+                                    addLogToOutput(`  ✓ @人物发送成功`, 'success');
+                                } else {
+                                    addLogToOutput(`  未设置@人物，跳过`, 'info');
+                                }
                             }
                             
-                            addLogToOutput(`  发送 ${linksToSend.length} 个链接对`, 'info');
-                            
-                            let message = `${group.name}\n`;
-                            linksToSend.forEach((pair, index) => {
-                                message += `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`;
-                                if (index < linksToSend.length - 1) {
-                                    message += '\n\n';
-                                }
-                            });
-                            
-                            await telegramBot.sendMessage(group.id, message);
-                            
-                            groups[groupIndex].sendSuccess = true;
-                            groups[groupIndex].lastSent = new Date().toISOString().split('T')[0];
-                            successCount++;
-                            successSendCount.textContent = successCount;
-                            
-                            addLogToOutput(`✓ 成功发送到 ${group.name}`, 'success');
+                            // 检查是否至少有一项发送成功
+                            if ((sendMode === 'all' && (linkSent || mentionSent)) ||
+                                (sendMode === 'link-only' && linkSent) ||
+                                (sendMode === 'mention-only' && mentionSent)) {
+                                groups[groupIndex].sendSuccess = true;
+                                groups[groupIndex].lastSent = new Date().toISOString().split('T')[0];
+                                successCount++;
+                                successSendCount.textContent = successCount;
+                                
+                                addLogToOutput(`✓ 成功发送到 ${group.name}`, 'success');
+                            } else {
+                                addLogToOutput(`✗ ${group.name} 没有内容可发送，跳过`, 'warning');
+                            }
                         } catch (error) {
                             groups[groupIndex].sendSuccess = false;
                             failCount++;
@@ -5413,10 +5814,18 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     isSending = false;
                     stopSendingBtn.style.display = 'none';
                     
-                    addLogToOutput(`批量发送完成！成功: ${successCount}, 失败: ${failCount}`, 
-                        successCount === selectedGroups.length ? 'success' : 'warning');
+                    let finalMessage = `批量发送完成！`;
+                    if (sendMode === 'all' || sendMode === 'link-only') {
+                        finalMessage += ` 链接成功: ${linkSuccessCount}`;
+                    }
+                    if (sendMode === 'all' || sendMode === 'mention-only') {
+                        finalMessage += ` @人物成功: ${mentionSuccessCount}`;
+                    }
+                    finalMessage += `, 总成功: ${successCount}, 失败: ${failCount}`;
                     
-                    showNotification('发送完成', `成功发送 ${successCount} 个群组，失败 ${failCount} 个`, 
+                    addLogToOutput(finalMessage, successCount === selectedGroups.length ? 'success' : 'warning');
+                    
+                    showNotification('发送完成', finalMessage, 
                         successCount === selectedGroups.length ? 'success' : 'warning');
                 } catch (error) {
                     addLogToOutput(`✗ 初始化失败: ${error.message}`, 'error');
@@ -5480,8 +5889,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 const exportData = {
                     meta: {
                         exportedAt: new Date().toISOString(),
-                        version: '1.0',
-                        system: 'Telegram群组绑定与消息发送系统'
+                        version: '1.1',
+                        system: 'Telegram群组绑定与消息发送系统',
+                        features: ['二次@人物功能']
                     },
                     groups: groups,
                     linkPairs: linkPairs,
@@ -5489,7 +5899,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         totalGroups: groups.length,
                         boundGroups: groups.filter(g => g.bound).length,
                         selectedGroups: groups.filter(g => g.selected).length,
-                        totalLinkPairs: linkPairs.length
+                        totalLinkPairs: linkPairs.length,
+                        groupsWithMentions: groups.filter(g => g.mentionUsers && g.mentionUsers.length > 0).length
                     }
                 };
                 
@@ -5502,13 +5913,16 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         fileName = `telegram-data-${new Date().toISOString().slice(0,10)}.json`;
                         break;
                     case 'csv':
-                        const csvHeaders = ['渠道名称', '渠道标识', 'Chat ID', 'CID', '图片尺寸', '绑定状态', '绑定日期', '最后发送'];
+                        const csvHeaders = ['渠道名称', '渠道标识', 'Chat ID', 'CID', '图片尺寸', '@人物', '@延迟', '@消息', '绑定状态', '绑定日期', '最后发送'];
                         const csvRows = groups.map(g => [
                             `"${g.name}"`,
                             `"${g.channel}"`,
                             g.id,
                             g.cid || '',
                             g.sizes?.join(',') || '',
+                            g.mentionUsers?.join(',') || '',
+                            g.mentionDelay || 3,
+                            `"${g.mentionMessage || ''}"`,
                             g.bound ? '是' : '否',
                             g.boundDate || '',
                             g.lastSent || ''
@@ -5519,7 +5933,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         break;
                     case 'txt':
                         dataStr = groups.map(g => 
-                            `${g.name}|${g.channel}|${g.id}|${g.cid || ''}|${g.sizes?.join(',') || ''}|${g.bound ? '已绑定' : '未绑定'}|${g.boundDate || ''}|${g.lastSent || ''}`
+                            `${g.name}|${g.channel}|${g.id}|${g.cid || ''}|${g.sizes?.join(',') || ''}|${g.mentionUsers?.join(',') || ''}|${g.mentionDelay || 3}|${g.mentionMessage || ''}|${g.bound ? '已绑定' : '未绑定'}|${g.boundDate || ''}|${g.lastSent || ''}`
                         ).join('\n');
                         mimeType = 'text/plain';
                         fileName = `telegram-groups-${new Date().toISOString().slice(0,10)}.txt`;
@@ -5615,7 +6029,15 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                     const [name, channel, id] = parts;
                                     const cid = parts[3] || null;
                                     const sizesStr = parts[4] || '';
+                                    const mentionUsersStr = parts[5] || '';
+                                    const mentionDelay = parseInt(parts[6]) || 3;
+                                    const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
+                                    
                                     const sizes = sizesStr.split(',').map(s => s.trim()).filter(s => s);
+                                    const mentionUsers = mentionUsersStr
+                                        .split(',')
+                                        .map(user => user.trim().replace('@', ''))
+                                        .filter(user => user);
                                     
                                     importedGroups.push({
                                         id,
@@ -5623,6 +6045,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         channel,
                                         cid,
                                         sizes,
+                                        mentionUsers,
+                                        mentionDelay,
+                                        mentionMessage,
                                         bound: true,
                                         boundDate: new Date().toISOString().split('T')[0],
                                         selected: false,
@@ -5746,6 +6171,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
             renderSendGroups();
             updateMessagePreview();
             renderCurrentLinks();
+            updateMentionMessagePreview();
             
             setTimeout(() => {
                 showNotification('系统已就绪', '所有数据已从本地存储加载', 'success', 3000);
