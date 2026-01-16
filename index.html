@@ -5628,7 +5628,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 }
             });
             
-            // 批量发送消息（支持二次@人物）
+            // 批量发送消息（支持二次@人物）- 修改后：只有匹配到对应链接的群组才进行发送和@人物
             document.getElementById('sendBatchBtn').addEventListener('click', async function() {
                 let selectedGroups;
                 
@@ -5643,11 +5643,6 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     return;
                 }
                 
-                if (linkPairs.length === 0 && sendSecondaryMentionSelect.value !== 'mention-only') {
-                    showNotification('没有链接对', '请先添加链接对', 'error');
-                    return;
-                }
-                
                 const botToken = botTokenInput.value.trim();
                 if (!botToken) {
                     showNotification('Bot Token为空', '请先输入Bot Token', 'error');
@@ -5656,6 +5651,27 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 
                 const sendDelay = parseInt(document.getElementById('sendDelay').value) || 1000;
                 const sendMode = sendSecondaryMentionSelect.value;
+                
+                // 筛选出有匹配链接的群组
+                let groupsToSend = [];
+                selectedGroups.forEach(group => {
+                    const matchedPairs = getGroupLinkPairs(group);
+                    const generalLinks = linkPairs.filter(pair => !pair.cid && pair.sizes.length === 0);
+                    
+                    // 只有匹配到链接的群组才加入发送列表
+                    if (matchedPairs.length > 0 || generalLinks.length > 0) {
+                        groupsToSend.push({
+                            group: group,
+                            matchedPairs: matchedPairs,
+                            hasGeneralLinks: generalLinks.length > 0
+                        });
+                    }
+                });
+                
+                if (groupsToSend.length === 0) {
+                    showNotification('没有可发送的群组', '选中的群组都没有匹配到链接', 'warning');
+                    return;
+                }
                 
                 groups.forEach(group => {
                     if (selectedGroups.includes(group)) {
@@ -5677,10 +5693,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 const progressFill = document.getElementById('progressFill');
                 const stopSendingBtn = document.getElementById('stopSending');
                 
-                totalSendCount.textContent = selectedGroups.length;
+                totalSendCount.textContent = groupsToSend.length;
                 successSendCount.textContent = '0';
                 failedSendCount.textContent = '0';
-                pendingSendCount.textContent = selectedGroups.length;
+                pendingSendCount.textContent = groupsToSend.length;
                 progressPercent.textContent = '0%';
                 progressFill.style.width = '0%';
                 
@@ -5691,7 +5707,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 addLogToOutput('开始批量发送消息...', 'info');
                 addLogToOutput(`发送方式: ${currentSendMethod === 'all' ? '所有已绑定群组' : '选中群组'}`, 'info');
                 addLogToOutput(`发送模式: ${sendMode === 'all' ? '链接+@人物' : sendMode === 'link-only' ? '仅链接' : '仅@人物'}`, 'info');
-                addLogToOutput(`共 ${selectedGroups.length} 个群组`, 'info');
+                addLogToOutput(`共 ${groupsToSend.length} 个有匹配链接的群组`, 'info');
+                addLogToOutput(`跳过了 ${selectedGroups.length - groupsToSend.length} 个无匹配链接的群组`, 'info');
                 addLogToOutput(`发送延迟: ${sendDelay}ms`, 'info');
                 addLogToOutput(`可用链接对: ${linkPairs.length}个`, 'info');
                 
@@ -5705,18 +5722,18 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         telegramBot = new TelegramBotAPI(botToken);
                     }
                     
-                    for (let i = 0; i < selectedGroups.length; i++) {
+                    for (let i = 0; i < groupsToSend.length; i++) {
                         if (stopSending) {
                             addLogToOutput('发送已停止', 'warning');
                             break;
                         }
                         
-                        const group = selectedGroups[i];
+                        const { group, matchedPairs, hasGeneralLinks } = groupsToSend[i];
                         const groupIndex = groups.findIndex(g => g.id === group.id && g.cid === group.cid);
                         
                         groups[groupIndex].sending = true;
                         
-                        addLogToOutput(`发送到 ${group.name} (${i+1}/${selectedGroups.length})...`, 'info');
+                        addLogToOutput(`发送到 ${group.name} (${i+1}/${groupsToSend.length})...`, 'info');
                         
                         try {
                             let linkSent = false;
@@ -5724,35 +5741,29 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                             
                             // 发送链接消息（如果需要）
                             if (sendMode === 'all' || sendMode === 'link-only') {
-                                const matchedPairs = getGroupLinkPairs(group);
-                                
                                 let linksToSend = matchedPairs;
-                                if (matchedPairs.length === 0) {
+                                
+                                // 如果无匹配但有关联链接，使用通用链接
+                                if (linksToSend.length === 0 && hasGeneralLinks) {
                                     const generalLinks = linkPairs.filter(pair => !pair.cid && pair.sizes.length === 0);
                                     linksToSend = generalLinks;
-                                    if (generalLinks.length > 0) {
-                                        addLogToOutput(`  使用通用链接: ${generalLinks.length}个`, 'info');
-                                    }
+                                    addLogToOutput(`  使用通用链接: ${generalLinks.length}个`, 'info');
                                 }
                                 
-                                if (linksToSend.length === 0) {
-                                    addLogToOutput(`  没有匹配的链接对，跳过链接发送`, 'warning');
-                                } else {
-                                    addLogToOutput(`  发送 ${linksToSend.length} 个链接对`, 'info');
-                                    
-                                    let message = `${group.name}\n`;
-                                    linksToSend.forEach((pair, index) => {
-                                        message += `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`;
-                                        if (index < linksToSend.length - 1) {
-                                            message += '\n\n';
-                                        }
-                                    });
-                                    
-                                    await telegramBot.sendMessage(group.id, message);
-                                    linkSent = true;
-                                    linkSuccessCount++;
-                                    addLogToOutput(`  ✓ 链接发送成功`, 'success');
-                                }
+                                addLogToOutput(`  发送 ${linksToSend.length} 个链接对`, 'info');
+                                
+                                let message = `${group.name}\n`;
+                                linksToSend.forEach((pair, index) => {
+                                    message += `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`;
+                                    if (index < linksToSend.length - 1) {
+                                        message += '\n\n';
+                                    }
+                                });
+                                
+                                await telegramBot.sendMessage(group.id, message);
+                                linkSent = true;
+                                linkSuccessCount++;
+                                addLogToOutput(`  ✓ 链接发送成功`, 'success');
                             }
                             
                             // 发送@人物消息（如果需要）
@@ -5799,14 +5810,14 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         }
                         
                         const sentCount = successCount + failCount;
-                        const percent = Math.round((sentCount / selectedGroups.length) * 100);
+                        const percent = Math.round((sentCount / groupsToSend.length) * 100);
                         progressPercent.textContent = `${percent}%`;
                         progressFill.style.width = `${percent}%`;
-                        pendingSendCount.textContent = selectedGroups.length - sentCount;
+                        pendingSendCount.textContent = groupsToSend.length - sentCount;
                         
                         saveToStorage();
                         
-                        if (i < selectedGroups.length - 1 && !stopSending) {
+                        if (i < groupsToSend.length - 1 && !stopSending) {
                             await new Promise(resolve => setTimeout(resolve, sendDelay));
                         }
                     }
@@ -5823,10 +5834,16 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     }
                     finalMessage += `, 总成功: ${successCount}, 失败: ${failCount}`;
                     
-                    addLogToOutput(finalMessage, successCount === selectedGroups.length ? 'success' : 'warning');
+                    // 添加跳过的群组信息
+                    const skippedCount = selectedGroups.length - groupsToSend.length;
+                    if (skippedCount > 0) {
+                        finalMessage += `, 跳过了 ${skippedCount} 个无匹配链接的群组`;
+                    }
+                    
+                    addLogToOutput(finalMessage, successCount === groupsToSend.length ? 'success' : 'warning');
                     
                     showNotification('发送完成', finalMessage, 
-                        successCount === selectedGroups.length ? 'success' : 'warning');
+                        successCount === groupsToSend.length ? 'success' : 'warning');
                 } catch (error) {
                     addLogToOutput(`✗ 初始化失败: ${error.message}`, 'error');
                     showNotification('发送失败', error.message || '初始化Telegram Bot失败', 'error');
