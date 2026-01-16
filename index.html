@@ -1527,6 +1527,100 @@
             color: #bb86fc;
             font-weight: bold;
         }
+        
+        /* 新增：多CID标签样式 */
+        .cid-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .cid-tag {
+            background-color: #e3f2fd;
+            color: var(--primary-color);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        .cid-tag i {
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        
+        .cid-tag i:hover {
+            color: var(--danger-color);
+        }
+        
+        /* 新增：CID输入助手 */
+        .cid-input-helper {
+            margin-top: 10px;
+            background-color: #e8f4fd;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+        }
+        
+        .cid-input-helper h5 {
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        
+        .cid-quick-add {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .cid-quick-btn {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .cid-quick-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        /* 批量绑定错误提示 */
+        .batch-error-list {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .batch-error-item {
+            color: #856404;
+            padding: 5px 0;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #ffeaa7;
+        }
+        
+        .batch-error-item:last-child {
+            border-bottom: none;
+        }
+        
+        .batch-error-item .error-line {
+            font-weight: bold;
+        }
+        
+        .batch-error-item .error-message {
+            color: #dc3545;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -1536,7 +1630,7 @@
                 <i class="fab fa-telegram"></i>
             </div>
             <h1>Telegram群组绑定与消息发送系统</h1>
-            <p>批量绑定群组，支持多尺寸图片匹配，智能CID识别发送消息</p>
+            <p>批量绑定群组，支持多CID和多尺寸图片匹配，智能CID识别发送消息</p>
             <div class="storage-status">
                 <i class="fas fa-database"></i>
                 <span>数据已保存</span>
@@ -1633,9 +1727,30 @@
                                         <label for="chatId">Chat ID</label>
                                         <input type="text" id="chatId" placeholder="例如: -1001234567890">
                                     </div>
-                                    <div class="form-group">
-                                        <label for="cid">渠道号 (CID)</label>
-                                        <input type="text" id="cid" placeholder="例如: 5100525">
+                                </div>
+                                
+                                <!-- 新增：多CID输入 -->
+                                <div class="form-group">
+                                    <label for="groupCids"><i class="fas fa-hashtag"></i> 渠道号 (CID，多个用逗号分隔)</label>
+                                    <div class="multi-size-input">
+                                        <input type="text" id="groupCids" placeholder="例如: 5100525,5100526,5100527">
+                                        <button class="btn" id="addCidBtn">添加</button>
+                                    </div>
+                                    <small>多个CID用逗号分隔，群组将匹配所有指定的CID</small>
+                                    
+                                    <div class="cid-input-helper">
+                                        <h5>常用CID快速添加:</h5>
+                                        <div class="cid-quick-add">
+                                            <button class="cid-quick-btn" data-cid="5100525">5100525</button>
+                                            <button class="cid-quick-btn" data-cid="5547607">5547607</button>
+                                            <button class="cid-quick-btn" data-cid="2860906">2860906</button>
+                                            <button class="cid-quick-btn" data-cid="6358945">6358945</button>
+                                            <button class="cid-quick-btn" data-cid="1234567">1234567</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="cid-tags" id="cidTags">
+                                        <!-- CID标签将通过JavaScript动态生成 -->
                                     </div>
                                 </div>
                                 
@@ -1743,17 +1858,23 @@
                             <div class="bind-method-content active" id="textBind">
                                 <div class="form-group">
                                     <label for="batchGroupInput"><i class="fas fa-users"></i> 批量添加群组</label>
-                                    <textarea id="batchGroupInput" placeholder="每行一个群组，格式：渠道名称|渠道标识|Chat ID|CID|图片尺寸(多个用逗号分隔)|@人物(多个用逗号分隔)|@延迟(秒)|@消息
+                                    <textarea id="batchGroupInput" placeholder="每行一个群组，格式：渠道名称|渠道标识|Chat ID|CID列表(多个用逗号分隔)|图片尺寸(多个用逗号分隔)|@人物(多个用逗号分隔)|@延迟(秒)|@消息
 例如：
-爱液|aiyec|-1001234567890|5100525|100-100,200-200|admin1,manager|3|链接已更新，请相关人员查看
-悟空站|wukong|-1009876543210|5547607|300-250,728-90|admin1|5|新链接已发布
-八戒站|bajie|-1001122334455|5547608|468-60,320-50,250-250|user1,user2,user3|2|请查看最新链接
+爱液|aiyec|-1001234567890|5100525,5100526,5100527|100-100,200-200|admin1,manager|3|链接已更新，请相关人员查看
+悟空站|wukong|-1009876543210|5547607,5547608|300-250,728-90|admin1|5|新链接已发布
+八戒站|bajie|-1001122334455|5547609,5547610|468-60,320-50,250-250|user1,user2,user3|2|请查看最新链接
 ..."></textarea>
                                     <small>Chat ID必须是负数（Telegram群组ID格式）</small>
+                                    <small>CID列表：多个CID用逗号分隔</small>
                                     <small>图片尺寸格式：宽度-高度（多个用逗号分隔）</small>
                                     <small>@人物：多个用户名用逗号分隔，不需要@符号</small>
                                     <small>@延迟：发送链接后等待多少秒再@人物（1-60秒）</small>
                                     <small>@消息：@人物时发送的消息内容</small>
+                                </div>
+                                
+                                <!-- 批量绑定错误提示区域 -->
+                                <div id="batchErrorList" class="batch-error-list" style="display: none;">
+                                    <!-- 错误信息将通过JavaScript动态生成 -->
                                 </div>
                                 
                                 <button class="btn btn-block" id="addBatchGroups">
@@ -1770,7 +1891,7 @@
                                         <ul>
                                             <li>JSON文件：包含群组信息的JSON数组</li>
                                             <li>CSV文件：逗号分隔的群组数据</li>
-                                            <li>TXT文件：每行一个群组（名称|标识|ID|CID|尺寸|@人物|延迟|消息）</li>
+                                            <li>TXT文件：每行一个群组（名称|标识|ID|CID列表|尺寸|@人物|延迟|消息）</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -2082,7 +2203,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             <ul>
                                 <li>如果链接包含CID参数，优先按CID匹配群组</li>
                                 <li>如果链接不包含CID，但包含尺寸（如/100-100/），按图片尺寸匹配群组</li>
-                                <li>如果群组有多个尺寸，只要链接匹配其中任意一个尺寸就会发送</li>
+                                <li>如果群组有多个CID或尺寸，只要链接匹配其中任意一个就会发送</li>
                                 <li>如果既无CID也无尺寸，将发送到所有群组</li>
                             </ul>
                         </div>
@@ -2296,13 +2417,13 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             <h4>匹配逻辑说明：</h4>
                             <p><strong>系统按以下优先级匹配：</strong></p>
                             <ol>
-                                <li>首先按CID匹配群组</li>
+                                <li>首先按CID匹配群组（支持多CID）</li>
                                 <li>如果没有CID，按图片尺寸匹配群组（支持多尺寸匹配）</li>
                                 <li>如果既无CID也无尺寸，发送到所有群组</li>
                             </ol>
                             <p><strong>例如：</strong></p>
-                            <p>群组"握草"的CID是2860906，图片尺寸是100-100,200-200</p>
-                            <p>系统会查找所有CID为2860906或尺寸包含100-100或200-200的链接对</p>
+                            <p>群组"握草"的CID是2860906,5100525，图片尺寸是100-100,200-200</p>
+                            <p>系统会查找所有CID为2860906或5100525或尺寸包含100-100或200-200的链接对</p>
                             <p>将生成的消息格式：</p>
                             <pre>握草
 旧 https://7147niredb.effectsk.com/imp04/?cid=2860906
@@ -2391,7 +2512,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
         </div>
         
         <div class="footer">
-            <p><i class="fab fa-telegram telegram-icon"></i> Telegram群组绑定与消息发送系统 | 支持CID和多尺寸图片匹配，智能发送消息</p>
+            <p><i class="fab fa-telegram telegram-icon"></i> Telegram群组绑定与消息发送系统 | 支持多CID和多尺寸图片匹配，智能发送消息</p>
             <p>注意: 所有数据保存在浏览器本地，不会上传到任何服务器。请定期备份数据。</p>
         </div>
     </div>
@@ -2491,6 +2612,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             let telegramBot = null;
             let selectedSizes = []; // 存储当前选中的尺寸
             let selectedMentions = []; // 存储当前选中的@人物
+            let selectedCids = []; // 存储当前选中的CID
             
             // DOM元素
             const bindTabBadge = document.getElementById('bindTabBadge');
@@ -2563,6 +2685,12 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             const addSizeBtn = document.getElementById('addSizeBtn');
             const sizeQuickButtons = document.querySelectorAll('.size-quick-btn');
             
+            // CID管理相关DOM元素
+            const groupCidsInput = document.getElementById('groupCids');
+            const cidTagsContainer = document.getElementById('cidTags');
+            const addCidBtn = document.getElementById('addCidBtn');
+            const cidQuickButtons = document.querySelectorAll('.cid-quick-btn');
+            
             // 链接管理页面元素
             const linkCidInput = document.getElementById('linkCid');
             const linkSizeInput = document.getElementById('linkSize');
@@ -2579,6 +2707,11 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             const linkMatchRate = document.getElementById('linkMatchRate');
             const matchedGroups = document.getElementById('matchedGroups');
             const totalGroups = document.getElementById('totalGroups');
+            
+            // 批量绑定相关元素
+            const batchGroupInput = document.getElementById('batchGroupInput');
+            const batchErrorList = document.getElementById('batchErrorList');
+            const addBatchGroupsBtn = document.getElementById('addBatchGroups');
             
             // 智能匹配选项
             const matchModeOptions = document.querySelectorAll('.match-mode-option');
@@ -2730,6 +2863,29 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 });
             });
             
+            // CID管理功能
+            function updateCidTags() {
+                cidTagsContainer.innerHTML = '';
+                selectedCids.forEach((cid, index) => {
+                    const tag = document.createElement('span');
+                    tag.className = 'cid-tag';
+                    tag.innerHTML = `
+                        ${cid}
+                        <i class="fas fa-times" data-index="${index}"></i>
+                    `;
+                    cidTagsContainer.appendChild(tag);
+                });
+                
+                // 添加删除事件
+                cidTagsContainer.querySelectorAll('.cid-tag i').forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        selectedCids.splice(index, 1);
+                        updateCidTags();
+                    });
+                });
+            }
+            
             // 尺寸管理功能
             function updateSizeTags() {
                 sizeTagsContainer.innerHTML = '';
@@ -2793,6 +2949,24 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 mentionMessagePreview.textContent = preview;
             }
             
+            // 添加CID按钮
+            addCidBtn.addEventListener('click', function() {
+                const cids = groupCidsInput.value.trim();
+                if (!cids) return;
+                
+                // 支持多个CID逗号分隔
+                const newCids = cids.split(',').map(c => c.trim()).filter(c => c);
+                
+                newCids.forEach(cid => {
+                    if (/^\d+$/.test(cid) && !selectedCids.includes(cid)) {
+                        selectedCids.push(cid);
+                    }
+                });
+                
+                groupCidsInput.value = '';
+                updateCidTags();
+            });
+            
             // 添加尺寸按钮
             addSizeBtn.addEventListener('click', function() {
                 const size = imageSizeInput.value.trim();
@@ -2833,6 +3007,17 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             // 监听@人物设置变化
             mentionDelayInput.addEventListener('input', updateMentionMessagePreview);
             mentionMessageInput.addEventListener('input', updateMentionMessagePreview);
+            
+            // 快速添加CID按钮
+            cidQuickButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const cid = this.getAttribute('data-cid');
+                    if (!selectedCids.includes(cid)) {
+                        selectedCids.push(cid);
+                        updateCidTags();
+                    }
+                });
+            });
             
             // 快速添加尺寸按钮
             sizeQuickButtons.forEach(btn => {
@@ -2906,6 +3091,28 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 };
             }
             
+            // 验证CID格式
+            function validateCids(cidsStr) {
+                if (!cidsStr) return { valid: true, cids: [] };
+                
+                const cids = cidsStr.split(',').map(c => c.trim()).filter(c => c);
+                const invalidCids = cids.filter(c => !/^\d+$/.test(c));
+                
+                if (invalidCids.length > 0) {
+                    return {
+                        valid: false,
+                        message: `无效的CID格式: ${invalidCids.join(', ')}`,
+                        cids: []
+                    };
+                }
+                
+                return {
+                    valid: true,
+                    message: 'CID格式正确',
+                    cids: cids
+                };
+            }
+            
             // 检查尺寸是否匹配（支持多尺寸）
             function sizesMatch(linkSizes, groupSizes) {
                 if (!linkSizes || linkSizes.length === 0) return false;
@@ -2915,6 +3122,15 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 return linkSizes.some(linkSize => 
                     groupSizes.includes(linkSize)
                 );
+            }
+            
+            // 检查CID是否匹配（支持多CID）
+            function cidsMatch(linkCid, groupCids) {
+                if (!linkCid) return false;
+                if (!groupCids || groupCids.length === 0) return false;
+                
+                // 检查是否有任意一个CID匹配
+                return groupCids.includes(linkCid);
             }
             
             // 验证链接对格式
@@ -3106,14 +3322,14 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 }
             }
             
-            // 初始化示例群组数据（支持多尺寸和@人物）
+            // 初始化示例群组数据（支持多CID、多尺寸和@人物）
             function initSampleGroups() {
                 groups = [
                     { 
                         id: "-1001234567890", 
                         name: "爱液", 
                         channel: "aiyec",
-                        cid: "5100525", 
+                        cids: ["5100525", "5100526", "5100527"],
                         sizes: ["100-100", "200-200"],
                         mentionUsers: ["admin1", "manager"],
                         mentionDelay: 3,
@@ -3128,7 +3344,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         id: "-1009876543210", 
                         name: "悟空站", 
                         channel: "wukong",
-                        cid: "5547607", 
+                        cids: ["5547607", "5547608"],
                         sizes: ["300-250", "728-90"],
                         mentionUsers: ["admin1"],
                         mentionDelay: 5,
@@ -3143,7 +3359,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         id: "-1001122334455", 
                         name: "八戒站", 
                         channel: "bajie",
-                        cid: "5547608", 
+                        cids: ["5547609", "5547610"],
                         sizes: ["468-60", "320-50"],
                         mentionUsers: ["user1", "user2", "user3"],
                         mentionDelay: 2,
@@ -3158,7 +3374,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         id: "-1002233445566", 
                         name: "沙僧站", 
                         channel: "shaseng",
-                        cid: "5547609", 
+                        cids: ["2860906"],
                         sizes: ["728-90"],
                         mentionUsers: [],
                         mentionDelay: 3,
@@ -3173,7 +3389,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         id: "-1003344556677", 
                         name: "唐僧站", 
                         channel: "tangseng",
-                        cid: "5547610", 
+                        cids: ["6358945", "6358946"],
                         sizes: ["100-100", "250-250", "120-600"],
                         mentionUsers: [],
                         mentionDelay: 3,
@@ -3234,14 +3450,26 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 return Date.now().toString(36) + Math.random().toString(36).substr(2);
             }
             
-            // 根据CID或尺寸获取匹配的链接对（支持多尺寸）
-            function getLinkPairsByCidOrSize(cid, groupSizes) {
+            // 根据CID或尺寸获取匹配的链接对（支持多CID、多尺寸）
+            function getLinkPairsByCidOrSize(linkCid, linkSizes, groupCids, groupSizes) {
                 return linkPairs.filter(pair => {
-                    // 优先按CID匹配
-                    if (cid && pair.cid === cid) return true;
+                    // 优先按CID匹配（支持多CID）
+                    if (linkCid && pair.cid === linkCid) {
+                        // 检查群组是否包含这个CID
+                        if (groupCids && groupCids.length > 0) {
+                            return groupCids.includes(linkCid);
+                        }
+                        return false;
+                    }
                     // 其次按尺寸匹配（支持多尺寸）
-                    if (pair.sizes && pair.sizes.length > 0 && groupSizes && groupSizes.length > 0) {
-                        return sizesMatch(pair.sizes, groupSizes);
+                    if (pair.sizes && pair.sizes.length > 0 && linkSizes && linkSizes.length > 0) {
+                        const hasCommonSize = pair.sizes.some(pairSize => 
+                            linkSizes.includes(pairSize)
+                        );
+                        if (hasCommonSize && groupSizes && groupSizes.length > 0) {
+                            // 检查群组是否包含这个尺寸
+                            return sizesMatch(pair.sizes, groupSizes);
+                        }
                     }
                     return false;
                 });
@@ -3249,7 +3477,29 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             
             // 获取群组匹配的链接对
             function getGroupLinkPairs(group) {
-                return getLinkPairsByCidOrSize(group.cid, group.sizes);
+                const allMatchedPairs = [];
+                
+                // 遍历所有链接对，检查是否匹配群组的CID或尺寸
+                linkPairs.forEach(pair => {
+                    let matched = false;
+                    
+                    // 按CID匹配
+                    if (pair.cid && group.cids && group.cids.includes(pair.cid)) {
+                        matched = true;
+                    }
+                    // 按尺寸匹配
+                    else if (pair.sizes && pair.sizes.length > 0 && group.sizes && group.sizes.length > 0) {
+                        if (sizesMatch(pair.sizes, group.sizes)) {
+                            matched = true;
+                        }
+                    }
+                    
+                    if (matched) {
+                        allMatchedPairs.push(pair);
+                    }
+                });
+                
+                return allMatchedPairs;
             }
             
             // 获取所有有匹配链接的群组
@@ -3321,7 +3571,11 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 
                 const matchedLinks = linkPairs.filter(pair => {
                     return groups.some(group => {
-                        if (pair.cid && group.cid === pair.cid) return true;
+                        // 按CID匹配
+                        if (pair.cid && group.cids && group.cids.includes(pair.cid)) {
+                            return true;
+                        }
+                        // 按尺寸匹配
                         if (pair.sizes && pair.sizes.length > 0 && group.sizes && group.sizes.length > 0) {
                             return sizesMatch(pair.sizes, group.sizes);
                         }
@@ -3524,7 +3778,9 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     hasContent = true;
                     Object.keys(cidGroups).sort().forEach(cid => {
                         const pairs = cidGroups[cid];
-                        const hasGroup = groups.some(group => group.cid === cid);
+                        const hasGroup = groups.some(group => 
+                            group.cids && group.cids.includes(cid)
+                        );
                         
                         // CID标题
                         const cidHeader = document.createElement('div');
@@ -3668,9 +3924,9 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 
                 groups.forEach(group => {
                     const option = document.createElement('option');
-                    option.value = group.cid || group.sizes?.join(',') || group.id;
+                    option.value = group.id;
                     let text = `${group.name}`;
-                    if (group.cid) text += ` (CID: ${group.cid})`;
+                    if (group.cids && group.cids.length > 0) text += ` (CID: ${group.cids.join(', ')})`;
                     if (group.sizes && group.sizes.length > 0) text += ` [${group.sizes.join(', ')}]`;
                     option.textContent = text;
                     previewGroupSelect.appendChild(option);
@@ -3679,11 +3935,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 previewGroupSelect.addEventListener('change', function() {
                     const selectedValue = this.value;
                     if (selectedValue) {
-                        const group = groups.find(g => 
-                            g.cid === selectedValue || 
-                            (g.sizes && g.sizes.join(',') === selectedValue) || 
-                            g.id === selectedValue
-                        );
+                        const group = groups.find(g => g.id === selectedValue);
                         if (group) {
                             renderLinkMatchPreview(group);
                         }
@@ -3703,7 +3955,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             <i class="fas fa-unlink"></i>
                             <h3>未找到匹配的链接对</h3>
                             <p>${group.name} 没有对应的链接对</p>
-                            <p>CID: ${group.cid || '无'}, 尺寸: ${group.sizes?.join(', ') || '无'}</p>
+                            <p>CID: ${group.cids?.join(', ') || '无'}, 尺寸: ${group.sizes?.join(', ') || '无'}</p>
                         </div>
                     `;
                     return;
@@ -3714,7 +3966,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         <h4 style="color: var(--primary-color); margin-bottom: 10px;">
                             ${group.name} 
                             <span style="font-size: 0.9rem; color: #666;">
-                                ${group.cid ? `(CID: ${group.cid})` : ''}
+                                ${group.cids && group.cids.length > 0 ? `(CID: ${group.cids.join(', ')})` : ''}
                                 ${group.sizes && group.sizes.length > 0 ? `[${group.sizes.join(', ')}]` : ''}
                             </span>
                         </h4>
@@ -3818,6 +4070,11 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     const historyItem = document.createElement('div');
                     historyItem.className = 'history-item';
                     
+                    let cidInfo = '';
+                    if (group.cids && group.cids.length > 0) {
+                        cidInfo = `<div style="font-size: 0.8rem; color: var(--primary-color);">CID: ${group.cids.join(', ')}</div>`;
+                    }
+                    
                     let mentionInfo = '';
                     if (group.mentionUsers && group.mentionUsers.length > 0) {
                         mentionInfo = `<div style="font-size: 0.8rem; color: #7b1fa2;">@${group.mentionUsers.join(', @')} (${group.mentionDelay}秒后)</div>`;
@@ -3826,11 +4083,12 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     historyItem.innerHTML = `
                         <div>
                             <strong>${group.name}</strong> (${group.channel})
-                            <div style="font-size: 0.8rem; color: #666;">${group.boundDate}</div>
+                            ${cidInfo}
                             ${mentionInfo}
+                            <div style="font-size: 0.8rem; color: #666;">${group.boundDate}</div>
                         </div>
                         <div style="font-family: monospace; font-size: 0.9rem;">
-                            CID: ${group.cid || '无'} ${group.sizes && group.sizes.length > 0 ? `[${group.sizes.join(', ')}]` : ''}
+                            ${group.sizes && group.sizes.length > 0 ? `[${group.sizes.join(', ')}]` : '无尺寸'}
                         </div>
                     `;
                     historyList.appendChild(historyItem);
@@ -3847,7 +4105,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         group.name.toLowerCase().includes(term) ||
                         group.channel.toLowerCase().includes(term) ||
                         group.id.toLowerCase().includes(term) ||
-                        (group.cid && group.cid.toLowerCase().includes(term)) ||
+                        (group.cids && group.cids.some(c => c.toLowerCase().includes(term))) ||
                         (group.sizes && group.sizes.some(s => s.toLowerCase().includes(term))) ||
                         (group.mentionUsers && group.mentionUsers.some(m => m.toLowerCase().includes(term)))
                     );
@@ -3871,10 +4129,22 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 } else {
                     for (let i = startIndex; i < endIndex; i++) {
                         const group = filteredGroups[i];
-                        const originalIndex = groups.findIndex(g => g.id === group.id && g.cid === group.cid);
+                        const originalIndex = groups.findIndex(g => g.id === group.id);
                         
                         const groupItem = document.createElement('div');
                         groupItem.className = `group-item ${group.selected ? 'selected' : ''} ${group.bound ? 'bound' : ''}`;
+                        
+                        let cidInfo = '';
+                        if (group.cids && group.cids.length > 0) {
+                            cidInfo = `
+                                <div class="group-detail">
+                                    <i class="fas fa-hashtag"></i>
+                                    <div class="cid-tags">
+                                        ${group.cids.map(cid => `<span class="cid-tag">${cid}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
                         
                         let mentionInfo = '';
                         if (group.mentionUsers && group.mentionUsers.length > 0) {
@@ -3903,15 +4173,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                 </div>
                                 <div class="group-details">
                                     <div class="group-detail">
-                                        <i class="fas fa-hashtag"></i>
+                                        <i class="fas fa-id-card"></i>
                                         <span class="group-id">${group.id}</span>
                                     </div>
-                                    ${group.cid ? `
-                                    <div class="group-detail">
-                                        <i class="fas fa-link"></i>
-                                        <span class="group-cid">CID: ${group.cid}</span>
-                                    </div>
-                                    ` : ''}
+                                    ${cidInfo}
                                     ${group.sizes && group.sizes.length > 0 ? `
                                     <div class="group-detail">
                                         <i class="fas fa-expand-alt"></i>
@@ -3993,7 +4258,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     filteredGroups = groups.filter(group => 
                         group.name.toLowerCase().includes(term) ||
                         group.channel.toLowerCase().includes(term) ||
-                        (group.cid && group.cid.toLowerCase().includes(term)) ||
+                        (group.cids && group.cids.some(c => c.toLowerCase().includes(term))) ||
                         (group.sizes && group.sizes.some(s => s.toLowerCase().includes(term))) ||
                         (group.mentionUsers && group.mentionUsers.some(m => m.toLowerCase().includes(term)))
                     );
@@ -4017,12 +4282,24 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 } else {
                     for (let i = startIndex; i < endIndex; i++) {
                         const group = filteredGroups[i];
-                        const originalIndex = groups.findIndex(g => g.id === group.id && g.cid === group.cid);
+                        const originalIndex = groups.findIndex(g => g.id === group.id);
                         const matchedPairs = getGroupLinkPairs(group);
                         const hasLinks = matchedPairs.length > 0;
                         
                         const groupItem = document.createElement('div');
                         groupItem.className = `group-item ${group.selected ? 'selected' : ''} ${group.bound ? 'bound' : ''}`;
+                        
+                        let cidInfo = '';
+                        if (group.cids && group.cids.length > 0) {
+                            cidInfo = `
+                                <div class="group-detail">
+                                    <i class="fas fa-hashtag"></i>
+                                    <div class="cid-tags">
+                                        ${group.cids.map(cid => `<span class="cid-tag">${cid}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
                         
                         let mentionInfo = '';
                         if (group.mentionUsers && group.mentionUsers.length > 0) {
@@ -4050,12 +4327,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                     </div>
                                 </div>
                                 <div class="group-details">
-                                    ${group.cid ? `
-                                    <div class="group-detail">
-                                        <i class="fas fa-link"></i>
-                                        <span class="group-cid">CID: ${group.cid}</span>
-                                    </div>
-                                    ` : ''}
+                                    ${cidInfo}
                                     ${group.sizes && group.sizes.length > 0 ? `
                                     <div class="group-detail">
                                         <i class="fas fa-expand-alt"></i>
@@ -4065,7 +4337,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                     </div>
                                     ` : ''}
                                     <div class="group-detail">
-                                        <i class="fas fa-hashtag"></i>
+                                        <i class="fas fa-id-card"></i>
                                         <span>Chat ID: ${group.id.substring(0, 10)}...</span>
                                     </div>
                                     ${mentionInfo}
@@ -4159,12 +4431,12 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 container.appendChild(nextBtn);
             }
             
-            // 添加单个群组
+            // 添加单个群组（支持多CID）
             document.getElementById('addSingleGroup').addEventListener('click', function() {
                 const name = document.getElementById('groupName').value.trim();
                 const channel = document.getElementById('channelName').value.trim();
                 const chatId = document.getElementById('chatId').value.trim();
-                const cid = document.getElementById('cid').value.trim();
+                const cids = [...selectedCids];
                 const sizes = [...selectedSizes];
                 const mentionUsers = [...selectedMentions];
                 const mentionDelay = parseInt(mentionDelayInput.value) || 3;
@@ -4175,12 +4447,19 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     return;
                 }
                 
-                if (!cid && sizes.length === 0) {
+                if (cids.length === 0 && sizes.length === 0) {
                     showNotification('信息不全', '请至少填写CID或选择图片尺寸', 'warning');
                 }
                 
                 if (!chatId.startsWith('-100')) {
                     showNotification('格式警告', 'Chat ID应以 -100 开头', 'warning');
+                }
+                
+                // 验证CID格式
+                const invalidCids = cids.filter(cid => !/^\d+$/.test(cid));
+                if (invalidCids.length > 0) {
+                    showNotification('格式错误', `无效的CID格式: ${invalidCids.join(', ')}`, 'error');
+                    return;
                 }
                 
                 // 验证尺寸格式
@@ -4195,8 +4474,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 if (existingIndex >= 0) {
                     groups[existingIndex].name = name;
                     groups[existingIndex].channel = channel;
-                    groups[existingIndex].cid = cid || groups[existingIndex].cid;
-                    groups[existingIndex].sizes = sizes.length > 0 ? sizes : groups[existingIndex].sizes;
+                    groups[existingIndex].cids = cids.length > 0 ? cids : [];
+                    groups[existingIndex].sizes = sizes.length > 0 ? sizes : [];
                     groups[existingIndex].mentionUsers = mentionUsers;
                     groups[existingIndex].mentionDelay = mentionDelay;
                     groups[existingIndex].mentionMessage = mentionMessage;
@@ -4209,8 +4488,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         id: chatId,
                         name: name,
                         channel: channel,
-                        cid: cid || null,
-                        sizes: sizes.length > 0 ? sizes : [],
+                        cids: cids,
+                        sizes: sizes,
                         mentionUsers: mentionUsers,
                         mentionDelay: mentionDelay,
                         mentionMessage: mentionMessage,
@@ -4228,9 +4507,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 document.getElementById('groupName').value = '';
                 document.getElementById('channelName').value = '';
                 document.getElementById('chatId').value = '';
-                document.getElementById('cid').value = '';
+                selectedCids = [];
                 selectedSizes = [];
                 selectedMentions = [];
+                updateCidTags();
                 updateSizeTags();
                 updateMentionTags();
                 document.getElementById('mentionDelay').value = 3;
@@ -4276,9 +4556,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 }
             });
             
-            // 批量添加群组（支持多尺寸和@人物）
-            document.getElementById('addBatchGroups').addEventListener('click', function() {
-                const input = document.getElementById('batchGroupInput').value.trim();
+            // 批量添加群组（修复版，支持多CID）
+            addBatchGroupsBtn.addEventListener('click', function() {
+                const input = batchGroupInput.value.trim();
                 if (!input) {
                     showNotification('输入为空', '请输入要添加的群组信息', 'warning');
                     return;
@@ -4288,6 +4568,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 let addedCount = 0;
                 let updatedCount = 0;
                 let errorCount = 0;
+                const errors = [];
+                
+                batchErrorList.innerHTML = '';
+                batchErrorList.style.display = 'none';
                 
                 lines.forEach((line, lineIndex) => {
                     const trimmedLine = line.trim();
@@ -4296,18 +4580,64 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     const parts = trimmedLine.split('|').map(part => part.trim());
                     if (parts.length < 4) {
                         errorCount++;
-                        console.error(`第 ${lineIndex + 1} 行格式错误: ${line}`);
+                        errors.push({
+                            line: lineIndex + 1,
+                            message: '格式错误：至少需要4个字段（名称|标识|ID|CID列表）'
+                        });
                         return;
                     }
                     
-                    const [name, channel, id, cid] = parts;
+                    const [name, channel, id, cidsStr] = parts;
                     const sizesStr = parts[4] || '';
                     const mentionUsersStr = parts[5] || '';
                     const mentionDelay = parseInt(parts[6]) || 3;
                     const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
                     
+                    // 验证必填字段
+                    if (!name || !channel || !id) {
+                        errorCount++;
+                        errors.push({
+                            line: lineIndex + 1,
+                            message: '缺少必填字段：名称、标识或ID'
+                        });
+                        return;
+                    }
+                    
+                    // 验证群组ID格式
+                    if (!id.startsWith('-100')) {
+                        errors.push({
+                            line: lineIndex + 1,
+                            message: '警告：Chat ID应以 -100 开头'
+                        });
+                    }
+                    
+                    // 解析CID列表（支持多个CID逗号分隔）
+                    const cids = cidsStr.split(',').map(c => c.trim()).filter(c => c);
+                    
+                    // 验证CID格式
+                    const invalidCids = cids.filter(cid => !/^\d+$/.test(cid));
+                    if (invalidCids.length > 0) {
+                        errorCount++;
+                        errors.push({
+                            line: lineIndex + 1,
+                            message: `无效的CID格式: ${invalidCids.join(', ')}`
+                        });
+                        return;
+                    }
+                    
                     // 解析尺寸（支持多个尺寸逗号分隔）
                     const sizes = sizesStr.split(',').map(s => s.trim()).filter(s => s);
+                    
+                    // 验证尺寸格式
+                    const invalidSizes = sizes.filter(size => !/^\d{2,4}-\d{2,4}$/.test(size));
+                    if (invalidSizes.length > 0) {
+                        errorCount++;
+                        errors.push({
+                            line: lineIndex + 1,
+                            message: `无效的尺寸格式: ${invalidSizes.join(', ')}`
+                        });
+                        return;
+                    }
                     
                     // 解析@人物（支持逗号分隔）
                     const mentionUsers = mentionUsersStr
@@ -4315,26 +4645,13 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         .map(user => user.trim().replace('@', ''))
                         .filter(user => user);
                     
-                    // 验证群组ID格式
-                    if (!id.startsWith('-100')) {
-                        showNotification('格式警告', `第 ${lineIndex + 1} 行: Chat ID应以 -100 开头`, 'warning');
-                    }
-                    
-                    // 验证尺寸格式
-                    const invalidSizes = sizes.filter(size => !/^\d{2,4}-\d{2,4}$/.test(size));
-                    if (invalidSizes.length > 0) {
-                        showNotification('格式错误', `第 ${lineIndex + 1} 行: 无效的尺寸格式: ${invalidSizes.join(', ')}`, 'error');
-                        errorCount++;
-                        return;
-                    }
-                    
                     const existingIndex = groups.findIndex(g => g.id === id);
                     
                     if (existingIndex >= 0) {
                         groups[existingIndex].name = name;
                         groups[existingIndex].channel = channel;
-                        groups[existingIndex].cid = cid || groups[existingIndex].cid;
-                        groups[existingIndex].sizes = sizes.length > 0 ? sizes : groups[existingIndex].sizes;
+                        groups[existingIndex].cids = cids.length > 0 ? cids : [];
+                        groups[existingIndex].sizes = sizes.length > 0 ? sizes : [];
                         groups[existingIndex].mentionUsers = mentionUsers;
                         groups[existingIndex].mentionDelay = mentionDelay;
                         groups[existingIndex].mentionMessage = mentionMessage;
@@ -4346,7 +4663,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                             id,
                             name,
                             channel,
-                            cid: cid || null,
+                            cids: cids,
                             sizes: sizes,
                             mentionUsers: mentionUsers,
                             mentionDelay: mentionDelay,
@@ -4361,6 +4678,19 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     }
                 });
                 
+                if (errors.length > 0) {
+                    batchErrorList.style.display = 'block';
+                    errors.forEach(error => {
+                        const errorItem = document.createElement('div');
+                        errorItem.className = 'batch-error-item';
+                        errorItem.innerHTML = `
+                            <div class="error-line">第 ${error.line} 行:</div>
+                            <div class="error-message">${error.message}</div>
+                        `;
+                        batchErrorList.appendChild(errorItem);
+                    });
+                }
+                
                 saveToStorage();
                 renderManageGroups();
                 renderBindHistory();
@@ -4371,8 +4701,11 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 if (updatedCount > 0) message += `${message ? '，' : ''}更新 ${updatedCount} 个群组`;
                 if (errorCount > 0) message += `${message ? '，' : ''}${errorCount} 行格式错误`;
                 
-                showNotification('批量添加完成', message, 'success');
-                document.getElementById('batchGroupInput').value = '';
+                if (addedCount > 0 || updatedCount > 0) {
+                    showNotification('批量添加完成', message, 'success');
+                } else if (errorCount > 0) {
+                    showNotification('批量添加失败', '所有行都有格式错误', 'error');
+                }
             });
             
             // 切换群组绑定状态
@@ -4389,7 +4722,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 showNotification('操作成功', `已${action} ${groups[index].name}`, 'success');
             }
             
-            // 编辑群组
+            // 编辑群组（支持多CID）
             function editGroup(index) {
                 const group = groups[index];
                 
@@ -4399,8 +4732,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 const newChannel = prompt('请输入新的渠道标识:', group.channel);
                 if (newChannel === null) return;
                 
-                const newCid = prompt('请输入新的渠道号 (CID):', group.cid || '');
-                if (newCid === null) return;
+                const newCids = prompt('请输入新的渠道号 (CID，多个用逗号分隔):', group.cids?.join(', ') || '');
+                if (newCids === null) return;
                 
                 const newSizes = prompt('请输入新的图片尺寸 (多个用逗号分隔):', group.sizes?.join(', ') || '');
                 if (newSizes === null) return;
@@ -4414,6 +4747,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 const newMentionMessage = prompt('请输入@人物消息内容:', group.mentionMessage || '链接已更新，请相关人员查看');
                 if (newMentionMessage === null) return;
                 
+                // 解析CID
+                const cids = newCids.split(',').map(c => c.trim()).filter(c => c);
+                
                 // 解析尺寸
                 const sizes = newSizes.split(',').map(s => s.trim()).filter(s => s);
                 
@@ -4425,6 +4761,13 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 
                 const mentionDelay = parseInt(newMentionDelay) || 3;
                 
+                // 验证CID格式
+                const invalidCids = cids.filter(cid => !/^\d+$/.test(cid));
+                if (invalidCids.length > 0) {
+                    showNotification('格式错误', `无效的CID格式: ${invalidCids.join(', ')}`, 'error');
+                    return;
+                }
+                
                 // 验证尺寸格式
                 const invalidSizes = sizes.filter(size => !/^\d{2,4}-\d{2,4}$/.test(size));
                 if (invalidSizes.length > 0) {
@@ -4434,7 +4777,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 
                 groups[index].name = newName.trim();
                 groups[index].channel = newChannel.trim();
-                groups[index].cid = newCid.trim() || null;
+                groups[index].cids = cids;
                 groups[index].sizes = sizes;
                 groups[index].mentionUsers = mentionUsers;
                 groups[index].mentionDelay = mentionDelay;
@@ -4612,7 +4955,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     let matchedGroupNames = [];
                     
                     if (validation.cid) {
-                        const matchingGroups = groups.filter(group => group.cid === validation.cid);
+                        const matchingGroups = groups.filter(group => 
+                            group.cids && group.cids.includes(validation.cid)
+                        );
                         matchText = matchingGroups.length > 0 ? 
                             `匹配到 ${matchingGroups.length} 个群组` : '无匹配群组';
                         matchedGroupNames = matchingGroups.map(g => g.name);
@@ -5371,14 +5716,15 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                     if (Array.isArray(data)) {
                                         data.forEach(item => {
                                             if (item.id && item.name) {
-                                                // 兼容旧版本（size字段）和新版本（sizes字段）
+                                                // 兼容旧版本（cid字段）和新版本（cids字段）
+                                                const cids = item.cids || (item.cid ? [item.cid] : []);
                                                 const sizes = item.sizes || (item.size ? [item.size] : []);
                                                 const mentionUsers = item.mentionUsers || [];
                                                 groups.push({
                                                     id: item.id,
                                                     name: item.name,
                                                     channel: item.channel || item.name.toLowerCase().replace(/\s+/g, ''),
-                                                    cid: item.cid || null,
+                                                    cids: cids,
                                                     sizes: sizes,
                                                     mentionUsers: mentionUsers,
                                                     mentionDelay: item.mentionDelay || 3,
@@ -5401,12 +5747,13 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                             }
                             
                             if (parts.length >= 4) {
-                                const [name, channel, id, cid] = parts;
+                                const [name, channel, id, cidsStr] = parts;
                                 const sizesStr = parts[4] || '';
                                 const mentionUsersStr = parts[5] || '';
                                 const mentionDelay = parseInt(parts[6]) || 3;
                                 const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
                                 
+                                const cids = cidsStr.split(',').map(c => c.trim()).filter(c => c);
                                 const sizes = sizesStr.split(',').map(s => s.trim()).filter(s => s);
                                 const mentionUsers = mentionUsersStr
                                     .split(',')
@@ -5418,8 +5765,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                 if (existingIndex >= 0) {
                                     groups[existingIndex].name = name;
                                     groups[existingIndex].channel = channel;
-                                    groups[existingIndex].cid = cid || groups[existingIndex].cid;
-                                    groups[existingIndex].sizes = sizes.length > 0 ? sizes : groups[existingIndex].sizes;
+                                    groups[existingIndex].cids = cids.length > 0 ? cids : [];
+                                    groups[existingIndex].sizes = sizes.length > 0 ? sizes : [];
                                     groups[existingIndex].mentionUsers = mentionUsers;
                                     groups[existingIndex].mentionDelay = mentionDelay;
                                     groups[existingIndex].mentionMessage = mentionMessage;
@@ -5428,7 +5775,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         id,
                                         name,
                                         channel,
-                                        cid: cid || null,
+                                        cids: cids,
                                         sizes: sizes,
                                         mentionUsers: mentionUsers,
                                         mentionDelay: mentionDelay,
@@ -5518,7 +5865,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         id: chatId,
                                         name: chatTitle,
                                         channel: channelName || `group${Date.now()}`,
-                                        cid: null,
+                                        cids: [],
                                         sizes: [],
                                         mentionUsers: [],
                                         mentionDelay: 3,
@@ -5729,7 +6076,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         }
                         
                         const { group, matchedPairs, hasGeneralLinks } = groupsToSend[i];
-                        const groupIndex = groups.findIndex(g => g.id === group.id && g.cid === group.cid);
+                        const groupIndex = groups.findIndex(g => g.id === group.id);
                         
                         groups[groupIndex].sending = true;
                         
@@ -5906,9 +6253,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 const exportData = {
                     meta: {
                         exportedAt: new Date().toISOString(),
-                        version: '1.1',
+                        version: '1.2',
                         system: 'Telegram群组绑定与消息发送系统',
-                        features: ['二次@人物功能']
+                        features: ['多CID支持', '二次@人物功能']
                     },
                     groups: groups,
                     linkPairs: linkPairs,
@@ -5917,7 +6264,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         boundGroups: groups.filter(g => g.bound).length,
                         selectedGroups: groups.filter(g => g.selected).length,
                         totalLinkPairs: linkPairs.length,
-                        groupsWithMentions: groups.filter(g => g.mentionUsers && g.mentionUsers.length > 0).length
+                        groupsWithMentions: groups.filter(g => g.mentionUsers && g.mentionUsers.length > 0).length,
+                        groupsWithMultipleCids: groups.filter(g => g.cids && g.cids.length > 1).length
                     }
                 };
                 
@@ -5930,12 +6278,12 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         fileName = `telegram-data-${new Date().toISOString().slice(0,10)}.json`;
                         break;
                     case 'csv':
-                        const csvHeaders = ['渠道名称', '渠道标识', 'Chat ID', 'CID', '图片尺寸', '@人物', '@延迟', '@消息', '绑定状态', '绑定日期', '最后发送'];
+                        const csvHeaders = ['渠道名称', '渠道标识', 'Chat ID', 'CID列表', '图片尺寸', '@人物', '@延迟', '@消息', '绑定状态', '绑定日期', '最后发送'];
                         const csvRows = groups.map(g => [
                             `"${g.name}"`,
                             `"${g.channel}"`,
                             g.id,
-                            g.cid || '',
+                            g.cids?.join(',') || '',
                             g.sizes?.join(',') || '',
                             g.mentionUsers?.join(',') || '',
                             g.mentionDelay || 3,
@@ -5950,7 +6298,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         break;
                     case 'txt':
                         dataStr = groups.map(g => 
-                            `${g.name}|${g.channel}|${g.id}|${g.cid || ''}|${g.sizes?.join(',') || ''}|${g.mentionUsers?.join(',') || ''}|${g.mentionDelay || 3}|${g.mentionMessage || ''}|${g.bound ? '已绑定' : '未绑定'}|${g.boundDate || ''}|${g.lastSent || ''}`
+                            `${g.name}|${g.channel}|${g.id}|${g.cids?.join(',') || ''}|${g.sizes?.join(',') || ''}|${g.mentionUsers?.join(',') || ''}|${g.mentionDelay || 3}|${g.mentionMessage || ''}|${g.bound ? '已绑定' : '未绑定'}|${g.boundDate || ''}|${g.lastSent || ''}`
                         ).join('\n');
                         mimeType = 'text/plain';
                         fileName = `telegram-groups-${new Date().toISOString().slice(0,10)}.txt`;
@@ -6044,12 +6392,13 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                 
                                 if (parts.length >= 3) {
                                     const [name, channel, id] = parts;
-                                    const cid = parts[3] || null;
+                                    const cidsStr = parts[3] || '';
                                     const sizesStr = parts[4] || '';
                                     const mentionUsersStr = parts[5] || '';
                                     const mentionDelay = parseInt(parts[6]) || 3;
                                     const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
                                     
+                                    const cids = cidsStr.split(',').map(c => c.trim()).filter(c => c);
                                     const sizes = sizesStr.split(',').map(s => s.trim()).filter(s => s);
                                     const mentionUsers = mentionUsersStr
                                         .split(',')
@@ -6060,7 +6409,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         id,
                                         name,
                                         channel,
-                                        cid,
+                                        cids,
                                         sizes,
                                         mentionUsers,
                                         mentionDelay,
