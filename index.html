@@ -16,6 +16,12 @@
             --dark-color: #343a40;
             --border-radius: 8px;
             --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --group-color-1: #e3f2fd;
+            --group-color-2: #f3e5f5;
+            --group-color-3: #e8f5e9;
+            --group-color-4: #fff3e0;
+            --group-color-5: #fce4ec;
+            --group-color-6: #f3f3f3;
         }
         
         * {
@@ -1621,6 +1627,406 @@
             color: #dc3545;
             margin-left: 10px;
         }
+        
+        /* 新增：分组功能样式 */
+        .group-tag {
+            background-color: var(--group-color-1);
+            color: var(--primary-color);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            margin-right: 5px;
+        }
+        
+        .group-tag.color-2 {
+            background-color: var(--group-color-2);
+            color: #7b1fa2;
+        }
+        
+        .group-tag.color-3 {
+            background-color: var(--group-color-3);
+            color: #1b5e20;
+        }
+        
+        .group-tag.color-4 {
+            background-color: var(--group-color-4);
+            color: #e65100;
+        }
+        
+        .group-tag.color-5 {
+            background-color: var(--group-color-5);
+            color: #880e4f;
+        }
+        
+        .group-tag.color-6 {
+            background-color: var(--group-color-6);
+            color: #37474f;
+        }
+        
+        .group-tag i {
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        
+        .group-tag i:hover {
+            color: var(--danger-color);
+        }
+        
+        .group-tag-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .group-tag-input select {
+            flex: 1;
+        }
+        
+        .group-tag-input .btn {
+            padding: 8px 12px;
+            white-space: nowrap;
+        }
+        
+        .group-tag-helper {
+            margin-top: 10px;
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+        }
+        
+        .group-tag-helper h5 {
+            margin-bottom: 5px;
+            color: #1b5e20;
+        }
+        
+        .group-tag-quick {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .group-tag-quick-btn {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        
+        .group-tag-quick-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .group-tag-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .group-tag-selector select {
+            flex: 1;
+        }
+        
+        .group-tag-selector .btn {
+            padding: 8px 12px;
+        }
+        
+        .group-tag-management {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+        
+        .group-tag-management h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .group-tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .group-tag-item {
+            background-color: white;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .group-tag-item-count {
+            background-color: #e3f2fd;
+            color: var(--primary-color);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        /* 新增：导出绑定群组样式 */
+        .export-bindings-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+        
+        .export-bindings-section h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .export-format-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .export-format-option {
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .export-format-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .export-format-option.selected {
+            background-color: #e3f2fd;
+            border-color: var(--primary-color);
+        }
+        
+        .export-format-option i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .export-format-option h5 {
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+        
+        .export-format-option p {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .export-preview {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            font-family: monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        
+        /* 新增：批量添加群组样式（使用导出格式） */
+        .batch-add-export-format {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+        
+        .batch-add-export-format h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .batch-add-export-example {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .batch-add-export-example h5 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .batch-add-export-example pre {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.8rem;
+        }
+        
+        .batch-add-export-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .batch-add-export-actions .btn {
+            flex: 1;
+        }
+        
+        /* 新增：批量分组样式 */
+        .batch-grouping-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+        
+        .batch-grouping-section h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .batch-grouping-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .batch-grouping-option {
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .batch-grouping-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .batch-grouping-option.selected {
+            background-color: #e3f2fd;
+            border-color: var(--primary-color);
+        }
+        
+        .batch-grouping-option i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .batch-grouping-option h5 {
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+        
+        .batch-grouping-option p {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        /* 新增：发送分组选项样式 */
+        .send-group-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .send-group-option {
+            background-color: white;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .send-group-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .send-group-option.selected {
+            background-color: #e3f2fd;
+            border-color: var(--primary-color);
+        }
+        
+        .send-group-option i {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .send-group-option h6 {
+            margin-bottom: 3px;
+            color: var(--dark-color);
+        }
+        
+        .send-group-option .group-count {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        /* 新增：群组分类样式 */
+        .groups-by-tag {
+            margin-top: 20px;
+        }
+        
+        .tag-section {
+            margin-bottom: 20px;
+        }
+        
+        .tag-header {
+            background-color: #e3f2fd;
+            padding: 10px 15px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tag-header h4 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+        
+        .tag-group-count {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .tag-groups-list {
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            padding: 10px;
+            background-color: white;
+        }
     </style>
 </head>
 <body>
@@ -1796,6 +2202,40 @@
                                     </div>
                                 </div>
                                 
+                                <!-- 新增：分组设置（可选） -->
+                                <div class="form-group">
+                                    <label><i class="fas fa-tags"></i> 分组设置（可选）</label>
+                                    <div class="group-tag-input">
+                                        <select id="groupTagSelect">
+                                            <option value="">-- 选择分组 --</option>
+                                            <option value="group1">分组1</option>
+                                            <option value="group2">分组2</option>
+                                            <option value="group3">分组3</option>
+                                            <option value="group4">分组4</option>
+                                            <option value="group5">分组5</option>
+                                            <option value="group6">分组6</option>
+                                        </select>
+                                        <button class="btn" id="addGroupTagBtn">添加</button>
+                                    </div>
+                                    <small>为群组添加分组标签，便于分类管理和发送</small>
+                                    
+                                    <div class="group-tag-helper">
+                                        <h5>快速分组:</h5>
+                                        <div class="group-tag-quick">
+                                            <button class="group-tag-quick-btn" data-tag="group1">分组1</button>
+                                            <button class="group-tag-quick-btn" data-tag="group2">分组2</button>
+                                            <button class="group-tag-quick-btn" data-tag="group3">分组3</button>
+                                            <button class="group-tag-quick-btn" data-tag="group4">分组4</button>
+                                            <button class="group-tag-quick-btn" data-tag="group5">分组5</button>
+                                            <button class="group-tag-quick-btn" data-tag="group6">分组6</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="size-tags" id="groupTags">
+                                        <!-- 分组标签将通过JavaScript动态生成 -->
+                                    </div>
+                                </div>
+                                
                                 <!-- 新增：二次@设置 -->
                                 <div class="secondary-mention-settings">
                                     <h4><i class="fas fa-clock"></i> 二次@设置</h4>
@@ -1849,6 +2289,7 @@
                                 <label for="bindMethod"><i class="fas fa-method"></i> 批量绑定方式</label>
                                 <select id="bindMethod">
                                     <option value="text">文本批量添加</option>
+                                    <option value="export-format">使用导出格式添加</option>
                                     <option value="file">文件导入</option>
                                     <option value="api">API自动获取</option>
                                 </select>
@@ -1858,11 +2299,11 @@
                             <div class="bind-method-content active" id="textBind">
                                 <div class="form-group">
                                     <label for="batchGroupInput"><i class="fas fa-users"></i> 批量添加群组</label>
-                                    <textarea id="batchGroupInput" placeholder="每行一个群组，格式：渠道名称|渠道标识|Chat ID|CID列表(多个用逗号分隔)|图片尺寸(多个用逗号分隔)|@人物(多个用逗号分隔)|@延迟(秒)|@消息
+                                    <textarea id="batchGroupInput" placeholder="每行一个群组，格式：渠道名称|渠道标识|Chat ID|CID列表(多个用逗号分隔)|图片尺寸(多个用逗号分隔)|@人物(多个用逗号分隔)|@延迟(秒)|@消息|分组标签(多个用逗号分隔)
 例如：
-爱液|aiyec|-1001234567890|5100525,5100526,5100527|100-100,200-200|admin1,manager|3|链接已更新，请相关人员查看
-悟空站|wukong|-1009876543210|5547607,5547608|300-250,728-90|admin1|5|新链接已发布
-八戒站|bajie|-1001122334455|5547609,5547610|468-60,320-50,250-250|user1,user2,user3|2|请查看最新链接
+爱液|aiyec|-1001234567890|5100525,5100526,5100527|100-100,200-200|admin1,manager|3|链接已更新，请相关人员查看|group1,group2
+悟空站|wukong|-1009876543210|5547607,5547608|300-250,728-90|admin1|5|新链接已发布|group1
+八戒站|bajie|-1001122334455|5547609,5547610|468-60,320-50,250-250|user1,user2,user3|2|请查看最新链接|group2,group3
 ..."></textarea>
                                     <small>Chat ID必须是负数（Telegram群组ID格式）</small>
                                     <small>CID列表：多个CID用逗号分隔</small>
@@ -1870,6 +2311,7 @@
                                     <small>@人物：多个用户名用逗号分隔，不需要@符号</small>
                                     <small>@延迟：发送链接后等待多少秒再@人物（1-60秒）</small>
                                     <small>@消息：@人物时发送的消息内容</small>
+                                    <small>分组标签：多个分组用逗号分隔（如：group1,group2）</small>
                                 </div>
                                 
                                 <!-- 批量绑定错误提示区域 -->
@@ -1882,6 +2324,65 @@
                                 </button>
                             </div>
                             
+                            <!-- 使用导出格式批量添加 -->
+                            <div class="bind-method-content hidden" id="export-formatBind">
+                                <div class="batch-add-export-format">
+                                    <h4><i class="fas fa-file-import"></i> 使用导出格式批量添加群组</h4>
+                                    
+                                    <div class="form-group">
+                                        <label for="batchExportFormatInput">导出格式数据</label>
+                                        <textarea id="batchExportFormatInput" placeholder="粘贴导出的JSON、CSV或TXT格式数据
+                                        
+JSON格式示例：
+{
+  \"groups\": [
+    {
+      \"id\": \"-1001234567890\",
+      \"name\": \"爱液\",
+      \"channel\": \"aiyec\",
+      \"cids\": [\"5100525\", \"5100526\", \"5100527\"],
+      \"sizes\": [\"100-100\", \"200-200\"],
+      \"mentionUsers\": [\"admin1\", \"manager\"],
+      \"mentionDelay\": 3,
+      \"mentionMessage\": \"链接已更新，请相关人员查看\",
+      \"tags\": [\"group1\", \"group2\"],
+      \"bound\": true,
+      \"boundDate\": \"2023-10-01\"
+    }
+  ]
+}
+
+CSV格式示例：
+渠道名称,渠道标识,Chat ID,CID列表,图片尺寸,@人物,@延迟,@消息,分组标签,绑定状态,绑定日期
+爱液,aiyec,-1001234567890,5100525,5100526,5100527,100-100,200-200,admin1,manager,3,链接已更新，请相关人员查看,group1,group2,是,2023-10-01
+
+TXT格式示例：
+爱液|aiyec|-1001234567890|5100525,5100526,5100527|100-100,200-200|admin1,manager|3|链接已更新，请相关人员查看|group1,group2|是|2023-10-01"></textarea>
+                                        <small>支持JSON、CSV、TXT格式，系统会自动识别格式</small>
+                                    </div>
+                                    
+                                    <div class="batch-add-export-example">
+                                        <h5><i class="fas fa-info-circle"></i> 格式说明</h5>
+                                        <p>系统支持三种格式的数据导入：</p>
+                                        <ol>
+                                            <li><strong>JSON格式：</strong>完整的群组数据，包含所有字段</li>
+                                            <li><strong>CSV格式：</strong>逗号分隔的群组数据，每行一个群组</li>
+                                            <li><strong>TXT格式：</strong>竖线分隔的群组数据，每行一个群组</li>
+                                        </ol>
+                                        <p>分组标签字段为可选，多个标签用逗号分隔</p>
+                                    </div>
+                                    
+                                    <div class="batch-add-export-actions">
+                                        <button class="btn btn-success" id="addBatchExportFormat">
+                                            <i class="fas fa-plus-circle"></i> 批量添加
+                                        </button>
+                                        <button class="btn" id="clearBatchExportInput">
+                                            <i class="fas fa-times"></i> 清空
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <!-- 文件导入 -->
                             <div class="bind-method-content hidden" id="fileBind">
                                 <div class="form-group">
@@ -1891,7 +2392,7 @@
                                         <ul>
                                             <li>JSON文件：包含群组信息的JSON数组</li>
                                             <li>CSV文件：逗号分隔的群组数据</li>
-                                            <li>TXT文件：每行一个群组（名称|标识|ID|CID列表|尺寸|@人物|延迟|消息）</li>
+                                            <li>TXT文件：每行一个群组（名称|标识|ID|CID列表|尺寸|@人物|延迟|消息|分组标签）</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -1932,6 +2433,55 @@
                             <h4><i class="fas fa-history"></i> 最近绑定记录</h4>
                             <div id="bindHistoryList">
                                 <!-- 绑定记录将通过JavaScript动态生成 -->
+                            </div>
+                        </div>
+                        
+                        <!-- 新增：导出绑定群组数据 -->
+                        <div class="export-bindings-section">
+                            <h4><i class="fas fa-file-export"></i> 导出绑定群组数据</h4>
+                            
+                            <div class="export-format-options">
+                                <div class="export-format-option selected" data-format="json">
+                                    <i class="fas fa-file-code"></i>
+                                    <h5>JSON格式</h5>
+                                    <p>完整数据结构，包含所有信息</p>
+                                </div>
+                                <div class="export-format-option" data-format="csv">
+                                    <i class="fas fa-file-csv"></i>
+                                    <h5>CSV格式</h5>
+                                    <p>表格格式，便于查看和编辑</p>
+                                </div>
+                                <div class="export-format-option" data-format="txt">
+                                    <i class="fas fa-file-alt"></i>
+                                    <h5>TXT格式</h5>
+                                    <p>文本格式，简单易用</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-filter"></i> 导出筛选</label>
+                                <select id="exportFilter">
+                                    <option value="all">导出所有群组</option>
+                                    <option value="bound">仅导出已绑定群组</option>
+                                    <option value="selected">仅导出选中群组</option>
+                                    <option value="by-group">按分组导出</option>
+                                </select>
+                            </div>
+                            
+                            <!-- 按分组导出选项 -->
+                            <div id="exportGroupOptions" class="form-group" style="display: none;">
+                                <label><i class="fas fa-tags"></i> 选择分组</label>
+                                <div class="group-tag-list" id="exportGroupTagList">
+                                    <!-- 分组标签将通过JavaScript动态生成 -->
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-success btn-block" id="exportBindings">
+                                <i class="fas fa-download"></i> 导出绑定数据
+                            </button>
+                            
+                            <div class="export-preview" id="exportPreview" style="display: none;">
+                                <!-- 导出预览将通过JavaScript动态生成 -->
                             </div>
                         </div>
                     </div>
@@ -2128,6 +2678,19 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                                     <h4>发送所有已绑定</h4>
                                     <p>发送所有已绑定的群组</p>
                                 </div>
+                                <div class="send-method-option" data-method="by-group">
+                                    <i class="fas fa-tags"></i>
+                                    <h4>按分组发送</h4>
+                                    <p>选择分组进行发送</p>
+                                </div>
+                            </div>
+                            
+                            <!-- 按分组发送选项 -->
+                            <div id="sendGroupOptions" class="form-group" style="display: none; margin-top: 15px;">
+                                <label><i class="fas fa-tags"></i> 选择发送分组</label>
+                                <div class="send-group-options" id="sendGroupTagList">
+                                    <!-- 分组选项将通过JavaScript动态生成 -->
+                                </div>
                             </div>
                             
                             <!-- 新增：二次@发送选项 -->
@@ -2181,15 +2744,12 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         
                         <div class="search-box">
                             <i class="fas fa-search"></i>
-                            <input type="text" id="sendSearch" placeholder="搜索渠道名称、标识、CID或尺寸...">
+                            <input type="text" id="sendSearch" placeholder="搜索渠道名称、标识、CID、尺寸或分组...">
                         </div>
                         
-                        <div class="groups-container" id="sendGroupsList">
-                            <!-- 发送群组列表将通过JavaScript动态生成 -->
-                        </div>
-                        
-                        <div class="pagination" id="sendPagination">
-                            <!-- 分页按钮将通过JavaScript动态生成 -->
+                        <!-- 按分组显示群组 -->
+                        <div class="groups-by-tag" id="sendGroupsByTag">
+                            <!-- 分组群组列表将通过JavaScript动态生成 -->
                         </div>
                         
                         <div class="channel-example">
@@ -2271,7 +2831,76 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="manageSearch" placeholder="搜索渠道名称、标识、Chat ID、CID或尺寸...">
+                        <input type="text" id="manageSearch" placeholder="搜索渠道名称、标识、Chat ID、CID、尺寸、分组...">
+                    </div>
+                    
+                    <!-- 批量分组管理 -->
+                    <div class="batch-grouping-section">
+                        <h4><i class="fas fa-tags"></i> 批量分组管理</h4>
+                        
+                        <div class="batch-grouping-options">
+                            <div class="batch-grouping-option" data-action="assign-tag">
+                                <i class="fas fa-tag"></i>
+                                <h5>添加分组标签</h5>
+                                <p>为选中群组添加分组标签</p>
+                            </div>
+                            <div class="batch-grouping-option" data-action="remove-tag">
+                                <i class="fas fa-times-circle"></i>
+                                <h5>移除分组标签</h5>
+                                <p>移除选中群组的分组标签</p>
+                            </div>
+                            <div class="batch-grouping-option" data-action="clear-tags">
+                                <i class="fas fa-trash"></i>
+                                <h5>清空所有标签</h5>
+                                <p>清除选中群组的所有分组标签</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 分组操作面板 -->
+                        <div id="groupingActionPanel" class="form-group" style="display: none; margin-top: 15px;">
+                            <div id="assignTagPanel" style="display: none;">
+                                <label><i class="fas fa-tag"></i> 选择要添加的分组标签</label>
+                                <div class="group-tag-selector">
+                                    <select id="tagToAssign">
+                                        <option value="">-- 选择分组 --</option>
+                                        <option value="group1">分组1</option>
+                                        <option value="group2">分组2</option>
+                                        <option value="group3">分组3</option>
+                                        <option value="group4">分组4</option>
+                                        <option value="group5">分组5</option>
+                                        <option value="group6">分组6</option>
+                                    </select>
+                                    <button class="btn btn-success" id="applyAssignTag">
+                                        <i class="fas fa-check"></i> 应用
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="removeTagPanel" style="display: none;">
+                                <label><i class="fas fa-times-circle"></i> 选择要移除的分组标签</label>
+                                <div class="group-tag-selector">
+                                    <select id="tagToRemove">
+                                        <option value="">-- 选择分组 --</option>
+                                        <option value="group1">分组1</option>
+                                        <option value="group2">分组2</option>
+                                        <option value="group3">分组3</option>
+                                        <option value="group4">分组4</option>
+                                        <option value="group5">分组5</option>
+                                        <option value="group6">分组6</option>
+                                    </select>
+                                    <button class="btn btn-danger" id="applyRemoveTag">
+                                        <i class="fas fa-check"></i> 应用
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="clearTagsPanel" style="display: none; text-align: center;">
+                                <p>确定要清空选中群组的所有分组标签吗？</p>
+                                <button class="btn btn-danger" id="applyClearTags">
+                                    <i class="fas fa-trash"></i> 确认清空
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="batch-controls">
@@ -2295,12 +2924,14 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         </button>
                     </div>
                     
-                    <div class="groups-container" id="manageGroupsList">
-                        <!-- 管理群组列表将通过JavaScript动态生成 -->
+                    <!-- 按分组显示群组 -->
+                    <div class="groups-by-tag" id="manageGroupsByTag">
+                        <!-- 分组群组列表将通过JavaScript动态生成 -->
                     </div>
                     
-                    <div class="pagination" id="managePagination">
-                        <!-- 分页按钮将通过JavaScript动态生成 -->
+                    <!-- 所有群组列表 -->
+                    <div class="groups-container" id="manageGroupsList" style="display: none;">
+                        <!-- 管理群组列表将通过JavaScript动态生成 -->
                     </div>
                     
                     <div class="storage-info">
@@ -2309,6 +2940,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             <span>总群组数: <strong id="storageTotal">0</strong></span>
                             <span>已绑定: <strong id="storageBound">0</strong></span>
                             <span>未绑定: <strong id="storageUnbound">0</strong></span>
+                            <span>分组数: <strong id="storageGroups">0</strong></span>
                             <span>占用空间: <strong id="storageSize">0 KB</strong></span>
                         </div>
                         <p>所有数据已自动保存到浏览器本地存储，关闭页面后不会丢失。</p>
@@ -2613,6 +3245,9 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             let selectedSizes = []; // 存储当前选中的尺寸
             let selectedMentions = []; // 存储当前选中的@人物
             let selectedCids = []; // 存储当前选中的CID
+            let selectedGroupTags = []; // 存储当前选中的分组标签
+            let availableGroupTags = ['group1', 'group2', 'group3', 'group4', 'group5', 'group6']; // 可用分组标签
+            let currentExportFormat = 'json'; // 当前导出格式
             
             // DOM元素
             const bindTabBadge = document.getElementById('bindTabBadge');
@@ -2635,12 +3270,46 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             const storageBound = document.getElementById('storageBound');
             const storageUnbound = document.getElementById('storageUnbound');
             const storageSize = document.getElementById('storageSize');
+            const storageGroups = document.getElementById('storageGroups');
             const notification = document.getElementById('notification');
             const notificationClose = notification.querySelector('.notification-close');
             const bindOptions = document.querySelectorAll('.bind-option');
             const bindMethodContents = document.querySelectorAll('.bind-method-content');
             const bindMethodSelect = document.getElementById('bindMethod');
             const sendMethodOptions = document.querySelectorAll('.send-method-option');
+            
+            // 分组相关DOM元素
+            const groupTagSelect = document.getElementById('groupTagSelect');
+            const addGroupTagBtn = document.getElementById('addGroupTagBtn');
+            const groupTagsContainer = document.getElementById('groupTags');
+            const groupTagQuickButtons = document.querySelectorAll('.group-tag-quick-btn');
+            const exportFilter = document.getElementById('exportFilter');
+            const exportGroupOptions = document.getElementById('exportGroupOptions');
+            const exportGroupTagList = document.getElementById('exportGroupTagList');
+            const exportFormatOptions = document.querySelectorAll('.export-format-option');
+            const exportBindingsBtn = document.getElementById('exportBindings');
+            const exportPreview = document.getElementById('exportPreview');
+            
+            // 批量分组相关DOM元素
+            const batchGroupingOptions = document.querySelectorAll('.batch-grouping-option');
+            const groupingActionPanel = document.getElementById('groupingActionPanel');
+            const assignTagPanel = document.getElementById('assignTagPanel');
+            const removeTagPanel = document.getElementById('removeTagPanel');
+            const clearTagsPanel = document.getElementById('clearTagsPanel');
+            const tagToAssign = document.getElementById('tagToAssign');
+            const tagToRemove = document.getElementById('tagToRemove');
+            const applyAssignTagBtn = document.getElementById('applyAssignTag');
+            const applyRemoveTagBtn = document.getElementById('applyRemoveTag');
+            const applyClearTagsBtn = document.getElementById('applyClearTags');
+            
+            // 发送分组相关DOM元素
+            const sendGroupOptions = document.getElementById('sendGroupOptions');
+            const sendGroupTagList = document.getElementById('sendGroupTagList');
+            
+            // 批量添加导出格式相关元素
+            const batchExportFormatInput = document.getElementById('batchExportFormatInput');
+            const addBatchExportFormatBtn = document.getElementById('addBatchExportFormat');
+            const clearBatchExportInputBtn = document.getElementById('clearBatchExportInput');
             
             // @人物相关DOM元素
             const mentionUsersInput = document.getElementById('mentionUsers');
@@ -2721,7 +3390,8 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 GROUPS: 'telegram_groups_data',
                 LINK_PAIRS: 'telegram_link_pairs',
                 BOT_TOKEN: 'telegram_bot_token',
-                CONFIG: 'telegram_system_config'
+                CONFIG: 'telegram_system_config',
+                GROUP_TAGS: 'telegram_group_tags'
             };
             
             // 显示通知
@@ -2768,13 +3438,16 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     });
                     
                     if (tabId === 'manage') {
-                        renderManageGroups();
+                        renderManageGroupsByTag();
+                        updateGroupTagsStats();
                     } else if (tabId === 'send') {
-                        renderSendGroups();
+                        renderSendGroupsByTag();
                         updateMessagePreview();
+                        updateSendGroupOptions();
                     } else if (tabId === 'bind') {
                         updateBindStats();
                         renderBindHistory();
+                        updateExportGroupOptions();
                     } else if (tabId === 'links') {
                         renderLinkPairs();
                         updateLinkMatchStats();
@@ -2829,12 +3502,19 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     
                     currentSendMethod = method;
                     
+                    // 显示/隐藏分组选项
+                    if (method === 'by-group') {
+                        sendGroupOptions.style.display = 'block';
+                    } else {
+                        sendGroupOptions.style.display = 'none';
+                    }
+                    
                     if (method === 'all') {
                         groups.forEach(group => {
                             group.selected = group.bound;
                         });
                         saveToStorage();
-                        renderSendGroups(sendSearchInput.value);
+                        renderSendGroupsByTag();
                         updateBadges();
                     }
                 });
@@ -2853,6 +3533,29 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 });
             });
             
+            // 导出格式选择
+            exportFormatOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const format = this.getAttribute('data-format');
+                    
+                    exportFormatOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    currentExportFormat = format;
+                });
+            });
+            
+            // 导出筛选切换
+            exportFilter.addEventListener('change', function() {
+                const filter = this.value;
+                
+                if (filter === 'by-group') {
+                    exportGroupOptions.style.display = 'block';
+                } else {
+                    exportGroupOptions.style.display = 'none';
+                }
+            });
+            
             // 智能匹配模式选择
             matchModeOptions.forEach(option => {
                 option.addEventListener('click', function() {
@@ -2861,6 +3564,52 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     const radio = this.querySelector('input[type="radio"]');
                     if (radio) radio.checked = true;
                 });
+            });
+            
+            // 分组标签管理功能
+            function updateGroupTags() {
+                groupTagsContainer.innerHTML = '';
+                selectedGroupTags.forEach((tag, index) => {
+                    const tagNum = tag.replace('group', '');
+                    const tagClass = `color-${tagNum}`;
+                    const tagElement = document.createElement('span');
+                    tagElement.className = `group-tag ${tagClass}`;
+                    tagElement.innerHTML = `
+                        ${tag}
+                        <i class="fas fa-times" data-index="${index}"></i>
+                    `;
+                    groupTagsContainer.appendChild(tagElement);
+                });
+                
+                // 添加删除事件
+                groupTagsContainer.querySelectorAll('.group-tag i').forEach(icon => {
+                    icon.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        selectedGroupTags.splice(index, 1);
+                        updateGroupTags();
+                    });
+                });
+            }
+            
+            // 快速分组按钮
+            groupTagQuickButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tag = this.getAttribute('data-tag');
+                    if (!selectedGroupTags.includes(tag)) {
+                        selectedGroupTags.push(tag);
+                        updateGroupTags();
+                    }
+                });
+            });
+            
+            // 添加分组标签按钮
+            addGroupTagBtn.addEventListener('click', function() {
+                const tag = groupTagSelect.value;
+                if (tag && !selectedGroupTags.includes(tag)) {
+                    selectedGroupTags.push(tag);
+                    updateGroupTags();
+                    groupTagSelect.value = '';
+                }
             });
             
             // CID管理功能
@@ -3238,6 +3987,12 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             if (!Array.isArray(groups)) {
                                 throw new Error('群组数据不是数组格式');
                             }
+                            // 确保每个群组都有tags数组
+                            groups.forEach(group => {
+                                if (!group.tags) {
+                                    group.tags = [];
+                                }
+                            });
                             showNotification('数据加载成功', `已加载 ${groups.length} 个群组`, 'success', 3000);
                         } catch (parseError) {
                             console.error('群组数据解析失败:', parseError);
@@ -3278,6 +4033,19 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         telegramBot = new TelegramBotAPI(savedToken);
                     }
                     
+                    // 加载分组标签设置
+                    const savedGroupTags = localStorage.getItem(STORAGE_KEYS.GROUP_TAGS);
+                    if (savedGroupTags) {
+                        try {
+                            const tagsData = JSON.parse(savedGroupTags);
+                            if (tagsData && Array.isArray(tagsData.availableTags)) {
+                                availableGroupTags = tagsData.availableTags;
+                            }
+                        } catch (e) {
+                            console.error('分组标签数据加载失败:', e);
+                        }
+                    }
+                    
                     updateBadges();
                     updateStorageInfo();
                     updateMessagePreview();
@@ -3285,6 +4053,8 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     renderBindHistory();
                     updateLinkMatchStats();
                     updateMentionMessagePreview();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
                 } catch (error) {
                     console.error('加载数据失败:', error);
                     showNotification('数据加载失败', '可能数据已损坏，将使用默认数据', 'error', 5000);
@@ -3305,10 +4075,18 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         localStorage.setItem(STORAGE_KEYS.BOT_TOKEN, botTokenInput.value.trim());
                     }
                     
+                    // 保存分组标签设置
+                    const tagsData = {
+                        availableTags: availableGroupTags,
+                        savedAt: new Date().toISOString()
+                    };
+                    localStorage.setItem(STORAGE_KEYS.GROUP_TAGS, JSON.stringify(tagsData));
+                    
                     updateBadges();
                     updateStorageInfo();
                     updateBindStats();
                     updateLinkMatchStats();
+                    updateGroupTagsStats();
                     
                     const now = Date.now();
                     const lastSave = localStorage.getItem('lastSaveTime') || 0;
@@ -3322,7 +4100,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 }
             }
             
-            // 初始化示例群组数据（支持多CID、多尺寸和@人物）
+            // 初始化示例群组数据（支持多CID、多尺寸、@人物和分组）
             function initSampleGroups() {
                 groups = [
                     { 
@@ -3334,6 +4112,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         mentionUsers: ["admin1", "manager"],
                         mentionDelay: 3,
                         mentionMessage: "链接已更新，请相关人员查看",
+                        tags: ["group1", "group2"],
                         bound: true,
                         boundDate: "2023-10-01",
                         selected: false,
@@ -3349,6 +4128,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         mentionUsers: ["admin1"],
                         mentionDelay: 5,
                         mentionMessage: "新链接已发布",
+                        tags: ["group1"],
                         bound: true,
                         boundDate: "2023-10-02",
                         selected: false,
@@ -3364,6 +4144,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         mentionUsers: ["user1", "user2", "user3"],
                         mentionDelay: 2,
                         mentionMessage: "请查看最新链接",
+                        tags: ["group2", "group3"],
                         bound: false,
                         boundDate: null,
                         selected: false,
@@ -3379,6 +4160,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         mentionUsers: [],
                         mentionDelay: 3,
                         mentionMessage: "链接已更新",
+                        tags: ["group3"],
                         bound: true,
                         boundDate: "2023-10-03",
                         selected: false,
@@ -3394,6 +4176,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         mentionUsers: [],
                         mentionDelay: 3,
                         mentionMessage: "链接已更新",
+                        tags: ["group4", "group5"],
                         bound: false,
                         boundDate: null,
                         selected: false,
@@ -3541,6 +4324,27 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 storageBound.textContent = bound;
                 storageUnbound.textContent = unbound;
                 storageSize.textContent = `${sizeInKB} KB`;
+            }
+            
+            // 更新分组统计
+            function updateGroupTagsStats() {
+                // 统计所有分组
+                const groupStats = {};
+                let totalGroupsWithTags = 0;
+                
+                groups.forEach(group => {
+                    if (group.tags && group.tags.length > 0) {
+                        totalGroupsWithTags++;
+                        group.tags.forEach(tag => {
+                            if (!groupStats[tag]) {
+                                groupStats[tag] = 0;
+                            }
+                            groupStats[tag]++;
+                        });
+                    }
+                });
+                
+                storageGroups.textContent = Object.keys(groupStats).length;
             }
             
             // 更新绑定统计
@@ -3928,6 +4732,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     let text = `${group.name}`;
                     if (group.cids && group.cids.length > 0) text += ` (CID: ${group.cids.join(', ')})`;
                     if (group.sizes && group.sizes.length > 0) text += ` [${group.sizes.join(', ')}]`;
+                    if (group.tags && group.tags.length > 0) text += ` #${group.tags.join(', ')}`;
                     option.textContent = text;
                     previewGroupSelect.appendChild(option);
                 });
@@ -3955,7 +4760,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             <i class="fas fa-unlink"></i>
                             <h3>未找到匹配的链接对</h3>
                             <p>${group.name} 没有对应的链接对</p>
-                            <p>CID: ${group.cids?.join(', ') || '无'}, 尺寸: ${group.sizes?.join(', ') || '无'}</p>
+                            <p>CID: ${group.cids?.join(', ') || '无'}, 尺寸: ${group.sizes?.join(', ') || '无'}, 分组: ${group.tags?.join(', ') || '无'}</p>
                         </div>
                     `;
                     return;
@@ -3968,6 +4773,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             <span style="font-size: 0.9rem; color: #666;">
                                 ${group.cids && group.cids.length > 0 ? `(CID: ${group.cids.join(', ')})` : ''}
                                 ${group.sizes && group.sizes.length > 0 ? `[${group.sizes.join(', ')}]` : ''}
+                                ${group.tags && group.tags.length > 0 ? `#${group.tags.join(', ')}` : ''}
                             </span>
                         </h4>
                         <p>找到 ${matchedPairs.length} 个匹配的链接对：</p>
@@ -4080,11 +4886,17 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         mentionInfo = `<div style="font-size: 0.8rem; color: #7b1fa2;">@${group.mentionUsers.join(', @')} (${group.mentionDelay}秒后)</div>`;
                     }
                     
+                    let tagInfo = '';
+                    if (group.tags && group.tags.length > 0) {
+                        tagInfo = `<div style="font-size: 0.8rem; color: #1b5e20;">分组: ${group.tags.join(', ')}</div>`;
+                    }
+                    
                     historyItem.innerHTML = `
                         <div>
                             <strong>${group.name}</strong> (${group.channel})
                             ${cidInfo}
                             ${mentionInfo}
+                            ${tagInfo}
                             <div style="font-size: 0.8rem; color: #666;">${group.boundDate}</div>
                         </div>
                         <div style="font-family: monospace; font-size: 0.9rem;">
@@ -4095,40 +4907,400 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 });
             }
             
-            // 渲染管理群组列表
-            function renderManageGroups(searchTerm = '') {
-                let filteredGroups = groups;
+            // 渲染按分组的群组列表（发送页面）
+            function renderSendGroupsByTag() {
+                const container = document.getElementById('sendGroupsByTag');
+                container.innerHTML = '';
                 
-                if (searchTerm) {
-                    const term = searchTerm.toLowerCase();
-                    filteredGroups = groups.filter(group => 
-                        group.name.toLowerCase().includes(term) ||
-                        group.channel.toLowerCase().includes(term) ||
-                        group.id.toLowerCase().includes(term) ||
-                        (group.cids && group.cids.some(c => c.toLowerCase().includes(term))) ||
-                        (group.sizes && group.sizes.some(s => s.toLowerCase().includes(term))) ||
-                        (group.mentionUsers && group.mentionUsers.some(m => m.toLowerCase().includes(term)))
-                    );
+                // 获取所有有标签的群组
+                const groupsWithTags = groups.filter(group => group.tags && group.tags.length > 0);
+                const groupsWithoutTags = groups.filter(group => !group.tags || group.tags.length === 0);
+                
+                // 按标签分组
+                const groupsByTag = {};
+                
+                groupsWithTags.forEach(group => {
+                    group.tags.forEach(tag => {
+                        if (!groupsByTag[tag]) {
+                            groupsByTag[tag] = [];
+                        }
+                        groupsByTag[tag].push(group);
+                    });
+                });
+                
+                // 渲染有标签的分组
+                Object.keys(groupsByTag).sort().forEach(tag => {
+                    const tagGroups = groupsByTag[tag];
+                    const tagNum = tag.replace('group', '');
+                    const tagClass = `color-${tagNum}`;
+                    
+                    // 创建分组标题
+                    const tagHeader = document.createElement('div');
+                    tagHeader.className = 'tag-header';
+                    tagHeader.innerHTML = `
+                        <h4>
+                            <span class="group-tag ${tagClass}">${tag}</span>
+                            <span style="margin-left: 10px; font-size: 0.9rem; color: #666;">${tagGroups.length}个群组</span>
+                        </h4>
+                        <div class="tag-group-count">${tagGroups.length}</div>
+                    `;
+                    container.appendChild(tagHeader);
+                    
+                    // 创建分组内的群组列表
+                    const tagGroupsList = document.createElement('div');
+                    tagGroupsList.className = 'tag-groups-list';
+                    
+                    tagGroups.forEach(group => {
+                        const originalIndex = groups.findIndex(g => g.id === group.id);
+                        const matchedPairs = getGroupLinkPairs(group);
+                        const hasLinks = matchedPairs.length > 0;
+                        
+                        const groupItem = document.createElement('div');
+                        groupItem.className = `group-item ${group.selected ? 'selected' : ''} ${group.bound ? 'bound' : ''}`;
+                        
+                        let cidInfo = '';
+                        if (group.cids && group.cids.length > 0) {
+                            cidInfo = `
+                                <div class="group-detail">
+                                    <i class="fas fa-hashtag"></i>
+                                    <div class="cid-tags">
+                                        ${group.cids.map(cid => `<span class="cid-tag">${cid}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        let mentionInfo = '';
+                        if (group.mentionUsers && group.mentionUsers.length > 0) {
+                            mentionInfo = `
+                                <div class="group-detail">
+                                    <i class="fas fa-at"></i>
+                                    <div class="mention-tags">
+                                        ${group.mentionUsers.map(mention => `<span class="mention-tag">@${mention}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <div class="group-detail">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${group.mentionDelay || 3}秒后@</span>
+                                </div>
+                            `;
+                        }
+                        
+                        groupItem.innerHTML = `
+                            <input type="checkbox" class="group-checkbox" data-index="${originalIndex}" ${group.selected ? 'checked' : ''} ${!group.bound ? 'disabled' : ''}>
+                            <div class="group-info">
+                                <div class="group-header">
+                                    <div class="group-name">${group.name} (${group.channel})</div>
+                                    <div class="group-status ${group.bound ? 'bound' : 'unbound'}">
+                                        ${group.bound ? (hasLinks ? '可发送' : '无匹配链接') : '未绑定'}
+                                    </div>
+                                </div>
+                                <div class="group-details">
+                                    ${cidInfo}
+                                    ${group.sizes && group.sizes.length > 0 ? `
+                                    <div class="group-detail">
+                                        <i class="fas fa-expand-alt"></i>
+                                        <div class="size-tags">
+                                            ${group.sizes.map(size => `<span class="size-tag">${size}</span>`).join('')}
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    <div class="group-detail">
+                                        <i class="fas fa-id-card"></i>
+                                        <span>Chat ID: ${group.id.substring(0, 10)}...</span>
+                                    </div>
+                                    ${mentionInfo}
+                                    ${hasLinks ? `
+                                    <div class="group-detail">
+                                        <i class="fas fa-exchange-alt"></i>
+                                        <span>匹配: ${matchedPairs.length}个链接</span>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                        tagGroupsList.appendChild(groupItem);
+                    });
+                    
+                    container.appendChild(tagGroupsList);
+                });
+                
+                // 渲染无标签的群组
+                if (groupsWithoutTags.length > 0) {
+                    // 创建无标签分组标题
+                    const noTagHeader = document.createElement('div');
+                    noTagHeader.className = 'tag-header';
+                    noTagHeader.style.backgroundColor = '#f3f3f3';
+                    noTagHeader.innerHTML = `
+                        <h4>
+                            <span style="color: #666;">未分组</span>
+                            <span style="margin-left: 10px; font-size: 0.9rem; color: #999;">${groupsWithoutTags.length}个群组</span>
+                        </h4>
+                        <div class="tag-group-count" style="background-color: #666;">${groupsWithoutTags.length}</div>
+                    `;
+                    container.appendChild(noTagHeader);
+                    
+                    // 创建无标签群组列表
+                    const noTagGroupsList = document.createElement('div');
+                    noTagGroupsList.className = 'tag-groups-list';
+                    
+                    groupsWithoutTags.forEach(group => {
+                        const originalIndex = groups.findIndex(g => g.id === group.id);
+                        const matchedPairs = getGroupLinkPairs(group);
+                        const hasLinks = matchedPairs.length > 0;
+                        
+                        const groupItem = document.createElement('div');
+                        groupItem.className = `group-item ${group.selected ? 'selected' : ''} ${group.bound ? 'bound' : ''}`;
+                        
+                        let cidInfo = '';
+                        if (group.cids && group.cids.length > 0) {
+                            cidInfo = `
+                                <div class="group-detail">
+                                    <i class="fas fa-hashtag"></i>
+                                    <div class="cid-tags">
+                                        ${group.cids.map(cid => `<span class="cid-tag">${cid}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        let mentionInfo = '';
+                        if (group.mentionUsers && group.mentionUsers.length > 0) {
+                            mentionInfo = `
+                                <div class="group-detail">
+                                    <i class="fas fa-at"></i>
+                                    <div class="mention-tags">
+                                        ${group.mentionUsers.map(mention => `<span class="mention-tag">@${mention}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <div class="group-detail">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${group.mentionDelay || 3}秒后@</span>
+                                </div>
+                            `;
+                        }
+                        
+                        groupItem.innerHTML = `
+                            <input type="checkbox" class="group-checkbox" data-index="${originalIndex}" ${group.selected ? 'checked' : ''} ${!group.bound ? 'disabled' : ''}>
+                            <div class="group-info">
+                                <div class="group-header">
+                                    <div class="group-name">${group.name} (${group.channel})</div>
+                                    <div class="group-status ${group.bound ? 'bound' : 'unbound'}">
+                                        ${group.bound ? (hasLinks ? '可发送' : '无匹配链接') : '未绑定'}
+                                    </div>
+                                </div>
+                                <div class="group-details">
+                                    ${cidInfo}
+                                    ${group.sizes && group.sizes.length > 0 ? `
+                                    <div class="group-detail">
+                                        <i class="fas fa-expand-alt"></i>
+                                        <div class="size-tags">
+                                            ${group.sizes.map(size => `<span class="size-tag">${size}</span>`).join('')}
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    <div class="group-detail">
+                                        <i class="fas fa-id-card"></i>
+                                        <span>Chat ID: ${group.id.substring(0, 10)}...</span>
+                                    </div>
+                                    ${mentionInfo}
+                                    ${hasLinks ? `
+                                    <div class="group-detail">
+                                        <i class="fas fa-exchange-alt"></i>
+                                        <span>匹配: ${matchedPairs.length}个链接</span>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                        noTagGroupsList.appendChild(groupItem);
+                    });
+                    
+                    container.appendChild(noTagGroupsList);
                 }
                 
-                manageGroupsList.innerHTML = '';
+                // 添加事件监听器
+                document.querySelectorAll('.send-groups-by-tag .group-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        if (!this.disabled) {
+                            const index = parseInt(this.getAttribute('data-index'));
+                            groups[index].selected = this.checked;
+                            updateBadges();
+                            saveToStorage();
+                        }
+                    });
+                });
+            }
+            
+            // 渲染按分组的群组列表（管理页面）
+            function renderManageGroupsByTag() {
+                const container = document.getElementById('manageGroupsByTag');
+                container.innerHTML = '';
                 
-                const totalPages = Math.ceil(filteredGroups.length / groupsPerPage);
-                const startIndex = (currentManagePage - 1) * groupsPerPage;
-                const endIndex = Math.min(startIndex + groupsPerPage, filteredGroups.length);
+                // 获取所有有标签的群组
+                const groupsWithTags = groups.filter(group => group.tags && group.tags.length > 0);
+                const groupsWithoutTags = groups.filter(group => !group.tags || group.tags.length === 0);
                 
-                if (filteredGroups.length === 0) {
-                    const emptyState = document.createElement('div');
-                    emptyState.className = 'empty-state';
-                    emptyState.innerHTML = `
-                        <i class="fas fa-users-slash"></i>
-                        <h3>${searchTerm ? '没有找到匹配的群组' : '暂无群组数据'}</h3>
-                        <p>${searchTerm ? '尝试其他搜索词' : '请先绑定或添加群组'}</p>
+                // 按标签分组
+                const groupsByTag = {};
+                
+                groupsWithTags.forEach(group => {
+                    group.tags.forEach(tag => {
+                        if (!groupsByTag[tag]) {
+                            groupsByTag[tag] = [];
+                        }
+                        groupsByTag[tag].push(group);
+                    });
+                });
+                
+                // 渲染有标签的分组
+                Object.keys(groupsByTag).sort().forEach(tag => {
+                    const tagGroups = groupsByTag[tag];
+                    const tagNum = tag.replace('group', '');
+                    const tagClass = `color-${tagNum}`;
+                    
+                    // 创建分组标题
+                    const tagHeader = document.createElement('div');
+                    tagHeader.className = 'tag-header';
+                    tagHeader.innerHTML = `
+                        <h4>
+                            <span class="group-tag ${tagClass}">${tag}</span>
+                            <span style="margin-left: 10px; font-size: 0.9rem; color: #666;">${tagGroups.length}个群组</span>
+                        </h4>
+                        <div class="tag-group-count">${tagGroups.length}</div>
                     `;
-                    manageGroupsList.appendChild(emptyState);
-                } else {
-                    for (let i = startIndex; i < endIndex; i++) {
-                        const group = filteredGroups[i];
+                    container.appendChild(tagHeader);
+                    
+                    // 创建分组内的群组列表
+                    const tagGroupsList = document.createElement('div');
+                    tagGroupsList.className = 'tag-groups-list';
+                    
+                    tagGroups.forEach(group => {
+                        const originalIndex = groups.findIndex(g => g.id === group.id);
+                        
+                        const groupItem = document.createElement('div');
+                        groupItem.className = `group-item ${group.selected ? 'selected' : ''} ${group.bound ? 'bound' : ''}`;
+                        
+                        let cidInfo = '';
+                        if (group.cids && group.cids.length > 0) {
+                            cidInfo = `
+                                <div class="group-detail">
+                                    <i class="fas fa-hashtag"></i>
+                                    <div class="cid-tags">
+                                        ${group.cids.map(cid => `<span class="cid-tag">${cid}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        let mentionInfo = '';
+                        if (group.mentionUsers && group.mentionUsers.length > 0) {
+                            mentionInfo = `
+                                <div class="group-detail">
+                                    <i class="fas fa-at"></i>
+                                    <div class="mention-tags">
+                                        ${group.mentionUsers.map(mention => `<span class="mention-tag">@${mention}</span>`).join('')}
+                                    </div>
+                                </div>
+                                <div class="group-detail">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${group.mentionDelay || 3}秒后@</span>
+                                </div>
+                            `;
+                        }
+                        
+                        let tagInfo = '';
+                        if (group.tags && group.tags.length > 0) {
+                            tagInfo = `
+                                <div class="group-detail">
+                                    <i class="fas fa-tags"></i>
+                                    <div class="size-tags">
+                                        ${group.tags.map(tag => {
+                                            const tagNum = tag.replace('group', '');
+                                            return `<span class="group-tag color-${tagNum}">${tag}</span>`;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        groupItem.innerHTML = `
+                            <input type="checkbox" class="group-checkbox" data-index="${originalIndex}" ${group.selected ? 'checked' : ''}>
+                            <div class="group-info">
+                                <div class="group-header">
+                                    <div class="group-name">${group.name} (${group.channel})</div>
+                                    <div class="group-status ${group.bound ? 'bound' : 'unbound'}">
+                                        ${group.bound ? '已绑定' : '未绑定'}
+                                    </div>
+                                </div>
+                                <div class="group-details">
+                                    <div class="group-detail">
+                                        <i class="fas fa-id-card"></i>
+                                        <span class="group-id">${group.id}</span>
+                                    </div>
+                                    ${cidInfo}
+                                    ${group.sizes && group.sizes.length > 0 ? `
+                                    <div class="group-detail">
+                                        <i class="fas fa-expand-alt"></i>
+                                        <div class="size-tags">
+                                            ${group.sizes.map(size => `<span class="size-tag">${size}</span>`).join('')}
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    ${mentionInfo}
+                                    ${tagInfo}
+                                    ${group.boundDate ? `
+                                    <div class="group-detail">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span>绑定: ${group.boundDate}</span>
+                                    </div>
+                                    ` : ''}
+                                    ${group.lastSent ? `
+                                    <div class="group-detail">
+                                        <i class="fas fa-paper-plane"></i>
+                                        <span>发送: ${group.lastSent}</span>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <div class="group-actions">
+                                <button class="group-action-btn bind" data-index="${originalIndex}" title="${group.bound ? '已绑定' : '标记绑定'}">
+                                    <i class="fas fa-${group.bound ? 'check' : 'link'}"></i>
+                                </button>
+                                <button class="group-action-btn edit" data-index="${originalIndex}" title="编辑">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="group-action-btn delete" data-index="${originalIndex}" title="删除">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                        tagGroupsList.appendChild(groupItem);
+                    });
+                    
+                    container.appendChild(tagGroupsList);
+                });
+                
+                // 渲染无标签的群组
+                if (groupsWithoutTags.length > 0) {
+                    // 创建无标签分组标题
+                    const noTagHeader = document.createElement('div');
+                    noTagHeader.className = 'tag-header';
+                    noTagHeader.style.backgroundColor = '#f3f3f3';
+                    noTagHeader.innerHTML = `
+                        <h4>
+                            <span style="color: #666;">未分组</span>
+                            <span style="margin-left: 10px; font-size: 0.9rem; color: #999;">${groupsWithoutTags.length}个群组</span>
+                        </h4>
+                        <div class="tag-group-count" style="background-color: #666;">${groupsWithoutTags.length}</div>
+                    `;
+                    container.appendChild(noTagHeader);
+                    
+                    // 创建无标签群组列表
+                    const noTagGroupsList = document.createElement('div');
+                    noTagGroupsList.className = 'tag-groups-list';
+                    
+                    groupsWithoutTags.forEach(group => {
                         const originalIndex = groups.findIndex(g => g.id === group.id);
                         
                         const groupItem = document.createElement('div');
@@ -4212,13 +5384,14 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                 </button>
                             </div>
                         `;
-                        manageGroupsList.appendChild(groupItem);
-                    }
+                        noTagGroupsList.appendChild(groupItem);
+                    });
+                    
+                    container.appendChild(noTagGroupsList);
                 }
                 
-                renderPagination(managePagination, totalPages, currentManagePage, 'manage');
-                
-                document.querySelectorAll('.group-checkbox').forEach(checkbox => {
+                // 添加事件监听器
+                document.querySelectorAll('.manage-groups-by-tag .group-checkbox').forEach(checkbox => {
                     checkbox.addEventListener('change', function() {
                         const index = parseInt(this.getAttribute('data-index'));
                         groups[index].selected = this.checked;
@@ -4249,189 +5422,124 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 });
             }
             
-            // 渲染发送群组列表
-            function renderSendGroups(searchTerm = '') {
-                let filteredGroups = groups;
+            // 更新导出分组选项
+            function updateExportGroupOptions() {
+                exportGroupTagList.innerHTML = '';
                 
-                if (searchTerm) {
-                    const term = searchTerm.toLowerCase();
-                    filteredGroups = groups.filter(group => 
-                        group.name.toLowerCase().includes(term) ||
-                        group.channel.toLowerCase().includes(term) ||
-                        (group.cids && group.cids.some(c => c.toLowerCase().includes(term))) ||
-                        (group.sizes && group.sizes.some(s => s.toLowerCase().includes(term))) ||
-                        (group.mentionUsers && group.mentionUsers.some(m => m.toLowerCase().includes(term)))
-                    );
-                }
+                // 统计所有分组
+                const groupStats = {};
+                groups.forEach(group => {
+                    if (group.tags && group.tags.length > 0) {
+                        group.tags.forEach(tag => {
+                            if (!groupStats[tag]) {
+                                groupStats[tag] = 0;
+                            }
+                            groupStats[tag]++;
+                        });
+                    }
+                });
                 
-                sendGroupsList.innerHTML = '';
-                
-                const totalPages = Math.ceil(filteredGroups.length / groupsPerPage);
-                const startIndex = (currentSendPage - 1) * groupsPerPage;
-                const endIndex = Math.min(startIndex + groupsPerPage, filteredGroups.length);
-                
-                if (filteredGroups.length === 0) {
-                    const emptyState = document.createElement('div');
-                    emptyState.className = 'empty-state';
-                    emptyState.innerHTML = `
-                        <i class="fas fa-users-slash"></i>
-                        <h3>${searchTerm ? '没有找到匹配的群组' : '暂无群组数据'}</h3>
-                        <p>${searchTerm ? '尝试其他搜索词' : '请先绑定或添加群组'}</p>
+                Object.keys(groupStats).sort().forEach(tag => {
+                    const count = groupStats[tag];
+                    const tagNum = tag.replace('group', '');
+                    const tagClass = `color-${tagNum}`;
+                    
+                    const tagItem = document.createElement('div');
+                    tagItem.className = 'group-tag-item';
+                    tagItem.innerHTML = `
+                        <span class="group-tag ${tagClass}">${tag}</span>
+                        <span class="group-tag-item-count">${count}</span>
+                        <input type="checkbox" class="group-tag-checkbox" data-tag="${tag}" style="margin-left: auto;">
                     `;
-                    sendGroupsList.appendChild(emptyState);
-                } else {
-                    for (let i = startIndex; i < endIndex; i++) {
-                        const group = filteredGroups[i];
-                        const originalIndex = groups.findIndex(g => g.id === group.id);
-                        const matchedPairs = getGroupLinkPairs(group);
-                        const hasLinks = matchedPairs.length > 0;
-                        
-                        const groupItem = document.createElement('div');
-                        groupItem.className = `group-item ${group.selected ? 'selected' : ''} ${group.bound ? 'bound' : ''}`;
-                        
-                        let cidInfo = '';
-                        if (group.cids && group.cids.length > 0) {
-                            cidInfo = `
-                                <div class="group-detail">
-                                    <i class="fas fa-hashtag"></i>
-                                    <div class="cid-tags">
-                                        ${group.cids.map(cid => `<span class="cid-tag">${cid}</span>`).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                        
-                        let mentionInfo = '';
-                        if (group.mentionUsers && group.mentionUsers.length > 0) {
-                            mentionInfo = `
-                                <div class="group-detail">
-                                    <i class="fas fa-at"></i>
-                                    <div class="mention-tags">
-                                        ${group.mentionUsers.map(mention => `<span class="mention-tag">@${mention}</span>`).join('')}
-                                    </div>
-                                </div>
-                                <div class="group-detail">
-                                    <i class="fas fa-clock"></i>
-                                    <span>${group.mentionDelay || 3}秒后@</span>
-                                </div>
-                            `;
-                        }
-                        
-                        groupItem.innerHTML = `
-                            <input type="checkbox" class="group-checkbox" data-index="${originalIndex}" ${group.selected ? 'checked' : ''} ${!group.bound ? 'disabled' : ''}>
-                            <div class="group-info">
-                                <div class="group-header">
-                                    <div class="group-name">${group.name} (${group.channel})</div>
-                                    <div class="group-status ${group.bound ? 'bound' : 'unbound'}">
-                                        ${group.bound ? (hasLinks ? '可发送' : '无匹配链接') : '未绑定'}
-                                    </div>
-                                </div>
-                                <div class="group-details">
-                                    ${cidInfo}
-                                    ${group.sizes && group.sizes.length > 0 ? `
-                                    <div class="group-detail">
-                                        <i class="fas fa-expand-alt"></i>
-                                        <div class="size-tags">
-                                            ${group.sizes.map(size => `<span class="size-tag">${size}</span>`).join('')}
-                                        </div>
-                                    </div>
-                                    ` : ''}
-                                    <div class="group-detail">
-                                        <i class="fas fa-id-card"></i>
-                                        <span>Chat ID: ${group.id.substring(0, 10)}...</span>
-                                    </div>
-                                    ${mentionInfo}
-                                    ${hasLinks ? `
-                                    <div class="group-detail">
-                                        <i class="fas fa-exchange-alt"></i>
-                                        <span>匹配: ${matchedPairs.length}个链接</span>
-                                    </div>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        `;
-                        sendGroupsList.appendChild(groupItem);
-                    }
-                }
+                    exportGroupTagList.appendChild(tagItem);
+                });
                 
-                renderPagination(sendPagination, totalPages, currentSendPage, 'send');
+                // 添加全选/取消全选按钮
+                const selectAllItem = document.createElement('div');
+                selectAllItem.className = 'group-tag-item';
+                selectAllItem.style.justifyContent = 'space-between';
+                selectAllItem.innerHTML = `
+                    <span style="font-weight: bold;">全选/取消全选</span>
+                    <div>
+                        <button class="btn btn-sm" id="selectAllTags" style="padding: 2px 8px; font-size: 0.8rem;">全选</button>
+                        <button class="btn btn-sm" id="deselectAllTags" style="padding: 2px 8px; font-size: 0.8rem; margin-left: 5px;">取消</button>
+                    </div>
+                `;
+                exportGroupTagList.appendChild(selectAllItem);
                 
-                document.querySelectorAll('.send-groups-list .group-checkbox').forEach(checkbox => {
-                    checkbox.addEventListener('change', function() {
-                        if (!this.disabled) {
-                            const index = parseInt(this.getAttribute('data-index'));
-                            groups[index].selected = this.checked;
-                            updateBadges();
-                            saveToStorage();
-                        }
+                // 添加事件监听器
+                document.getElementById('selectAllTags')?.addEventListener('click', function() {
+                    exportGroupTagList.querySelectorAll('.group-tag-checkbox').forEach(checkbox => {
+                        checkbox.checked = true;
+                    });
+                });
+                
+                document.getElementById('deselectAllTags')?.addEventListener('click', function() {
+                    exportGroupTagList.querySelectorAll('.group-tag-checkbox').forEach(checkbox => {
+                        checkbox.checked = false;
                     });
                 });
             }
             
-            // 渲染分页
-            function renderPagination(container, totalPages, currentPage, type) {
-                container.innerHTML = '';
+            // 更新发送分组选项
+            function updateSendGroupOptions() {
+                sendGroupTagList.innerHTML = '';
                 
-                if (totalPages <= 1) return;
-                
-                const prevBtn = document.createElement('button');
-                prevBtn.className = `page-btn ${currentPage === 1 ? 'disabled' : ''}`;
-                prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
-                prevBtn.addEventListener('click', function() {
-                    if (currentPage > 1) {
-                        if (type === 'manage') {
-                            currentManagePage--;
-                            renderManageGroups(manageSearchInput.value);
-                        } else {
-                            currentSendPage--;
-                            renderSendGroups(sendSearchInput.value);
-                        }
+                // 统计所有分组（只统计已绑定的群组）
+                const groupStats = {};
+                groups.forEach(group => {
+                    if (group.bound && group.tags && group.tags.length > 0) {
+                        group.tags.forEach(tag => {
+                            if (!groupStats[tag]) {
+                                groupStats[tag] = 0;
+                            }
+                            groupStats[tag]++;
+                        });
                     }
                 });
-                container.appendChild(prevBtn);
                 
-                const maxVisiblePages = 5;
-                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                // 添加"所有分组"选项
+                const allGroupsItem = document.createElement('div');
+                allGroupsItem.className = 'send-group-option selected';
+                allGroupsItem.setAttribute('data-tag', 'all');
+                allGroupsItem.innerHTML = `
+                    <i class="fas fa-users"></i>
+                    <h6>所有分组</h6>
+                    <div class="group-count">${groups.filter(g => g.bound).length}个群组</div>
+                `;
+                sendGroupTagList.appendChild(allGroupsItem);
                 
-                if (endPage - startPage + 1 < maxVisiblePages) {
-                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
-                }
+                Object.keys(groupStats).sort().forEach(tag => {
+                    const count = groupStats[tag];
+                    const tagNum = tag.replace('group', '');
+                    const tagClass = `color-${tagNum}`;
+                    
+                    const tagItem = document.createElement('div');
+                    tagItem.className = 'send-group-option';
+                    tagItem.setAttribute('data-tag', tag);
+                    tagItem.innerHTML = `
+                        <i class="fas fa-tag" style="color: var(--group-color-${tagNum});"></i>
+                        <h6>${tag}</h6>
+                        <div class="group-count">${count}个群组</div>
+                    `;
+                    sendGroupTagList.appendChild(tagItem);
+                });
                 
-                for (let i = startPage; i <= endPage; i++) {
-                    const pageBtn = document.createElement('button');
-                    pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
-                    pageBtn.textContent = i;
-                    pageBtn.addEventListener('click', function() {
-                        if (type === 'manage') {
-                            currentManagePage = i;
-                            renderManageGroups(manageSearchInput.value);
-                        } else {
-                            currentSendPage = i;
-                            renderSendGroups(sendSearchInput.value);
-                        }
+                // 添加事件监听器
+                document.querySelectorAll('.send-group-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        const tag = this.getAttribute('data-tag');
+                        
+                        // 更新选择状态
+                        document.querySelectorAll('.send-group-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        this.classList.add('selected');
                     });
-                    container.appendChild(pageBtn);
-                }
-                
-                const nextBtn = document.createElement('button');
-                nextBtn.className = `page-btn ${currentPage === totalPages ? 'disabled' : ''}`;
-                nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
-                nextBtn.addEventListener('click', function() {
-                    if (currentPage < totalPages) {
-                        if (type === 'manage') {
-                            currentManagePage++;
-                            renderManageGroups(manageSearchInput.value);
-                        } else {
-                            currentSendPage++;
-                            renderSendGroups(sendSearchInput.value);
-                        }
-                    }
                 });
-                container.appendChild(nextBtn);
             }
             
-            // 添加单个群组（支持多CID）
+            // 添加单个群组（支持多CID和分组）
             document.getElementById('addSingleGroup').addEventListener('click', function() {
                 const name = document.getElementById('groupName').value.trim();
                 const channel = document.getElementById('channelName').value.trim();
@@ -4441,6 +5549,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 const mentionUsers = [...selectedMentions];
                 const mentionDelay = parseInt(mentionDelayInput.value) || 3;
                 const mentionMessage = mentionMessageInput.value.trim() || '链接已更新，请相关人员查看';
+                const tags = [...selectedGroupTags];
                 
                 if (!name || !channel || !chatId) {
                     showNotification('信息不全', '请填写所有必填字段', 'error');
@@ -4479,6 +5588,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     groups[existingIndex].mentionUsers = mentionUsers;
                     groups[existingIndex].mentionDelay = mentionDelay;
                     groups[existingIndex].mentionMessage = mentionMessage;
+                    groups[existingIndex].tags = tags;
                     groups[existingIndex].bound = true;
                     groups[existingIndex].boundDate = new Date().toISOString().split('T')[0];
                     
@@ -4493,6 +5603,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         mentionUsers: mentionUsers,
                         mentionDelay: mentionDelay,
                         mentionMessage: mentionMessage,
+                        tags: tags,
                         bound: true,
                         boundDate: new Date().toISOString().split('T')[0],
                         selected: false,
@@ -4510,18 +5621,23 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 selectedCids = [];
                 selectedSizes = [];
                 selectedMentions = [];
+                selectedGroupTags = [];
                 updateCidTags();
                 updateSizeTags();
                 updateMentionTags();
+                updateGroupTags();
                 document.getElementById('mentionDelay').value = 3;
                 document.getElementById('mentionMessage').value = '链接已更新，请相关人员查看';
                 updateMentionMessagePreview();
                 document.getElementById('testMessage').value = '';
                 
                 saveToStorage();
-                renderManageGroups();
+                renderManageGroupsByTag();
+                renderSendGroupsByTag();
                 renderBindHistory();
                 updateLinkMatchStats();
+                updateExportGroupOptions();
+                updateSendGroupOptions();
             });
             
             // 测试绑定
@@ -4556,7 +5672,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 }
             });
             
-            // 批量添加群组（修复版，支持多CID）
+            // 批量添加群组（修复版，支持多CID和分组）
             addBatchGroupsBtn.addEventListener('click', function() {
                 const input = batchGroupInput.value.trim();
                 if (!input) {
@@ -4592,6 +5708,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     const mentionUsersStr = parts[5] || '';
                     const mentionDelay = parseInt(parts[6]) || 3;
                     const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
+                    const tagsStr = parts[8] || '';
                     
                     // 验证必填字段
                     if (!name || !channel || !id) {
@@ -4645,6 +5762,12 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         .map(user => user.trim().replace('@', ''))
                         .filter(user => user);
                     
+                    // 解析分组标签（支持逗号分隔）
+                    const tags = tagsStr
+                        .split(',')
+                        .map(tag => tag.trim())
+                        .filter(tag => tag);
+                    
                     const existingIndex = groups.findIndex(g => g.id === id);
                     
                     if (existingIndex >= 0) {
@@ -4655,6 +5778,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         groups[existingIndex].mentionUsers = mentionUsers;
                         groups[existingIndex].mentionDelay = mentionDelay;
                         groups[existingIndex].mentionMessage = mentionMessage;
+                        groups[existingIndex].tags = tags;
                         groups[existingIndex].bound = true;
                         groups[existingIndex].boundDate = new Date().toISOString().split('T')[0];
                         updatedCount++;
@@ -4668,6 +5792,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                             mentionUsers: mentionUsers,
                             mentionDelay: mentionDelay,
                             mentionMessage: mentionMessage,
+                            tags: tags,
                             bound: true,
                             boundDate: new Date().toISOString().split('T')[0],
                             selected: false,
@@ -4692,9 +5817,12 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 }
                 
                 saveToStorage();
-                renderManageGroups();
+                renderManageGroupsByTag();
+                renderSendGroupsByTag();
                 renderBindHistory();
                 updateLinkMatchStats();
+                updateExportGroupOptions();
+                updateSendGroupOptions();
                 
                 let message = '';
                 if (addedCount > 0) message += `成功添加 ${addedCount} 个群组`;
@@ -4708,21 +5836,221 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 }
             });
             
+            // 使用导出格式批量添加群组
+            addBatchExportFormatBtn.addEventListener('click', function() {
+                const input = batchExportFormatInput.value.trim();
+                if (!input) {
+                    showNotification('输入为空', '请输入要添加的群组数据', 'warning');
+                    return;
+                }
+                
+                let addedCount = 0;
+                let updatedCount = 0;
+                let errorCount = 0;
+                
+                try {
+                    // 尝试解析JSON格式
+                    if (input.startsWith('{') || input.startsWith('[')) {
+                        try {
+                            const data = JSON.parse(input);
+                            
+                            if (data.groups && Array.isArray(data.groups)) {
+                                data.groups.forEach(groupData => {
+                                    const existingIndex = groups.findIndex(g => g.id === groupData.id);
+                                    
+                                    if (existingIndex >= 0) {
+                                        // 更新现有群组
+                                        groups[existingIndex] = {
+                                            ...groups[existingIndex],
+                                            ...groupData,
+                                            selected: groups[existingIndex].selected
+                                        };
+                                        updatedCount++;
+                                    } else {
+                                        // 添加新群组
+                                        groups.push({
+                                            id: groupData.id || generateId(),
+                                            name: groupData.name || '未命名',
+                                            channel: groupData.channel || groupData.name?.toLowerCase().replace(/\s+/g, '') || 'unknown',
+                                            cids: groupData.cids || [],
+                                            sizes: groupData.sizes || [],
+                                            mentionUsers: groupData.mentionUsers || [],
+                                            mentionDelay: groupData.mentionDelay || 3,
+                                            mentionMessage: groupData.mentionMessage || '链接已更新，请相关人员查看',
+                                            tags: groupData.tags || [],
+                                            bound: groupData.bound !== undefined ? groupData.bound : true,
+                                            boundDate: groupData.boundDate || new Date().toISOString().split('T')[0],
+                                            selected: false,
+                                            lastSent: groupData.lastSent || null,
+                                            createdAt: new Date().toISOString()
+                                        });
+                                        addedCount++;
+                                    }
+                                });
+                            }
+                        } catch (jsonError) {
+                            console.error('JSON解析失败:', jsonError);
+                            errorCount++;
+                        }
+                    }
+                    
+                    // 尝试解析CSV格式
+                    if (addedCount === 0 && updatedCount === 0) {
+                        const lines = input.split('\n');
+                        if (lines.length > 1) {
+                            const headers = lines[0].split(',').map(h => h.trim());
+                            
+                            for (let i = 1; i < lines.length; i++) {
+                                const line = lines[i].trim();
+                                if (!line) continue;
+                                
+                                const values = line.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+                                
+                                if (values.length >= 3) {
+                                    const id = values[2];
+                                    if (!id) continue;
+                                    
+                                    const existingIndex = groups.findIndex(g => g.id === id);
+                                    
+                                    const groupData = {
+                                        id: id,
+                                        name: values[0] || '未命名',
+                                        channel: values[1] || 'unknown',
+                                        cids: values[3] ? values[3].split(',').filter(c => c) : [],
+                                        sizes: values[4] ? values[4].split(',').filter(s => s) : [],
+                                        mentionUsers: values[5] ? values[5].split(',').filter(u => u) : [],
+                                        mentionDelay: parseInt(values[6]) || 3,
+                                        mentionMessage: values[7] || '链接已更新，请相关人员查看',
+                                        tags: values[8] ? values[8].split(',').filter(t => t) : [],
+                                        bound: values[9] === '是' || values[9] === 'true' || values[9] === '1',
+                                        boundDate: values[10] || new Date().toISOString().split('T')[0]
+                                    };
+                                    
+                                    if (existingIndex >= 0) {
+                                        groups[existingIndex] = {
+                                            ...groups[existingIndex],
+                                            ...groupData,
+                                            selected: groups[existingIndex].selected
+                                        };
+                                        updatedCount++;
+                                    } else {
+                                        groups.push({
+                                            ...groupData,
+                                            selected: false,
+                                            lastSent: null,
+                                            createdAt: new Date().toISOString()
+                                        });
+                                        addedCount++;
+                                    }
+                                } else {
+                                    errorCount++;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 尝试解析TXT格式（竖线分隔）
+                    if (addedCount === 0 && updatedCount === 0) {
+                        const lines = input.split('\n');
+                        
+                        lines.forEach(line => {
+                            const trimmedLine = line.trim();
+                            if (!trimmedLine) return;
+                            
+                            if (trimmedLine.includes('|')) {
+                                const parts = trimmedLine.split('|').map(p => p.trim());
+                                if (parts.length >= 3) {
+                                    const [name, channel, id] = parts;
+                                    const cidsStr = parts[3] || '';
+                                    const sizesStr = parts[4] || '';
+                                    const mentionUsersStr = parts[5] || '';
+                                    const mentionDelay = parseInt(parts[6]) || 3;
+                                    const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
+                                    const tagsStr = parts[8] || '';
+                                    const boundStr = parts[9] || '是';
+                                    const boundDate = parts[10] || new Date().toISOString().split('T')[0];
+                                    
+                                    const existingIndex = groups.findIndex(g => g.id === id);
+                                    
+                                    const groupData = {
+                                        id: id,
+                                        name: name,
+                                        channel: channel,
+                                        cids: cidsStr.split(',').filter(c => c),
+                                        sizes: sizesStr.split(',').filter(s => s),
+                                        mentionUsers: mentionUsersStr.split(',').filter(u => u),
+                                        mentionDelay: mentionDelay,
+                                        mentionMessage: mentionMessage,
+                                        tags: tagsStr.split(',').filter(t => t),
+                                        bound: boundStr === '是' || boundStr === 'true' || boundStr === '1',
+                                        boundDate: boundDate
+                                    };
+                                    
+                                    if (existingIndex >= 0) {
+                                        groups[existingIndex] = {
+                                            ...groups[existingIndex],
+                                            ...groupData,
+                                            selected: groups[existingIndex].selected
+                                        };
+                                        updatedCount++;
+                                    } else {
+                                        groups.push({
+                                            ...groupData,
+                                            selected: false,
+                                            lastSent: null,
+                                            createdAt: new Date().toISOString()
+                                        });
+                                        addedCount++;
+                                    }
+                                } else {
+                                    errorCount++;
+                                }
+                            }
+                        });
+                    }
+                    
+                    if (addedCount > 0 || updatedCount > 0) {
+                        saveToStorage();
+                        renderManageGroupsByTag();
+                        renderSendGroupsByTag();
+                        renderBindHistory();
+                        updateLinkMatchStats();
+                        updateExportGroupOptions();
+                        updateSendGroupOptions();
+                        
+                        showNotification('批量添加完成', `成功添加 ${addedCount} 个群组，更新 ${updatedCount} 个群组`, 'success');
+                        batchExportFormatInput.value = '';
+                    } else {
+                        showNotification('添加失败', '无法识别数据格式或没有有效数据', 'error');
+                    }
+                } catch (error) {
+                    console.error('批量添加失败:', error);
+                    showNotification('添加失败', '数据格式错误', 'error');
+                }
+            });
+            
+            // 清空批量添加输入
+            clearBatchExportInputBtn.addEventListener('click', function() {
+                batchExportFormatInput.value = '';
+                showNotification('已清空', '输入框已清空', 'info');
+            });
+            
             // 切换群组绑定状态
             function toggleGroupBind(index) {
                 groups[index].bound = !groups[index].bound;
                 groups[index].boundDate = groups[index].bound ? new Date().toISOString().split('T')[0] : null;
                 
                 saveToStorage();
-                renderManageGroups(manageSearchInput.value);
+                renderManageGroupsByTag();
                 updateBindStats();
                 renderBindHistory();
+                updateSendGroupOptions();
                 
                 const action = groups[index].bound ? '绑定' : '取消绑定';
                 showNotification('操作成功', `已${action} ${groups[index].name}`, 'success');
             }
             
-            // 编辑群组（支持多CID）
+            // 编辑群组（支持多CID和分组）
             function editGroup(index) {
                 const group = groups[index];
                 
@@ -4747,6 +6075,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 const newMentionMessage = prompt('请输入@人物消息内容:', group.mentionMessage || '链接已更新，请相关人员查看');
                 if (newMentionMessage === null) return;
                 
+                const newTags = prompt('请输入分组标签 (多个用逗号分隔):', group.tags?.join(', ') || '');
+                if (newTags === null) return;
+                
                 // 解析CID
                 const cids = newCids.split(',').map(c => c.trim()).filter(c => c);
                 
@@ -4760,6 +6091,12 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     .filter(user => user);
                 
                 const mentionDelay = parseInt(newMentionDelay) || 3;
+                
+                // 解析分组标签
+                const tags = newTags
+                    .split(',')
+                    .map(tag => tag.trim())
+                    .filter(tag => tag);
                 
                 // 验证CID格式
                 const invalidCids = cids.filter(cid => !/^\d+$/.test(cid));
@@ -4782,10 +6119,13 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 groups[index].mentionUsers = mentionUsers;
                 groups[index].mentionDelay = mentionDelay;
                 groups[index].mentionMessage = newMentionMessage.trim();
+                groups[index].tags = tags;
                 
                 saveToStorage();
-                renderManageGroups(manageSearchInput.value);
+                renderManageGroupsByTag();
                 updateLinkMatchStats();
+                updateExportGroupOptions();
+                updateSendGroupOptions();
                 
                 showNotification('群组已更新', `已更新 ${newName} 的信息`, 'success');
             }
@@ -4797,10 +6137,13 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 if (confirm(`确定要删除群组 "${group.name}" 吗？此操作不可恢复。`)) {
                     groups.splice(index, 1);
                     saveToStorage();
-                    renderManageGroups(manageSearchInput.value);
+                    renderManageGroupsByTag();
+                    renderSendGroupsByTag();
                     updateBindStats();
                     renderBindHistory();
                     updateLinkMatchStats();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
                     
                     showNotification('群组已删除', `已删除 ${group.name}`, 'success');
                 }
@@ -4808,41 +6151,107 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
             
             // 搜索功能
             manageSearchInput.addEventListener('input', function() {
-                currentManagePage = 1;
-                renderManageGroups(this.value);
+                const searchTerm = this.value.toLowerCase();
+                
+                // 隐藏所有分组，然后显示匹配的
+                document.querySelectorAll('.tag-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // 搜索逻辑
+                const allGroups = document.querySelectorAll('.group-item');
+                allGroups.forEach(groupItem => {
+                    const groupText = groupItem.textContent.toLowerCase();
+                    if (groupText.includes(searchTerm)) {
+                        groupItem.style.display = 'flex';
+                        // 显示父级分组
+                        let parent = groupItem.parentElement;
+                        while (parent && !parent.classList.contains('tag-section')) {
+                            parent = parent.parentElement;
+                        }
+                        if (parent) {
+                            parent.style.display = 'block';
+                        }
+                    } else {
+                        groupItem.style.display = 'none';
+                    }
+                });
+                
+                // 如果没有搜索词，显示所有
+                if (!searchTerm) {
+                    document.querySelectorAll('.tag-section').forEach(section => {
+                        section.style.display = 'block';
+                    });
+                    document.querySelectorAll('.group-item').forEach(groupItem => {
+                        groupItem.style.display = 'flex';
+                    });
+                }
             });
             
             sendSearchInput.addEventListener('input', function() {
-                currentSendPage = 1;
-                renderSendGroups(this.value);
+                const searchTerm = this.value.toLowerCase();
+                
+                // 隐藏所有分组，然后显示匹配的
+                document.querySelectorAll('.tag-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // 搜索逻辑
+                const allGroups = document.querySelectorAll('.group-item');
+                allGroups.forEach(groupItem => {
+                    const groupText = groupItem.textContent.toLowerCase();
+                    if (groupText.includes(searchTerm)) {
+                        groupItem.style.display = 'flex';
+                        // 显示父级分组
+                        let parent = groupItem.parentElement;
+                        while (parent && !parent.classList.contains('tag-section')) {
+                            parent = parent.parentElement;
+                        }
+                        if (parent) {
+                            parent.style.display = 'block';
+                        }
+                    } else {
+                        groupItem.style.display = 'none';
+                    }
+                });
+                
+                // 如果没有搜索词，显示所有
+                if (!searchTerm) {
+                    document.querySelectorAll('.tag-section').forEach(section => {
+                        section.style.display = 'block';
+                    });
+                    document.querySelectorAll('.group-item').forEach(groupItem => {
+                        groupItem.style.display = 'flex';
+                    });
+                }
             });
             
             // 批量操作 - 管理页面
             document.getElementById('manageSelectAll').addEventListener('click', function() {
                 groups.forEach(group => group.selected = true);
                 saveToStorage();
-                renderManageGroups(manageSearchInput.value);
+                renderManageGroupsByTag();
                 updateBadges();
             });
             
             document.getElementById('manageSelectNone').addEventListener('click', function() {
                 groups.forEach(group => group.selected = false);
                 saveToStorage();
-                renderManageGroups(manageSearchInput.value);
+                renderManageGroupsByTag();
                 updateBadges();
             });
             
             document.getElementById('manageSelectBound').addEventListener('click', function() {
                 groups.forEach(group => group.selected = group.bound);
                 saveToStorage();
-                renderManageGroups(manageSearchInput.value);
+                renderManageGroupsByTag();
                 updateBadges();
             });
             
             document.getElementById('manageInvertSelection').addEventListener('click', function() {
                 groups.forEach(group => group.selected = !group.selected);
                 saveToStorage();
-                renderManageGroups(manageSearchInput.value);
+                renderManageGroupsByTag();
                 updateBadges();
             });
             
@@ -4856,11 +6265,14 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 if (confirm(`确定要删除选中的 ${selectedCount} 个群组吗？此操作不可恢复。`)) {
                     groups = groups.filter(group => !group.selected);
                     saveToStorage();
-                    renderManageGroups(manageSearchInput.value);
+                    renderManageGroupsByTag();
+                    renderSendGroupsByTag();
                     updateBadges();
                     updateBindStats();
                     renderBindHistory();
                     updateLinkMatchStats();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
                     
                     showNotification('删除完成', `已删除 ${selectedCount} 个群组`, 'success');
                 }
@@ -4881,9 +6293,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 });
                 
                 saveToStorage();
-                renderManageGroups(manageSearchInput.value);
+                renderManageGroupsByTag();
                 updateBindStats();
                 renderBindHistory();
+                updateSendGroupOptions();
                 
                 showNotification('绑定完成', `已标记 ${selectedCount} 个群组为已绑定`, 'success');
             });
@@ -4896,21 +6309,21 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     }
                 });
                 saveToStorage();
-                renderSendGroups(sendSearchInput.value);
+                renderSendGroupsByTag();
                 updateBadges();
             });
             
             document.getElementById('sendSelectNone').addEventListener('click', function() {
                 groups.forEach(group => group.selected = false);
                 saveToStorage();
-                renderSendGroups(sendSearchInput.value);
+                renderSendGroupsByTag();
                 updateBadges();
             });
             
             document.getElementById('sendSelectBound').addEventListener('click', function() {
                 groups.forEach(group => group.selected = group.bound);
                 saveToStorage();
-                renderSendGroups(sendSearchInput.value);
+                renderSendGroupsByTag();
                 updateBadges();
             });
             
@@ -4921,8 +6334,269 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     }
                 });
                 saveToStorage();
-                renderSendGroups(sendSearchInput.value);
+                renderSendGroupsByTag();
                 updateBadges();
+            });
+            
+            // 批量分组管理
+            batchGroupingOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const action = this.getAttribute('data-action');
+                    
+                    // 更新选择状态
+                    batchGroupingOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    // 显示对应的操作面板
+                    groupingActionPanel.style.display = 'block';
+                    assignTagPanel.style.display = 'none';
+                    removeTagPanel.style.display = 'none';
+                    clearTagsPanel.style.display = 'none';
+                    
+                    switch (action) {
+                        case 'assign-tag':
+                            assignTagPanel.style.display = 'block';
+                            break;
+                        case 'remove-tag':
+                            removeTagPanel.style.display = 'block';
+                            break;
+                        case 'clear-tags':
+                            clearTagsPanel.style.display = 'block';
+                            break;
+                    }
+                });
+            });
+            
+            // 应用添加分组标签
+            applyAssignTagBtn.addEventListener('click', function() {
+                const tag = tagToAssign.value;
+                if (!tag) {
+                    showNotification('请选择分组', '请先选择一个分组标签', 'warning');
+                    return;
+                }
+                
+                const selectedGroups = groups.filter(g => g.selected);
+                if (selectedGroups.length === 0) {
+                    showNotification('没有选中群组', '请先选择要操作的群组', 'warning');
+                    return;
+                }
+                
+                let updatedCount = 0;
+                selectedGroups.forEach(group => {
+                    if (!group.tags) {
+                        group.tags = [];
+                    }
+                    if (!group.tags.includes(tag)) {
+                        group.tags.push(tag);
+                        updatedCount++;
+                    }
+                });
+                
+                if (updatedCount > 0) {
+                    saveToStorage();
+                    renderManageGroupsByTag();
+                    renderSendGroupsByTag();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
+                    showNotification('分组标签已添加', `已为 ${updatedCount} 个群组添加 ${tag} 标签`, 'success');
+                } else {
+                    showNotification('没有更改', '选中的群组已拥有该标签', 'info');
+                }
+            });
+            
+            // 应用移除分组标签
+            applyRemoveTagBtn.addEventListener('click', function() {
+                const tag = tagToRemove.value;
+                if (!tag) {
+                    showNotification('请选择分组', '请先选择一个分组标签', 'warning');
+                    return;
+                }
+                
+                const selectedGroups = groups.filter(g => g.selected);
+                if (selectedGroups.length === 0) {
+                    showNotification('没有选中群组', '请先选择要操作的群组', 'warning');
+                    return;
+                }
+                
+                let updatedCount = 0;
+                selectedGroups.forEach(group => {
+                    if (group.tags && group.tags.includes(tag)) {
+                        const index = group.tags.indexOf(tag);
+                        if (index > -1) {
+                            group.tags.splice(index, 1);
+                            updatedCount++;
+                        }
+                    }
+                });
+                
+                if (updatedCount > 0) {
+                    saveToStorage();
+                    renderManageGroupsByTag();
+                    renderSendGroupsByTag();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
+                    showNotification('分组标签已移除', `已从 ${updatedCount} 个群组移除 ${tag} 标签`, 'success');
+                } else {
+                    showNotification('没有更改', '选中的群组没有该标签', 'info');
+                }
+            });
+            
+            // 应用清空分组标签
+            applyClearTagsBtn.addEventListener('click', function() {
+                const selectedGroups = groups.filter(g => g.selected);
+                if (selectedGroups.length === 0) {
+                    showNotification('没有选中群组', '请先选择要操作的群组', 'warning');
+                    return;
+                }
+                
+                let updatedCount = 0;
+                selectedGroups.forEach(group => {
+                    if (group.tags && group.tags.length > 0) {
+                        group.tags = [];
+                        updatedCount++;
+                    }
+                });
+                
+                if (updatedCount > 0) {
+                    saveToStorage();
+                    renderManageGroupsByTag();
+                    renderSendGroupsByTag();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
+                    showNotification('分组标签已清空', `已清空 ${updatedCount} 个群组的所有标签`, 'success');
+                } else {
+                    showNotification('没有更改', '选中的群组没有标签', 'info');
+                }
+            });
+            
+            // 导出绑定群组数据
+            exportBindingsBtn.addEventListener('click', function() {
+                const filter = exportFilter.value;
+                let groupsToExport = [];
+                
+                // 根据筛选条件选择群组
+                switch (filter) {
+                    case 'all':
+                        groupsToExport = groups;
+                        break;
+                    case 'bound':
+                        groupsToExport = groups.filter(g => g.bound);
+                        break;
+                    case 'selected':
+                        groupsToExport = groups.filter(g => g.selected);
+                        break;
+                    case 'by-group':
+                        // 获取选中的分组
+                        const selectedTags = [];
+                        exportGroupTagList.querySelectorAll('.group-tag-checkbox:checked').forEach(checkbox => {
+                            selectedTags.push(checkbox.getAttribute('data-tag'));
+                        });
+                        
+                        if (selectedTags.length === 0) {
+                            showNotification('请选择分组', '请至少选择一个分组', 'warning');
+                            return;
+                        }
+                        
+                        groupsToExport = groups.filter(g => 
+                            g.tags && g.tags.some(tag => selectedTags.includes(tag))
+                        );
+                        break;
+                }
+                
+                if (groupsToExport.length === 0) {
+                    showNotification('没有数据', '没有符合条件的群组数据', 'warning');
+                    return;
+                }
+                
+                // 根据格式生成数据
+                let dataStr, mimeType, fileName;
+                
+                switch (currentExportFormat) {
+                    case 'json':
+                        const exportData = {
+                            meta: {
+                                exportedAt: new Date().toISOString(),
+                                version: '1.3',
+                                system: 'Telegram群组绑定与消息发送系统',
+                                features: ['多CID支持', '二次@人物功能', '分组功能']
+                            },
+                            groups: groupsToExport.map(g => ({
+                                id: g.id,
+                                name: g.name,
+                                channel: g.channel,
+                                cids: g.cids || [],
+                                sizes: g.sizes || [],
+                                mentionUsers: g.mentionUsers || [],
+                                mentionDelay: g.mentionDelay || 3,
+                                mentionMessage: g.mentionMessage || '链接已更新，请相关人员查看',
+                                tags: g.tags || [],
+                                bound: g.bound || false,
+                                boundDate: g.boundDate || null,
+                                lastSent: g.lastSent || null,
+                                createdAt: g.createdAt || new Date().toISOString()
+                            })),
+                            stats: {
+                                totalGroups: groupsToExport.length,
+                                boundGroups: groupsToExport.filter(g => g.bound).length,
+                                groupsWithTags: groupsToExport.filter(g => g.tags && g.tags.length > 0).length,
+                                groupsWithMentions: groupsToExport.filter(g => g.mentionUsers && g.mentionUsers.length > 0).length
+                            }
+                        };
+                        dataStr = JSON.stringify(exportData, null, 2);
+                        mimeType = 'application/json';
+                        fileName = `telegram-groups-${new Date().toISOString().slice(0,10)}.json`;
+                        
+                        // 显示预览
+                        exportPreview.style.display = 'block';
+                        exportPreview.textContent = dataStr.substring(0, 2000) + (dataStr.length > 2000 ? '\n\n... (数据过长，已截断)' : '');
+                        break;
+                        
+                    case 'csv':
+                        const csvHeaders = ['渠道名称', '渠道标识', 'Chat ID', 'CID列表', '图片尺寸', '@人物', '@延迟', '@消息', '分组标签', '绑定状态', '绑定日期', '最后发送'];
+                        const csvRows = groupsToExport.map(g => [
+                            `"${g.name}"`,
+                            `"${g.channel}"`,
+                            g.id,
+                            g.cids?.join(',') || '',
+                            g.sizes?.join(',') || '',
+                            g.mentionUsers?.join(',') || '',
+                            g.mentionDelay || 3,
+                            `"${g.mentionMessage || ''}"`,
+                            g.tags?.join(',') || '',
+                            g.bound ? '是' : '否',
+                            g.boundDate || '',
+                            g.lastSent || ''
+                        ].join(','));
+                        dataStr = [csvHeaders.join(','), ...csvRows].join('\n');
+                        mimeType = 'text/csv';
+                        fileName = `telegram-groups-${new Date().toISOString().slice(0,10)}.csv`;
+                        
+                        // 显示预览
+                        exportPreview.style.display = 'block';
+                        exportPreview.textContent = dataStr.substring(0, 2000) + (dataStr.length > 2000 ? '\n\n... (数据过长，已截断)' : '');
+                        break;
+                        
+                    case 'txt':
+                        dataStr = groupsToExport.map(g => 
+                            `${g.name}|${g.channel}|${g.id}|${g.cids?.join(',') || ''}|${g.sizes?.join(',') || ''}|${g.mentionUsers?.join(',') || ''}|${g.mentionDelay || 3}|${g.mentionMessage || ''}|${g.tags?.join(',') || ''}|${g.bound ? '是' : '否'}|${g.boundDate || ''}|${g.lastSent || ''}`
+                        ).join('\n');
+                        mimeType = 'text/plain';
+                        fileName = `telegram-groups-${new Date().toISOString().slice(0,10)}.txt`;
+                        
+                        // 显示预览
+                        exportPreview.style.display = 'block';
+                        exportPreview.textContent = dataStr.substring(0, 2000) + (dataStr.length > 2000 ? '\n\n... (数据过长，已截断)' : '');
+                        break;
+                }
+                
+                // 创建下载链接
+                const dataUri = `data:${mimeType};charset=utf-8,${encodeURIComponent(dataStr)}`;
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', fileName);
+                linkElement.click();
+                
+                showNotification('导出成功', `已导出 ${groupsToExport.length} 个群组数据为 ${currentExportFormat.toUpperCase()} 格式`, 'success');
             });
             
             // 单个链接对提取信息
@@ -5720,6 +7394,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                                 const cids = item.cids || (item.cid ? [item.cid] : []);
                                                 const sizes = item.sizes || (item.size ? [item.size] : []);
                                                 const mentionUsers = item.mentionUsers || [];
+                                                const tags = item.tags || [];
                                                 groups.push({
                                                     id: item.id,
                                                     name: item.name,
@@ -5729,6 +7404,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                                     mentionUsers: mentionUsers,
                                                     mentionDelay: item.mentionDelay || 3,
                                                     mentionMessage: item.mentionMessage || '链接已更新，请相关人员查看',
+                                                    tags: tags,
                                                     bound: item.bound || true,
                                                     boundDate: item.boundDate || new Date().toISOString().split('T')[0],
                                                     selected: false,
@@ -5752,6 +7428,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                 const mentionUsersStr = parts[5] || '';
                                 const mentionDelay = parseInt(parts[6]) || 3;
                                 const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
+                                const tagsStr = parts[8] || '';
                                 
                                 const cids = cidsStr.split(',').map(c => c.trim()).filter(c => c);
                                 const sizes = sizesStr.split(',').map(s => s.trim()).filter(s => s);
@@ -5759,6 +7436,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                     .split(',')
                                     .map(user => user.trim().replace('@', ''))
                                     .filter(user => user);
+                                const tags = tagsStr
+                                    .split(',')
+                                    .map(tag => tag.trim())
+                                    .filter(tag => tag);
                                 
                                 const existingIndex = groups.findIndex(g => g.id === id);
                                 
@@ -5770,6 +7451,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                     groups[existingIndex].mentionUsers = mentionUsers;
                                     groups[existingIndex].mentionDelay = mentionDelay;
                                     groups[existingIndex].mentionMessage = mentionMessage;
+                                    groups[existingIndex].tags = tags;
                                 } else {
                                     groups.push({
                                         id,
@@ -5780,6 +7462,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         mentionUsers: mentionUsers,
                                         mentionDelay: mentionDelay,
                                         mentionMessage: mentionMessage,
+                                        tags: tags,
                                         bound: true,
                                         boundDate: new Date().toISOString().split('T')[0],
                                         selected: false,
@@ -5793,9 +7476,12 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         
                         if (importedCount > 0) {
                             saveToStorage();
-                            renderManageGroups();
+                            renderManageGroupsByTag();
+                            renderSendGroupsByTag();
                             renderBindHistory();
                             updateLinkMatchStats();
+                            updateExportGroupOptions();
+                            updateSendGroupOptions();
                             showNotification('导入成功', `成功导入 ${importedCount} 个群组`, 'success');
                         } else {
                             showNotification('导入失败', '文件格式不正确或没有新数据', 'warning');
@@ -5870,6 +7556,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         mentionUsers: [],
                                         mentionDelay: 3,
                                         mentionMessage: '链接已更新，请相关人员查看',
+                                        tags: [],
                                         bound: true,
                                         boundDate: new Date().toISOString().split('T')[0],
                                         selected: false,
@@ -5885,9 +7572,12 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     
                     if (addedCount > 0) {
                         saveToStorage();
-                        renderManageGroups();
+                        renderManageGroupsByTag();
+                        renderSendGroupsByTag();
                         renderBindHistory();
                         updateLinkMatchStats();
+                        updateExportGroupOptions();
+                        updateSendGroupOptions();
                         showNotification('获取成功', `通过API获取到 ${addedCount} 个新群组`, 'success');
                     } else {
                         showNotification('获取完成', '没有发现新的群组', 'info');
@@ -5904,6 +7594,22 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 
                 if (currentSendMethod === 'all') {
                     selectedGroups = groups.filter(g => g.bound);
+                } else if (currentSendMethod === 'by-group') {
+                    // 获取选中的分组
+                    const selectedTagElement = document.querySelector('.send-group-option.selected');
+                    if (!selectedTagElement) {
+                        showNotification('请选择分组', '请先选择一个分组', 'warning');
+                        return;
+                    }
+                    
+                    const selectedTag = selectedTagElement.getAttribute('data-tag');
+                    if (selectedTag === 'all') {
+                        selectedGroups = groups.filter(g => g.bound);
+                    } else {
+                        selectedGroups = groups.filter(g => 
+                            g.bound && g.tags && g.tags.includes(selectedTag)
+                        );
+                    }
                 } else {
                     selectedGroups = groups.filter(g => g.selected && g.bound);
                 }
@@ -5975,12 +7681,28 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 }
             });
             
-            // 批量发送消息（支持二次@人物）- 修改后：只有匹配到对应链接的群组才进行发送和@人物
+            // 批量发送消息（支持分组发送和二次@人物）
             document.getElementById('sendBatchBtn').addEventListener('click', async function() {
                 let selectedGroups;
                 
                 if (currentSendMethod === 'all') {
                     selectedGroups = groups.filter(g => g.bound);
+                } else if (currentSendMethod === 'by-group') {
+                    // 获取选中的分组
+                    const selectedTagElement = document.querySelector('.send-group-option.selected');
+                    if (!selectedTagElement) {
+                        showNotification('请选择分组', '请先选择一个分组', 'warning');
+                        return;
+                    }
+                    
+                    const selectedTag = selectedTagElement.getAttribute('data-tag');
+                    if (selectedTag === 'all') {
+                        selectedGroups = groups.filter(g => g.bound);
+                    } else {
+                        selectedGroups = groups.filter(g => 
+                            g.bound && g.tags && g.tags.includes(selectedTag)
+                        );
+                    }
                 } else {
                     selectedGroups = groups.filter(g => g.selected && g.bound);
                 }
@@ -6052,7 +7774,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 isSending = true;
                 
                 addLogToOutput('开始批量发送消息...', 'info');
-                addLogToOutput(`发送方式: ${currentSendMethod === 'all' ? '所有已绑定群组' : '选中群组'}`, 'info');
+                addLogToOutput(`发送方式: ${currentSendMethod === 'all' ? '所有已绑定群组' : currentSendMethod === 'by-group' ? '按分组发送' : '选中群组'}`, 'info');
                 addLogToOutput(`发送模式: ${sendMode === 'all' ? '链接+@人物' : sendMode === 'link-only' ? '仅链接' : '仅@人物'}`, 'info');
                 addLogToOutput(`共 ${groupsToSend.length} 个有匹配链接的群组`, 'info');
                 addLogToOutput(`跳过了 ${selectedGroups.length - groupsToSend.length} 个无匹配链接的群组`, 'info');
@@ -6253,9 +7975,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 const exportData = {
                     meta: {
                         exportedAt: new Date().toISOString(),
-                        version: '1.2',
+                        version: '1.3',
                         system: 'Telegram群组绑定与消息发送系统',
-                        features: ['多CID支持', '二次@人物功能']
+                        features: ['多CID支持', '二次@人物功能', '分组功能']
                     },
                     groups: groups,
                     linkPairs: linkPairs,
@@ -6265,7 +7987,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         selectedGroups: groups.filter(g => g.selected).length,
                         totalLinkPairs: linkPairs.length,
                         groupsWithMentions: groups.filter(g => g.mentionUsers && g.mentionUsers.length > 0).length,
-                        groupsWithMultipleCids: groups.filter(g => g.cids && g.cids.length > 1).length
+                        groupsWithMultipleCids: groups.filter(g => g.cids && g.cids.length > 1).length,
+                        groupsWithTags: groups.filter(g => g.tags && g.tags.length > 0).length
                     }
                 };
                 
@@ -6278,7 +8001,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         fileName = `telegram-data-${new Date().toISOString().slice(0,10)}.json`;
                         break;
                     case 'csv':
-                        const csvHeaders = ['渠道名称', '渠道标识', 'Chat ID', 'CID列表', '图片尺寸', '@人物', '@延迟', '@消息', '绑定状态', '绑定日期', '最后发送'];
+                        const csvHeaders = ['渠道名称', '渠道标识', 'Chat ID', 'CID列表', '图片尺寸', '@人物', '@延迟', '@消息', '分组标签', '绑定状态', '绑定日期', '最后发送'];
                         const csvRows = groups.map(g => [
                             `"${g.name}"`,
                             `"${g.channel}"`,
@@ -6288,6 +8011,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                             g.mentionUsers?.join(',') || '',
                             g.mentionDelay || 3,
                             `"${g.mentionMessage || ''}"`,
+                            g.tags?.join(',') || '',
                             g.bound ? '是' : '否',
                             g.boundDate || '',
                             g.lastSent || ''
@@ -6298,7 +8022,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         break;
                     case 'txt':
                         dataStr = groups.map(g => 
-                            `${g.name}|${g.channel}|${g.id}|${g.cids?.join(',') || ''}|${g.sizes?.join(',') || ''}|${g.mentionUsers?.join(',') || ''}|${g.mentionDelay || 3}|${g.mentionMessage || ''}|${g.bound ? '已绑定' : '未绑定'}|${g.boundDate || ''}|${g.lastSent || ''}`
+                            `${g.name}|${g.channel}|${g.id}|${g.cids?.join(',') || ''}|${g.sizes?.join(',') || ''}|${g.mentionUsers?.join(',') || ''}|${g.mentionDelay || 3}|${g.mentionMessage || ''}|${g.tags?.join(',') || ''}|${g.bound ? '已绑定' : '未绑定'}|${g.boundDate || ''}|${g.lastSent || ''}`
                         ).join('\n');
                         mimeType = 'text/plain';
                         fileName = `telegram-groups-${new Date().toISOString().slice(0,10)}.txt`;
@@ -6397,6 +8121,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                     const mentionUsersStr = parts[5] || '';
                                     const mentionDelay = parseInt(parts[6]) || 3;
                                     const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
+                                    const tagsStr = parts[8] || '';
                                     
                                     const cids = cidsStr.split(',').map(c => c.trim()).filter(c => c);
                                     const sizes = sizesStr.split(',').map(s => s.trim()).filter(s => s);
@@ -6404,6 +8129,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         .split(',')
                                         .map(user => user.trim().replace('@', ''))
                                         .filter(user => user);
+                                    const tags = tagsStr
+                                        .split(',')
+                                        .map(tag => tag.trim())
+                                        .filter(tag => tag);
                                     
                                     importedGroups.push({
                                         id,
@@ -6414,6 +8143,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         mentionUsers,
                                         mentionDelay,
                                         mentionMessage,
+                                        tags,
                                         bound: true,
                                         boundDate: new Date().toISOString().split('T')[0],
                                         selected: false,
@@ -6438,12 +8168,15 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         }
                         
                         saveToStorage();
-                        renderManageGroups();
+                        renderManageGroupsByTag();
+                        renderSendGroupsByTag();
                         renderBindHistory();
                         renderLinkPairs();
                         renderCurrentLinks();
                         updateLinkMatchStats();
                         updateLinksStats();
+                        updateExportGroupOptions();
+                        updateSendGroupOptions();
                         
                         showNotification('导入成功', `成功导入数据`, 'success');
                         
@@ -6475,11 +8208,13 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     localStorage.clear();
                     groups = [];
                     linkPairs = [];
+                    selectedGroupTags = [];
                     botTokenInput.value = '';
                     telegramBot = null;
                     
                     saveToStorage();
-                    renderManageGroups();
+                    renderManageGroupsByTag();
+                    renderSendGroupsByTag();
                     renderLinkPairs();
                     renderCurrentLinks();
                     updateMessagePreview();
@@ -6487,6 +8222,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     renderBindHistory();
                     updateLinkMatchStats();
                     updateLinksStats();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
                     
                     showNotification('数据已清除', '已恢复为初始状态', 'success');
                 }
@@ -6497,13 +8234,16 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 if (confirm('确定要恢复示例数据吗？当前数据将被替换。')) {
                     initSampleGroups();
                     initSampleLinkPairs();
-                    renderManageGroups();
+                    renderManageGroupsByTag();
+                    renderSendGroupsByTag();
                     renderLinkPairs();
                     renderCurrentLinks();
                     updateBindStats();
                     renderBindHistory();
                     updateLinkMatchStats();
                     updateLinksStats();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
                     
                     showNotification('数据已恢复', '已恢复为示例数据', 'success');
                 }
@@ -6533,8 +8273,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
             
             // 初始化
             loadFromStorage();
-            renderManageGroups();
-            renderSendGroups();
+            renderManageGroupsByTag();
+            renderSendGroupsByTag();
             updateMessagePreview();
             renderCurrentLinks();
             updateMentionMessagePreview();
