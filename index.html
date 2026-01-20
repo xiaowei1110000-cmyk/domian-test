@@ -6,7 +6,7 @@
     <title>Telegram群组绑定与消息发送系统</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* 所有CSS样式保持不变，直接从原代码复制 */
+        /* 原有样式保持不变，只添加新样式 */
         :root {
             --primary-color: #0088cc;
             --secondary-color: #2ca5e0;
@@ -23,8 +23,6 @@
             --group-color-4: #fff3e0;
             --group-color-5: #fce4ec;
             --group-color-6: #f3f3f3;
-            --promotion-color: #ff9800;
-            --image-color: #2196f3;
         }
         
         * {
@@ -1050,6 +1048,308 @@
             color: #666;
         }
         
+        /* 新增：发送格式选项样式 */
+        .send-format-options {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+        
+        .send-format-options h4 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .format-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .format-option {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .format-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .format-option.selected {
+            background-color: #e3f2fd;
+            border-color: var(--primary-color);
+        }
+        
+        .format-option i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .format-option h5 {
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+        
+        .format-option p {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .format-preview {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            font-family: monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 10px;
+            text-align: left;
+            white-space: pre-wrap;
+        }
+        
+        /* 新增：链接分类管理 */
+        .link-categories {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+        
+        .link-categories h4 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .category-tabs {
+            display: flex;
+            background-color: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            overflow: hidden;
+            margin-bottom: -1px;
+        }
+        
+        .category-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: var(--dark-color);
+            background-color: #f8f9fa;
+        }
+        
+        .category-tab:hover {
+            background-color: #e9ecef;
+        }
+        
+        .category-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background-color: white;
+        }
+        
+        .category-content {
+            display: none;
+            background-color: white;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        
+        .category-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .category-content .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .category-batch-input {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .category-batch-input textarea {
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        .category-batch-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .category-batch-actions .btn {
+            flex: 1;
+        }
+        
+        /* 新增：@人物话术选项 */
+        .mention-templates {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+        
+        .mention-templates h4 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .template-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .template-option {
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            text-align: left;
+        }
+        
+        .template-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .template-option.selected {
+            background-color: #e3f2fd;
+            border-color: var(--primary-color);
+        }
+        
+        .template-option h5 {
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+        
+        .template-option p {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .template-preview {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            font-family: monospace;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+        
+        /* 新增：手动批量添加样式 */
+        .manual-batch-add {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+        
+        .manual-batch-add h4 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .manual-batch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .manual-batch-section {
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+        
+        .manual-batch-section h5 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .manual-batch-section textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+        
+        .manual-batch-section .btn {
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        /* 新增：批量添加格式说明 */
+        .batch-add-instructions {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .batch-add-instructions h5 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .batch-add-instructions pre {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
+        /* 新增：批量添加操作按钮 */
+        .batch-add-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .batch-add-buttons .btn {
+            flex: 1;
+        }
+        
         /* 链接对管理样式 */
         .link-pairs-container {
             margin-top: 20px;
@@ -1642,6 +1942,7 @@
             display: inline-flex;
             align-items: center;
             gap: 3px;
+            margin-right: 5px;
         }
         
         .group-tag.color-2 {
@@ -2029,86 +2330,6 @@
             padding: 10px;
             background-color: white;
         }
-        
-        /* 新增：链接类型标识样式 */
-        .link-type-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        
-        .link-type-promotion {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-        
-        .link-type-image {
-            background-color: #cce5ff;
-            color: #004085;
-        }
-        
-        /* 新增：发送后清空选项样式 */
-        .send-clear-options {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin-top: 15px;
-        }
-        
-        .send-clear-options h5 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-        
-        .send-clear-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .send-clear-checkbox input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-        }
-        
-        /* 新增：@人物智能提示样式 */
-        .mention-intelligent-settings {
-            background-color: #fff3cd;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin-top: 15px;
-            border: 2px solid #ffeaa7;
-        }
-        
-        .mention-intelligent-settings h5 {
-            color: #856404;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .mention-intelligent-preview {
-            background-color: #f1f1f1;
-            padding: 10px;
-            border-radius: var(--border-radius);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        
-        .mention-intelligent-preview .promotion-mention {
-            color: var(--promotion-color);
-            font-weight: bold;
-        }
-        
-        .mention-intelligent-preview .image-mention {
-            color: var(--image-color);
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -2332,21 +2553,6 @@
                                             <label for="mentionMessage">@人物消息</label>
                                             <input type="text" id="mentionMessage" value="链接已更新，请相关人员查看">
                                             <small>@人物时发送的消息内容</small>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- 新增：@人物智能提示 -->
-                                    <div class="mention-intelligent-settings">
-                                        <h5><i class="fas fa-brain"></i> @人物智能提示功能</h5>
-                                        <div class="send-clear-checkbox">
-                                            <input type="checkbox" id="enableIntelligentMention" checked>
-                                            <label for="enableIntelligentMention">启用智能@人物提示</label>
-                                        </div>
-                                        <small>系统会根据发送的链接类型自动在@人物消息中添加提示：</small>
-                                        <div class="mention-intelligent-preview">
-                                            <p><span class="promotion-mention">推广链接提示：</span>"链接已更新，请相关人员注意该链接是（推广链接） @qiaozhi3456"</p>
-                                            <p><span class="image-mention">图片链接提示：</span>"链接已更新，请相关人员注意该链接是（图片链接） @qiaozhi3456"</p>
-                                            <p>普通链接提示："链接已更新，请相关人员查看 @qiaozhi3456"</p>
                                         </div>
                                     </div>
                                     
@@ -2591,178 +2797,258 @@ TXT格式示例：
                     <div class="card">
                         <h2><i class="fas fa-cogs"></i> 消息配置</h2>
                         
-                        <!-- 链接输入选项卡 -->
-                        <div class="link-tabs">
-                            <div class="link-tab active" data-tab="single">单个添加</div>
-                            <div class="link-tab" data-tab="batch">批量添加</div>
-                            <div class="link-tab" data-tab="manage-links">链接管理</div>
-                        </div>
-                        
-                        <!-- 单个添加 -->
-                        <div class="link-tab-content active" id="singleLinkTab">
-                            <div class="form-group">
-                                <label for="singleOldUrl"><i class="fas fa-link"></i> 旧链接</label>
-                                <input type="text" id="singleOldUrl" placeholder="例如: https://d0x6am7em5.effectsj.com/imp04/?cid=5100525">
-                            </div>
+                        <!-- 新增：发送格式选项 -->
+                        <div class="send-format-options">
+                            <h4><i class="fas fa-file-alt"></i> 发送格式选择</h4>
                             
-                            <div class="form-group">
-                                <label for="singleNewUrl"><i class="fas fa-link"></i> 新链接</label>
-                                <input type="text" id="singleNewUrl" placeholder="例如: https://izwq30lgis.comingf.com/imp04/?cid=5100525">
-                            </div>
-                            
-                            <div id="singleExtractResult" class="url-analysis" style="display: none;">
-                                <h4><i class="fas fa-check-circle"></i> 提取结果</h4>
-                                <div class="analysis-result">
-                                    <div class="analysis-item">
-                                        <label>提取的CID:</label>
-                                        <div class="analysis-value" id="singleExtractedCid"></div>
-                                    </div>
-                                    <div class="analysis-item">
-                                        <label>提取的尺寸:</label>
-                                        <div class="analysis-value" id="singleExtractedSize"></div>
-                                    </div>
-                                    <div class="analysis-item">
-                                        <label>链接类型:</label>
-                                        <div class="analysis-value" id="singleLinkType">
-                                            <span class="link-type-badge link-type-promotion" style="display: none;">推广链接</span>
-                                            <span class="link-type-badge link-type-image" style="display: none;">图片链接</span>
-                                            <span id="singleGeneralLink" style="display: none;">通用链接</span>
-                                        </div>
-                                    </div>
-                                    <div class="analysis-item">
-                                        <label>匹配状态:</label>
-                                        <div class="analysis-value" id="singleMatchStatus"></div>
-                                    </div>
-                                    <div class="analysis-item">
-                                        <label>匹配群组:</label>
-                                        <div class="analysis-value" id="singleMatchedGroups"></div>
-                                    </div>
+                            <div class="format-options-grid">
+                                <div class="format-option selected" data-format="simple">
+                                    <i class="fas fa-align-left"></i>
+                                    <h5>简单格式</h5>
+                                    <p>默认格式，单行显示</p>
+                                    <div class="format-preview">渠道名称
+旧 旧链接
+新 新链接</div>
+                                </div>
+                                <div class="format-option" data-format="separate">
+                                    <i class="fas fa-columns"></i>
+                                    <h5>推广/图片分开</h5>
+                                    <p>推广链接和图片链接分开显示</p>
+                                    <div class="format-preview">渠道名称
+推广链接 旧链接
+推广链接 新链接
+
+图片链接 旧链接
+图片链接 新链接</div>
+                                </div>
+                                <div class="format-option" data-format="compact">
+                                    <i class="fas fa-compress-alt"></i>
+                                    <h5>紧凑格式</h5>
+                                    <p>省略"旧"和"新"标签</p>
+                                    <div class="format-preview">渠道名称
+旧链接
+新链接</div>
+                                </div>
+                                <div class="format-option" data-format="custom">
+                                    <i class="fas fa-edit"></i>
+                                    <h5>自定义格式</h5>
+                                    <p>使用自定义模板</p>
+                                    <div class="format-preview">[名称]
+推广旧: [推广旧链接]
+推广新: [推广新链接]
+图片旧: [图片旧链接]
+图片新: [图片新链接]</div>
                                 </div>
                             </div>
                             
-                            <button class="btn btn-success btn-block" id="addSingleLink">
-                                <i class="fas fa-plus-circle"></i> 添加链接对
-                            </button>
+                            <!-- 自定义格式设置 -->
+                            <div id="customFormatSettings" class="form-group" style="display: none; margin-top: 15px;">
+                                <label for="customFormatTemplate">自定义格式模板</label>
+                                <textarea id="customFormatTemplate" placeholder="使用以下占位符：
+[名称] - 渠道名称
+[推广旧链接] - 推广旧链接
+[推广新链接] - 推广新链接
+[图片旧链接] - 图片旧链接
+[图片新链接] - 图片新链接
+
+例如：
+[名称]
+推广旧: [推广旧链接]
+推广新: [推广新链接]
+图片旧: [图片旧链接]
+图片新: [图片新链接]"></textarea>
+                                <small>可以使用HTML标签进行格式化</small>
+                            </div>
                         </div>
                         
-                        <!-- 批量添加 -->
-                        <div class="link-tab-content" id="batchLinkTab">
-                            <!-- 智能匹配选项 -->
-                            <div class="form-group">
-                                <label><i class="fas fa-magic"></i> 匹配模式</label>
-                                <div class="match-mode-options">
-                                    <div class="match-mode-option selected" data-mode="strict">
-                                        <input type="radio" name="batchMatchMode" value="strict" checked>
-                                        <label>严格匹配</label>
-                                        <small>按行顺序一一对应</small>
-                                    </div>
-                                    <div class="match-mode-option" data-mode="smart">
-                                        <input type="radio" name="batchMatchMode" value="smart">
-                                        <label>智能匹配</label>
-                                        <small>按CID/尺寸自动匹配</small>
-                                    </div>
-                                </div>
-                                <small>智能匹配：系统自动根据CID或尺寸参数匹配链接，无需顺序对应，数量可以不同</small>
+                        <!-- 新增：链接分类管理 -->
+                        <div class="link-categories">
+                            <h4><i class="fas fa-tags"></i> 链接分类管理</h4>
+                            
+                            <div class="category-tabs">
+                                <div class="category-tab active" data-category="promotion">推广链接</div>
+                                <div class="category-tab" data-category="image">图片链接</div>
+                                <div class="category-tab" data-category="video">视频链接</div>
+                                <div class="category-tab" data-category="other">其他链接</div>
                             </div>
                             
-                            <div class="form-group">
-                                <label><i class="fas fa-list"></i> 批量添加链接对</label>
-                                <div class="batch-add-links-form">
-                                    <div class="batch-input-split">
-                                        <div class="batch-input-side">
-                                            <label for="batchOldUrls"><i class="fas fa-link" style="color: var(--warning-color);"></i> 旧链接列表</label>
-                                            <textarea id="batchOldUrls" class="old-textarea" placeholder="每行一个旧链接，例如：
-https://7147niredb.effectsk.com/imp04/?cid=2860906
-https://aqx8htbibk.effectsj.com/imp04/?cid=6358945
-https://example1.com/100-100/image.gif
-https://example2.com/200-200/banner.jpg"></textarea>
-                                        </div>
-                                        <div class="batch-input-side">
-                                            <label for="batchNewUrls"><i class="fas fa-link" style="color: var(--success-color);"></i> 新链接列表</label>
-                                            <textarea id="batchNewUrls" class="new-textarea" placeholder="每行一个新链接，例如：
-https://4ipt8ik9v4.yearsc.com/imp04/?cid=2860906
-https://fmt1uehxl5.effectsj.com/imp04/?cid=6358945
-https://newexample1.com/100-100/image.gif
-https://newexample2.com/200-200/banner.jpg"></textarea>
-                                        </div>
+                            <!-- 推广链接分类 -->
+                            <div class="category-content active" id="promotionCategory">
+                                <div class="link-tabs">
+                                    <div class="link-tab active" data-tab="single-promotion">单个添加</div>
+                                    <div class="link-tab" data-tab="batch-promotion">批量添加</div>
+                                </div>
+                                
+                                <!-- 单个添加推广链接 -->
+                                <div class="link-tab-content active" id="singlePromotionTab">
+                                    <div class="form-group">
+                                        <label for="promotionOldUrl"><i class="fas fa-link"></i> 推广旧链接</label>
+                                        <input type="text" id="promotionOldUrl" placeholder="例如: https://d0x6am7em5.effectsj.com/imp04/?cid=5100525">
                                     </div>
                                     
-                                    <div class="batch-add-format">
-                                        <strong>格式说明：</strong>
-                                        <p><strong>智能匹配模式：</strong>系统自动根据CID或尺寸参数匹配链接，无需顺序对应，左右链接数量可以不同</p>
-                                        <p><strong>严格匹配模式：</strong>左右两边链接数量必须相同，按行顺序一一对应</p>
-                                        <p><strong>示例：</strong></p>
-                                        <pre>左: https://7147niredb.effectsk.com/imp04/?cid=2860906
-右: https://4ipt8ik9v4.yearsc.com/imp04/?cid=2860906
-
-左: https://example.com/100-100/image.gif
-右: https://newexample.com/100-100/image.gif</pre>
+                                    <div class="form-group">
+                                        <label for="promotionNewUrl"><i class="fas fa-link"></i> 推广新链接</label>
+                                        <input type="text" id="promotionNewUrl" placeholder="例如: https://izwq30lgis.comingf.com/imp04/?cid=5100525">
                                     </div>
-                                </div>
-                            </div>
-                            
-                            <div id="batchExtractResult" class="url-analysis" style="display: none;">
-                                <h4><i class="fas fa-check-circle"></i> 批量提取结果</h4>
-                                <div class="analysis-result">
-                                    <div class="analysis-item">
-                                        <label>提取的CID:</label>
-                                        <div class="analysis-value" id="batchExtractedCids"></div>
-                                    </div>
-                                    <div class="analysis-item">
-                                        <label>提取的尺寸:</label>
-                                        <div class="analysis-value" id="batchExtractedSizes"></div>
-                                    </div>
-                                    <div class="analysis-item">
-                                        <label>链接类型统计:</label>
-                                        <div class="analysis-value">
-                                            <span id="batchPromotionCount" class="link-type-badge link-type-promotion">推广链接: 0</span>
-                                            <span id="batchImageCount" class="link-type-badge link-type-image">图片链接: 0</span>
-                                            <span id="batchGeneralCount" class="link-type-badge" style="background-color: #d4edda; color: #155724;">通用链接: 0</span>
-                                        </div>
-                                    </div>
-                                    <div class="analysis-item">
-                                        <label>成功匹配:</label>
-                                        <div class="analysis-value" id="batchSuccessCount"></div>
-                                    </div>
-                                    <div class="analysis-item">
-                                        <label>未匹配链接:</label>
-                                        <div class="analysis-value" id="batchUnmatchedCount"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <button class="btn btn-success btn-block" id="addBatchLinks">
-                                <i class="fas fa-plus-circle"></i> 批量添加链接对
-                            </button>
-                        </div>
-                        
-                        <!-- 链接管理 -->
-                        <div class="link-tab-content" id="manageLinksTab">
-                            <div class="link-pairs-section">
-                                <div class="link-pairs-header">
-                                    <h4><i class="fas fa-exchange-alt"></i> 当前链接对</h4>
-                                    <button class="btn btn-danger btn-sm" id="clearAllLinks">
-                                        <i class="fas fa-trash"></i> 清空所有
+                                    
+                                    <button class="btn btn-success btn-block" id="addPromotionLink">
+                                        <i class="fas fa-plus-circle"></i> 添加推广链接对
                                     </button>
                                 </div>
                                 
-                                <div class="link-pairs-list" id="currentLinksList">
-                                    <!-- 链接对列表将通过JavaScript动态生成 -->
+                                <!-- 批量添加推广链接 -->
+                                <div class="link-tab-content" id="batchPromotionTab">
+                                    <div class="form-group">
+                                        <label><i class="fas fa-list"></i> 批量添加推广链接对</label>
+                                        <div class="batch-add-links-form">
+                                            <div class="batch-input-split">
+                                                <div class="batch-input-side">
+                                                    <label for="batchPromotionOldUrls">推广旧链接列表</label>
+                                                    <textarea id="batchPromotionOldUrls" class="old-textarea" placeholder="每行一个推广旧链接"></textarea>
+                                                </div>
+                                                <div class="batch-input-side">
+                                                    <label for="batchPromotionNewUrls">推广新链接列表</label>
+                                                    <textarea id="batchPromotionNewUrls" class="new-textarea" placeholder="每行一个推广新链接"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="btn btn-success btn-block" id="addBatchPromotionLinks">
+                                        <i class="fas fa-plus-circle"></i> 批量添加推广链接对
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 图片链接分类 -->
+                            <div class="category-content" id="imageCategory">
+                                <div class="link-tabs">
+                                    <div class="link-tab active" data-tab="single-image">单个添加</div>
+                                    <div class="link-tab" data-tab="batch-image">批量添加</div>
                                 </div>
                                 
-                                <div class="links-stats">
-                                    <div class="links-stat total">
-                                        <h4 id="totalLinksCount">0</h4>
-                                        <p>总链接对</p>
+                                <!-- 单个添加图片链接 -->
+                                <div class="link-tab-content active" id="singleImageTab">
+                                    <div class="form-group">
+                                        <label for="imageOldUrl"><i class="fas fa-link"></i> 图片旧链接</label>
+                                        <input type="text" id="imageOldUrl" placeholder="例如: https://example.com/100-100/image.gif">
                                     </div>
-                                    <div class="links-stat matched">
-                                        <h4 id="matchedLinksCount">0</h4>
-                                        <p>可匹配</p>
+                                    
+                                    <div class="form-group">
+                                        <label for="imageNewUrl"><i class="fas fa-link"></i> 图片新链接</label>
+                                        <input type="text" id="imageNewUrl" placeholder="例如: https://newexample.com/100-100/image.gif">
                                     </div>
-                                    <div class="links-stat unmatched">
-                                        <h4 id="unmatchedLinksCount">0</h4>
-                                        <p>无匹配</p>
+                                    
+                                    <button class="btn btn-success btn-block" id="addImageLink">
+                                        <i class="fas fa-plus-circle"></i> 添加图片链接对
+                                    </button>
+                                </div>
+                                
+                                <!-- 批量添加图片链接 -->
+                                <div class="link-tab-content" id="batchImageTab">
+                                    <div class="form-group">
+                                        <label><i class="fas fa-list"></i> 批量添加图片链接对</label>
+                                        <div class="batch-add-links-form">
+                                            <div class="batch-input-split">
+                                                <div class="batch-input-side">
+                                                    <label for="batchImageOldUrls">图片旧链接列表</label>
+                                                    <textarea id="batchImageOldUrls" class="old-textarea" placeholder="每行一个图片旧链接"></textarea>
+                                                </div>
+                                                <div class="batch-input-side">
+                                                    <label for="batchImageNewUrls">图片新链接列表</label>
+                                                    <textarea id="batchImageNewUrls" class="new-textarea" placeholder="每行一个图片新链接"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+                                    
+                                    <button class="btn btn-success btn-block" id="addBatchImageLinks">
+                                        <i class="fas fa-plus-circle"></i> 批量添加图片链接对
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 视频链接分类 -->
+                            <div class="category-content" id="videoCategory">
+                                <div class="form-group">
+                                    <label for="videoOldUrl"><i class="fas fa-link"></i> 视频旧链接</label>
+                                    <input type="text" id="videoOldUrl" placeholder="例如: https://example.com/video.mp4">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="videoNewUrl"><i class="fas fa-link"></i> 视频新链接</label>
+                                    <input type="text" id="videoNewUrl" placeholder="例如: https://newexample.com/video.mp4">
+                                </div>
+                                
+                                <button class="btn btn-success btn-block" id="addVideoLink">
+                                    <i class="fas fa-plus-circle"></i> 添加视频链接对
+                                </button>
+                            </div>
+                            
+                            <!-- 其他链接分类 -->
+                            <div class="category-content" id="otherCategory">
+                                <div class="form-group">
+                                    <label for="otherOldUrl"><i class="fas fa-link"></i> 其他旧链接</label>
+                                    <input type="text" id="otherOldUrl" placeholder="例如: https://example.com/other">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="otherNewUrl"><i class="fas fa-link"></i> 其他新链接</label>
+                                    <input type="text" id="otherNewUrl" placeholder="例如: https://newexample.com/other">
+                                </div>
+                                
+                                <button class="btn btn-success btn-block" id="addOtherLink">
+                                    <i class="fas fa-plus-circle"></i> 添加其他链接对
+                                </button>
+                            </div>
+                            
+                            <!-- 新增：手动批量添加区域 -->
+                            <div class="manual-batch-add">
+                                <h4><i class="fas fa-hand-paper"></i> 手动批量添加</h4>
+                                
+                                <div class="batch-add-instructions">
+                                    <h5>使用说明：</h5>
+                                    <p>可以在以下区域直接粘贴大量链接对，支持多种格式：</p>
+                                    <pre>格式1（自动识别）：
+旧链接1
+新链接1
+旧链接2
+新链接2
+
+格式2（竖线分隔）：
+旧链接1|新链接1
+旧链接2|新链接2
+
+格式3（逗号分隔）：
+旧链接1,新链接1
+旧链接2,新链接2</pre>
+                                </div>
+                                
+                                <div class="manual-batch-grid">
+                                    <div class="manual-batch-section">
+                                        <h5><i class="fas fa-bullhorn"></i> 推广链接批量添加</h5>
+                                        <textarea id="manualBatchPromotion" placeholder="粘贴推广链接对，支持多种格式"></textarea>
+                                        <button class="btn btn-success" id="processManualBatchPromotion">
+                                            <i class="fas fa-magic"></i> 处理推广链接
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="manual-batch-section">
+                                        <h5><i class="fas fa-image"></i> 图片链接批量添加</h5>
+                                        <textarea id="manualBatchImage" placeholder="粘贴图片链接对，支持多种格式"></textarea>
+                                        <button class="btn btn-success" id="processManualBatchImage">
+                                            <i class="fas fa-magic"></i> 处理图片链接
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="batch-add-buttons">
+                                    <button class="btn btn-warning" id="processAllManualBatch">
+                                        <i class="fas fa-cogs"></i> 处理所有批量链接
+                                    </button>
+                                    <button class="btn" id="clearManualBatch">
+                                        <i class="fas fa-trash"></i> 清空所有
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -2776,19 +3062,47 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             <small>最终发送的消息将以此格式显示，基于群组CID或图片尺寸匹配的链接对</small>
                         </div>
                         
-                        <!-- 发送后清空选项 -->
-                        <div class="send-clear-options">
-                            <h5><i class="fas fa-trash-alt"></i> 发送后数据清理设置</h5>
-                            <div class="send-clear-checkbox">
-                                <input type="checkbox" id="clearAfterSend" checked>
-                                <label for="clearAfterSend">发送完成后自动清空所有链接数据</label>
+                        <!-- 新增：@人物话术选项 -->
+                        <div class="mention-templates">
+                            <h4><i class="fas fa-comments"></i> @人物话术选择</h4>
+                            
+                            <div class="template-options">
+                                <div class="template-option selected" data-template="default">
+                                    <h5>默认话术</h5>
+                                    <p>链接已更新，请相关人员查看</p>
+                                </div>
+                                <div class="template-option" data-template="urgent">
+                                    <h5>紧急通知</h5>
+                                    <p>重要！链接已更新，请立即查看</p>
+                                </div>
+                                <div class="template-option" data-template="friendly">
+                                    <h5>友好提醒</h5>
+                                    <p>温馨提示：链接已更新，记得查看哦~</p>
+                                </div>
+                                <div class="template-option" data-template="professional">
+                                    <h5>专业通知</h5>
+                                    <p>通知：推广链接已更新，请相关运营人员及时处理</p>
+                                </div>
+                                <div class="template-option" data-template="simple">
+                                    <h5>简洁版</h5>
+                                    <p>链接已更新</p>
+                                </div>
+                                <div class="template-option" data-template="custom">
+                                    <h5>自定义话术</h5>
+                                    <p>点击右侧编辑按钮自定义</p>
+                                </div>
                             </div>
-                            <small>启用后，每次批量发送完成后将自动清空所有链接对数据，无需手动清理</small>
-                            <div class="send-clear-checkbox">
-                                <input type="checkbox" id="clearLinksOnly">
-                                <label for="clearLinksOnly">仅清空链接数据（保留群组数据）</label>
+                            
+                            <!-- 自定义话术编辑 -->
+                            <div id="customTemplateEditor" class="form-group" style="display: none; margin-top: 15px;">
+                                <label for="customMentionTemplate">自定义@人物话术</label>
+                                <textarea id="customMentionTemplate" placeholder="输入自定义@人物话术，可以使用[名称]占位符"></textarea>
+                                <small>可以使用[名称]占位符，发送时会替换为渠道名称</small>
                             </div>
-                            <small>仅清空链接对，保留所有群组绑定信息</small>
+                            
+                            <div class="template-preview" id="templatePreview">
+                                <!-- 模板预览将通过JavaScript动态生成 -->
+                            </div>
                         </div>
                         
                         <!-- 批量发送选项 -->
@@ -2821,7 +3135,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                                 </div>
                             </div>
                             
-                            <!-- 新增：二次@发送选项 -->
+                            <!-- 二次@发送选项 -->
                             <div class="form-group" style="margin-top: 15px;">
                                 <label for="sendSecondaryMention"><i class="fas fa-at"></i> 发送后二次@人物</label>
                                 <select id="sendSecondaryMention">
@@ -2884,22 +3198,15 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             <h4>发送格式说明：</h4>
                             <p>消息将按照以下格式发送：</p>
                             <pre>渠道名称
-<span class="link-type-promotion">推广链接</span>旧 旧链接
-<span class="link-type-promotion">推广链接</span>新 新链接
-
-<span class="link-type-image">图片链接</span>旧 旧链接
-<span class="link-type-image">图片链接</span>新 新链接</pre>
-                            <p><strong>智能链接分类：</strong></p>
+旧 旧链接
+新 新链接</pre>
+                            <p><strong>二次@人物：</strong>发送链接消息后，等待指定秒数再发送@人物消息</p>
+                            <p><strong>匹配逻辑：</strong></p>
                             <ul>
-                                <li>包含 <code>?cid=</code> 参数的链接会被标记为<span class="link-type-promotion" style="display: inline-block; padding: 1px 6px; border-radius: 4px;">推广链接</span></li>
-                                <li>包含尺寸路径如 <code>/100-100/</code>、<code>/750-1685/</code> 的链接会被标记为<span class="link-type-image" style="display: inline-block; padding: 1px 6px; border-radius: 4px;">图片链接</span></li>
-                                <li>其他链接不添加特殊标记</li>
-                            </ul>
-                            <p><strong>二次@人物智能提示：</strong></p>
-                            <ul>
-                                <li>如果发送的是推广链接：<code>"链接已更新，请相关人员注意该链接是（推广链接） @qiaozhi3456"</code></li>
-                                <li>如果发送的是图片链接：<code>"链接已更新，请相关人员注意该链接是（图片链接） @qiaozhi3456"</code></li>
-                                <li>如果发送的是混合链接或通用链接：<code>"链接已更新，请相关人员查看 @qiaozhi3456"</code></li>
+                                <li>如果链接包含CID参数，优先按CID匹配群组</li>
+                                <li>如果链接不包含CID，但包含尺寸（如/100-100/），按图片尺寸匹配群组</li>
+                                <li>如果群组有多个CID或尺寸，只要链接匹配其中任意一个就会发送</li>
+                                <li>如果既无CID也无尺寸，将发送到所有群组</li>
                             </ul>
                         </div>
                     </div>
@@ -3125,15 +3432,6 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                                 </div>
                             </div>
                             
-                            <div class="form-group">
-                                <label><i class="fas fa-info-circle"></i> 链接类型预览</label>
-                                <div id="linkTypePreview" class="url-preview">
-                                    <span id="linkTypeText">未检测到链接类型</span>
-                                    <span id="promotionTypeBadge" class="link-type-badge link-type-promotion" style="display: none;">推广链接</span>
-                                    <span id="imageTypeBadge" class="link-type-badge link-type-image" style="display: none;">图片链接</span>
-                                </div>
-                            </div>
-                            
                             <button class="btn btn-success" id="addLinkPair">
                                 <i class="fas fa-save"></i> 添加链接对
                             </button>
@@ -3202,14 +3500,14 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             <p>系统会查找所有CID为2860906或5100525或尺寸包含100-100或200-200的链接对</p>
                             <p>将生成的消息格式：</p>
                             <pre>握草
-<span class="link-type-promotion">推广链接</span>旧 https://7147niredb.effectsk.com/imp04/?cid=2860906
-<span class="link-type-promotion">推广链接</span>新 https://4ipt8ik9v4.yearsc.com/imp04/?cid=2860906
+旧 https://7147niredb.effectsk.com/imp04/?cid=2860906
+新 https://4ipt8ik9v4.yearsc.com/imp04/?cid=2860906
 
-<span class="link-type-image">图片链接</span>旧 https://example.com/100-100/image.gif
-<span class="link-type-image">图片链接</span>新 https://newexample.com/100-100/image.gif
+旧 https://example.com/100-100/image.gif
+新 https://newexample.com/100-100/image.gif
 
-<span class="link-type-image">图片链接</span>旧 https://example.com/200-200/banner.jpg
-<span class="link-type-image">图片链接</span>新 https://newexample.com/200-200/banner.jpg</pre>
+旧 https://example.com/200-200/banner.jpg
+新 https://newexample.com/200-200/banner.jpg</pre>
                         </div>
                     </div>
                 </div>
@@ -3304,47 +3602,306 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
     </div>
 
     <script>
+        // Telegram Bot API 封装类
+        class TelegramBotAPI {
+            constructor(botToken) {
+                this.botToken = botToken;
+                this.apiBaseUrl = 'https://api.telegram.org/bot';
+            }
+            
+            async request(method, params = {}) {
+                const url = `${this.apiBaseUrl}${this.botToken}/${method}`;
+                
+                try {
+                    const formData = new FormData();
+                    Object.keys(params).forEach(key => {
+                        formData.append(key, params[key]);
+                    });
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.ok) {
+                        return data.result;
+                    } else {
+                        throw new Error(data.description || 'Telegram API错误');
+                    }
+                } catch (error) {
+                    console.error('Telegram API请求失败:', error);
+                    throw error;
+                }
+            }
+            
+            async getMe() {
+                return await this.request('getMe');
+            }
+            
+            async sendMessage(chatId, text, options = {}) {
+                const params = {
+                    chat_id: chatId,
+                    text: text,
+                    parse_mode: 'HTML',
+                    ...options
+                };
+                
+                return await this.request('sendMessage', params);
+            }
+            
+            async getUpdates(offset = 0, limit = 100) {
+                return await this.request('getUpdates', {
+                    offset: offset,
+                    limit: limit,
+                    timeout: 30
+                });
+            }
+            
+            async getChat(chatId) {
+                return await this.request('getChat', {
+                    chat_id: chatId
+                });
+            }
+            
+            async getChatMembersCount(chatId) {
+                return await this.request('getChatMembersCount', {
+                    chat_id: chatId
+                });
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化变量
             let groups = [];
             let linkPairs = [];
+            let currentManagePage = 1;
+            let currentSendPage = 1;
+            const groupsPerPage = 15;
             let isSending = false;
             let stopSending = false;
             let currentBindMethod = 'single';
             let currentSendMethod = 'selected';
             let telegramBot = null;
-            let selectedSizes = [];
-            let selectedMentions = [];
-            let selectedCids = [];
-            let selectedGroupTags = [];
-            let availableGroupTags = ['group1', 'group2', 'group3', 'group4', 'group5', 'group6'];
-            let currentExportFormat = 'json';
-            let enableIntelligentMention = true;
+            let selectedSizes = []; // 存储当前选中的尺寸
+            let selectedMentions = []; // 存储当前选中的@人物
+            let selectedCids = []; // 存储当前选中的CID
+            let selectedGroupTags = []; // 存储当前选中的分组标签
+            let availableGroupTags = ['group1', 'group2', 'group3', 'group4', 'group5', 'group6']; // 可用分组标签
+            let currentExportFormat = 'json'; // 当前导出格式
+            let currentSendFormat = 'simple'; // 当前发送格式
+            let currentCategory = 'promotion'; // 当前链接分类
+            let currentMentionTemplate = 'default'; // 当前@人物话术
             
-            // DOM元素引用
+            // 新增：链接分类存储
+            let promotionLinks = []; // 推广链接
+            let imageLinks = []; // 图片链接
+            let videoLinks = []; // 视频链接
+            let otherLinks = []; // 其他链接
+            
+            // @人物话术模板
+            const mentionTemplates = {
+                default: '链接已更新，请相关人员查看',
+                urgent: '重要！链接已更新，请立即查看',
+                friendly: '温馨提示：链接已更新，记得查看哦~',
+                professional: '通知：推广链接已更新，请相关运营人员及时处理',
+                simple: '链接已更新',
+                custom: '链接已更新，请相关人员查看'
+            };
+            
+            // DOM元素
+            const bindTabBadge = document.getElementById('bindTabBadge');
+            const sendTabBadge = document.getElementById('sendTabBadge');
+            const manageTabBadge = document.getElementById('manageTabBadge');
+            const linksTabBadge = document.getElementById('linksTabBadge');
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');
+            const botTokenInput = document.getElementById('botToken');
+            const messagePreview = document.getElementById('messagePreview');
+            const sendSelectedCount = document.getElementById('sendSelectedCount');
+            const sendSearchInput = document.getElementById('sendSearch');
+            const sendGroupsList = document.getElementById('sendGroupsList');
+            const sendPagination = document.getElementById('sendPagination');
+            const manageSearchInput = document.getElementById('manageSearch');
+            const manageGroupsList = document.getElementById('manageGroupsList');
+            const managePagination = document.getElementById('managePagination');
+            const totalGroupsCount = document.getElementById('totalGroupsCount');
+            const storageTotal = document.getElementById('storageTotal');
+            const storageBound = document.getElementById('storageBound');
+            const storageUnbound = document.getElementById('storageUnbound');
+            const storageSize = document.getElementById('storageSize');
+            const storageGroups = document.getElementById('storageGroups');
             const notification = document.getElementById('notification');
             const notificationClose = notification.querySelector('.notification-close');
-            const botTokenInput = document.getElementById('botToken');
-            const verifyBotBtn = document.getElementById('verifyBot');
-            const addSingleGroupBtn = document.getElementById('addSingleGroup');
-            const testBindBtn = document.getElementById('testBind');
+            const bindOptions = document.querySelectorAll('.bind-option');
+            const bindMethodContents = document.querySelectorAll('.bind-method-content');
+            const bindMethodSelect = document.getElementById('bindMethod');
+            const sendMethodOptions = document.querySelectorAll('.send-method-option');
+            
+            // 新增：发送格式选项DOM元素
+            const formatOptions = document.querySelectorAll('.format-option');
+            const customFormatSettings = document.getElementById('customFormatSettings');
+            const customFormatTemplate = document.getElementById('customFormatTemplate');
+            
+            // 新增：链接分类DOM元素
+            const categoryTabs = document.querySelectorAll('.category-tab');
+            const categoryContents = document.querySelectorAll('.category-content');
+            const promotionOldUrlInput = document.getElementById('promotionOldUrl');
+            const promotionNewUrlInput = document.getElementById('promotionNewUrl');
+            const addPromotionLinkBtn = document.getElementById('addPromotionLink');
+            const batchPromotionOldUrlsInput = document.getElementById('batchPromotionOldUrls');
+            const batchPromotionNewUrlsInput = document.getElementById('batchPromotionNewUrls');
+            const addBatchPromotionLinksBtn = document.getElementById('addBatchPromotionLinks');
+            
+            const imageOldUrlInput = document.getElementById('imageOldUrl');
+            const imageNewUrlInput = document.getElementById('imageNewUrl');
+            const addImageLinkBtn = document.getElementById('addImageLink');
+            const batchImageOldUrlsInput = document.getElementById('batchImageOldUrls');
+            const batchImageNewUrlsInput = document.getElementById('batchImageNewUrls');
+            const addBatchImageLinksBtn = document.getElementById('addBatchImageLinks');
+            
+            const videoOldUrlInput = document.getElementById('videoOldUrl');
+            const videoNewUrlInput = document.getElementById('videoNewUrl');
+            const addVideoLinkBtn = document.getElementById('addVideoLink');
+            
+            const otherOldUrlInput = document.getElementById('otherOldUrl');
+            const otherNewUrlInput = document.getElementById('otherNewUrl');
+            const addOtherLinkBtn = document.getElementById('addOtherLink');
+            
+            // 新增：手动批量添加DOM元素
+            const manualBatchPromotionInput = document.getElementById('manualBatchPromotion');
+            const manualBatchImageInput = document.getElementById('manualBatchImage');
+            const processManualBatchPromotionBtn = document.getElementById('processManualBatchPromotion');
+            const processManualBatchImageBtn = document.getElementById('processManualBatchImage');
+            const processAllManualBatchBtn = document.getElementById('processAllManualBatch');
+            const clearManualBatchBtn = document.getElementById('clearManualBatch');
+            
+            // 新增：@人物话术DOM元素
+            const templateOptions = document.querySelectorAll('.template-option');
+            const customTemplateEditor = document.getElementById('customTemplateEditor');
+            const customMentionTemplate = document.getElementById('customMentionTemplate');
+            const templatePreview = document.getElementById('templatePreview');
+            
+            // 分组相关DOM元素
+            const groupTagSelect = document.getElementById('groupTagSelect');
+            const addGroupTagBtn = document.getElementById('addGroupTagBtn');
+            const groupTagsContainer = document.getElementById('groupTags');
+            const groupTagQuickButtons = document.querySelectorAll('.group-tag-quick-btn');
+            const exportFilter = document.getElementById('exportFilter');
+            const exportGroupOptions = document.getElementById('exportGroupOptions');
+            const exportGroupTagList = document.getElementById('exportGroupTagList');
+            const exportFormatOptions = document.querySelectorAll('.export-format-option');
+            const exportBindingsBtn = document.getElementById('exportBindings');
+            const exportPreview = document.getElementById('exportPreview');
+            
+            // 批量分组相关DOM元素
+            const batchGroupingOptions = document.querySelectorAll('.batch-grouping-option');
+            const groupingActionPanel = document.getElementById('groupingActionPanel');
+            const assignTagPanel = document.getElementById('assignTagPanel');
+            const removeTagPanel = document.getElementById('removeTagPanel');
+            const clearTagsPanel = document.getElementById('clearTagsPanel');
+            const tagToAssign = document.getElementById('tagToAssign');
+            const tagToRemove = document.getElementById('tagToRemove');
+            const applyAssignTagBtn = document.getElementById('applyAssignTag');
+            const applyRemoveTagBtn = document.getElementById('applyRemoveTag');
+            const applyClearTagsBtn = document.getElementById('applyClearTags');
+            
+            // 发送分组相关DOM元素
+            const sendGroupOptions = document.getElementById('sendGroupOptions');
+            const sendGroupTagList = document.getElementById('sendGroupTagList');
+            
+            // 批量添加导出格式相关元素
+            const batchExportFormatInput = document.getElementById('batchExportFormatInput');
+            const addBatchExportFormatBtn = document.getElementById('addBatchExportFormat');
+            const clearBatchExportInputBtn = document.getElementById('clearBatchExportInput');
+            
+            // @人物相关DOM元素
+            const mentionUsersInput = document.getElementById('mentionUsers');
+            const mentionTagsContainer = document.getElementById('mentionTags');
+            const addMentionBtn = document.getElementById('addMentionBtn');
+            const mentionDelayInput = document.getElementById('mentionDelay');
+            const mentionMessageInput = document.getElementById('mentionMessage');
+            const mentionMessagePreview = document.getElementById('mentionMessagePreview');
+            const sendSecondaryMentionSelect = document.getElementById('sendSecondaryMention');
+            
+            // 链接管理相关DOM元素
+            const singleOldUrlInput = document.getElementById('singleOldUrl');
+            const singleNewUrlInput = document.getElementById('singleNewUrl');
+            const singleExtractResult = document.getElementById('singleExtractResult');
+            const singleExtractedCid = document.getElementById('singleExtractedCid');
+            const singleExtractedSize = document.getElementById('singleExtractedSize');
+            const singleMatchStatus = document.getElementById('singleMatchStatus');
+            const singleMatchedGroups = document.getElementById('singleMatchedGroups');
             const addSingleLinkBtn = document.getElementById('addSingleLink');
-            const sendBatchBtn = document.getElementById('sendBatchBtn');
+            
+            const batchOldUrlsInput = document.getElementById('batchOldUrls');
+            const batchNewUrlsInput = document.getElementById('batchNewUrls');
+            const batchExtractResult = document.getElementById('batchExtractResult');
+            const batchExtractedCids = document.getElementById('batchExtractedCids');
+            const batchExtractedSizes = document.getElementById('batchExtractedSizes');
+            const batchSuccessCount = document.getElementById('batchSuccessCount');
+            const batchUnmatchedCount = document.getElementById('batchUnmatchedCount');
+            const addBatchLinksBtn = document.getElementById('addBatchLinks');
+            
+            const currentLinksList = document.getElementById('currentLinksList');
             const clearAllLinksBtn = document.getElementById('clearAllLinks');
+            const totalLinksCount = document.getElementById('totalLinksCount');
+            const matchedLinksCount = document.getElementById('matchedLinksCount');
+            const unmatchedLinksCount = document.getElementById('unmatchedLinksCount');
+            
+            const linkTabs = document.querySelectorAll('.link-tab');
+            const linkTabContents = document.querySelectorAll('.link-tab-content');
+            
+            // 尺寸管理相关DOM元素
+            const imageSizeInput = document.getElementById('imageSize');
+            const sizeTagsContainer = document.getElementById('sizeTags');
+            const addSizeBtn = document.getElementById('addSizeBtn');
+            const sizeQuickButtons = document.querySelectorAll('.size-quick-btn');
+            
+            // CID管理相关DOM元素
+            const groupCidsInput = document.getElementById('groupCids');
+            const cidTagsContainer = document.getElementById('cidTags');
+            const addCidBtn = document.getElementById('addCidBtn');
+            const cidQuickButtons = document.querySelectorAll('.cid-quick-btn');
+            
+            // 链接管理页面元素
+            const linkCidInput = document.getElementById('linkCid');
+            const linkSizeInput = document.getElementById('linkSize');
+            const linkOldUrlInput = document.getElementById('linkOldUrl');
+            const linkNewUrlInput = document.getElementById('linkNewUrl');
             const addLinkPairBtn = document.getElementById('addLinkPair');
-            const clearStorageBtn = document.getElementById('clearStorage');
-            const resetStorageBtn = document.getElementById('resetStorage');
-            const importDataBtn = document.getElementById('importData');
-            const selectImportFileBtn = document.getElementById('selectImportFile');
-            const importFileInput = document.getElementById('importFile');
+            const batchLinksInput = document.getElementById('batchLinksInput');
+            const addBatchLinks2Btn = document.getElementById('addBatchLinks2');
+            
+            const linkPairsList = document.getElementById('linkPairsList');
+            const linkPairsCount = document.getElementById('linkPairsCount');
+            const previewGroupSelect = document.getElementById('previewGroupSelect');
+            const linkMatchPreview = document.getElementById('linkMatchPreview');
+            const linkMatchRate = document.getElementById('linkMatchRate');
+            const matchedGroups = document.getElementById('matchedGroups');
+            const totalGroups = document.getElementById('totalGroups');
+            
+            // 批量绑定相关元素
+            const batchGroupInput = document.getElementById('batchGroupInput');
+            const batchErrorList = document.getElementById('batchErrorList');
+            const addBatchGroupsBtn = document.getElementById('addBatchGroups');
+            
+            // 智能匹配选项
+            const matchModeOptions = document.querySelectorAll('.match-mode-option');
             
             // 数据存储键名
             const STORAGE_KEYS = {
                 GROUPS: 'telegram_groups_data',
                 LINK_PAIRS: 'telegram_link_pairs',
-                BOT_TOKEN: 'telegram_bot_token'
+                BOT_TOKEN: 'telegram_bot_token',
+                CONFIG: 'telegram_system_config',
+                GROUP_TAGS: 'telegram_group_tags',
+                PROMOTION_LINKS: 'telegram_promotion_links',
+                IMAGE_LINKS: 'telegram_image_links',
+                VIDEO_LINKS: 'telegram_video_links',
+                OTHER_LINKS: 'telegram_other_links',
+                MENTION_TEMPLATES: 'telegram_mention_templates'
             };
             
             // 显示通知
@@ -3389,221 +3946,1190 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             content.classList.add('active');
                         }
                     });
+                    
+                    if (tabId === 'manage') {
+                        renderManageGroupsByTag();
+                        updateGroupTagsStats();
+                    } else if (tabId === 'send') {
+                        renderSendGroupsByTag();
+                        updateMessagePreview();
+                        updateSendGroupOptions();
+                        updateTemplatePreview();
+                    } else if (tabId === 'bind') {
+                        updateBindStats();
+                        renderBindHistory();
+                        updateExportGroupOptions();
+                    } else if (tabId === 'links') {
+                        renderLinkPairs();
+                        updateLinkMatchStats();
+                        renderGroupSelectOptions();
+                    }
                 });
             });
             
-            // 验证机器人
-            verifyBotBtn.addEventListener('click', async function() {
-                const token = botTokenInput.value.trim();
-                if (!token) {
-                    showNotification('请输入Token', '请先输入Telegram Bot Token', 'error');
-                    return;
-                }
+            // 链接选项卡切换
+            linkTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    linkTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    linkTabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabId}LinkTab`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // 绑定方式选择
+            bindOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const method = this.getAttribute('data-method');
+                    
+                    bindOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    bindMethodContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${method}Bind`) {
+                            content.classList.add('active');
+                        }
+                    });
+                    
+                    currentBindMethod = method;
+                });
+            });
+            
+            // 发送方式选择
+            sendMethodOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const method = this.getAttribute('data-method');
+                    
+                    sendMethodOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    currentSendMethod = method;
+                    
+                    // 显示/隐藏分组选项
+                    if (method === 'by-group') {
+                        sendGroupOptions.style.display = 'block';
+                    } else {
+                        sendGroupOptions.style.display = 'none';
+                    }
+                    
+                    if (method === 'all') {
+                        groups.forEach(group => {
+                            group.selected = group.bound;
+                        });
+                        saveToStorage();
+                        renderSendGroupsByTag();
+                        updateBadges();
+                    }
+                });
+            });
+            
+            // 发送格式选择
+            formatOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const format = this.getAttribute('data-format');
+                    
+                    formatOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    currentSendFormat = format;
+                    
+                    // 显示/隐藏自定义格式设置
+                    if (format === 'custom') {
+                        customFormatSettings.style.display = 'block';
+                    } else {
+                        customFormatSettings.style.display = 'none';
+                    }
+                    
+                    updateMessagePreview();
+                });
+            });
+            
+            // 链接分类切换
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const category = this.getAttribute('data-category');
+                    
+                    categoryTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    categoryContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${category}Category`) {
+                            content.classList.add('active');
+                        }
+                    });
+                    
+                    currentCategory = category;
+                });
+            });
+            
+            // @人物话术选择
+            templateOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const template = this.getAttribute('data-template');
+                    
+                    templateOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    currentMentionTemplate = template;
+                    
+                    // 显示/隐藏自定义话术编辑器
+                    if (template === 'custom') {
+                        customTemplateEditor.style.display = 'block';
+                    } else {
+                        customTemplateEditor.style.display = 'none';
+                    }
+                    
+                    updateTemplatePreview();
+                });
+            });
+            
+            // 绑定方式切换
+            bindMethodSelect.addEventListener('change', function() {
+                const method = this.value;
+                const contents = document.querySelectorAll('#batchBind .bind-method-content');
                 
-                try {
-                    const bot = new TelegramBotAPI(token);
-                    const me = await bot.getMe();
-                    localStorage.setItem(STORAGE_KEYS.BOT_TOKEN, token);
-                    telegramBot = bot;
-                    showNotification('验证成功', `机器人: ${me.first_name} (@${me.username})`, 'success');
-                } catch (error) {
-                    showNotification('验证失败', error.message, 'error');
+                contents.forEach(content => {
+                    content.classList.add('hidden');
+                    if (content.id === `${method}Bind`) {
+                        content.classList.remove('hidden');
+                    }
+                });
+            });
+            
+            // 导出格式选择
+            exportFormatOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const format = this.getAttribute('data-format');
+                    
+                    exportFormatOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    currentExportFormat = format;
+                });
+            });
+            
+            // 导出筛选切换
+            exportFilter.addEventListener('change', function() {
+                const filter = this.value;
+                
+                if (filter === 'by-group') {
+                    exportGroupOptions.style.display = 'block';
+                } else {
+                    exportGroupOptions.style.display = 'none';
                 }
             });
             
-            // 添加单个群组
-            addSingleGroupBtn.addEventListener('click', function() {
-                const name = document.getElementById('groupName').value.trim();
-                const channel = document.getElementById('channelName').value.trim();
-                const id = document.getElementById('chatId').value.trim();
-                const cids = selectedCids;
-                const sizes = selectedSizes;
-                const mentionUsers = selectedMentions;
-                const mentionDelay = parseInt(document.getElementById('mentionDelay').value) || 3;
-                const mentionMessage = document.getElementById('mentionMessage').value.trim() || '链接已更新，请相关人员查看';
-                const tags = selectedGroupTags;
-                
-                if (!name || !channel || !id) {
-                    showNotification('信息不全', '请填写渠道名称、标识和Chat ID', 'error');
-                    return;
+            // 智能匹配模式选择
+            matchModeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    matchModeOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio) radio.checked = true;
+                });
+            });
+            
+            // 从本地存储加载数据
+            function loadFromStorage() {
+                try {
+                    // 加载群组数据
+                    const savedGroups = localStorage.getItem(STORAGE_KEYS.GROUPS);
+                    if (savedGroups) {
+                        try {
+                            groups = JSON.parse(savedGroups);
+                            if (!Array.isArray(groups)) {
+                                throw new Error('群组数据不是数组格式');
+                            }
+                            // 确保每个群组都有tags数组
+                            groups.forEach(group => {
+                                if (!group.tags) {
+                                    group.tags = [];
+                                }
+                            });
+                            showNotification('数据加载成功', `已加载 ${groups.length} 个群组`, 'success', 3000);
+                        } catch (parseError) {
+                            console.error('群组数据解析失败:', parseError);
+                            groups = [];
+                            initSampleGroups();
+                            showNotification('数据修复', '群组数据已损坏，已恢复为示例数据', 'warning', 4000);
+                        }
+                    } else {
+                        groups = [];
+                        initSampleGroups();
+                        showNotification('数据初始化', '已创建示例群组数据', 'info', 3000);
+                    }
+                    
+                    // 加载链接对数据
+                    const savedLinkPairs = localStorage.getItem(STORAGE_KEYS.LINK_PAIRS);
+                    if (savedLinkPairs) {
+                        try {
+                            linkPairs = JSON.parse(savedLinkPairs);
+                            if (!Array.isArray(linkPairs)) {
+                                throw new Error('链接对数据不是数组格式');
+                            }
+                            showNotification('链接对加载成功', `已加载 ${linkPairs.length} 个链接对`, 'success', 3000);
+                        } catch (parseError) {
+                            console.error('链接对数据解析失败:', parseError);
+                            linkPairs = [];
+                            initSampleLinkPairs();
+                            showNotification('数据修复', '链接对数据已损坏，已恢复为示例数据', 'warning', 4000);
+                        }
+                    } else {
+                        linkPairs = [];
+                        initSampleLinkPairs();
+                    }
+                    
+                    // 加载分类链接数据
+                    loadCategoryLinks();
+                    
+                    // 加载Bot Token
+                    const savedToken = localStorage.getItem(STORAGE_KEYS.BOT_TOKEN);
+                    if (savedToken) {
+                        botTokenInput.value = savedToken;
+                        telegramBot = new TelegramBotAPI(savedToken);
+                    }
+                    
+                    // 加载分组标签设置
+                    const savedGroupTags = localStorage.getItem(STORAGE_KEYS.GROUP_TAGS);
+                    if (savedGroupTags) {
+                        try {
+                            const tagsData = JSON.parse(savedGroupTags);
+                            if (tagsData && Array.isArray(tagsData.availableTags)) {
+                                availableGroupTags = tagsData.availableTags;
+                            }
+                        } catch (e) {
+                            console.error('分组标签数据加载失败:', e);
+                        }
+                    }
+                    
+                    // 加载@人物话术
+                    const savedTemplates = localStorage.getItem(STORAGE_KEYS.MENTION_TEMPLATES);
+                    if (savedTemplates) {
+                        try {
+                            const templatesData = JSON.parse(savedTemplates);
+                            if (templatesData && templatesData.custom) {
+                                mentionTemplates.custom = templatesData.custom;
+                            }
+                        } catch (e) {
+                            console.error('@人物话术数据加载失败:', e);
+                        }
+                    }
+                    
+                    updateBadges();
+                    updateStorageInfo();
+                    updateMessagePreview();
+                    updateBindStats();
+                    renderBindHistory();
+                    updateLinkMatchStats();
+                    updateMentionMessagePreview();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
+                    updateTemplatePreview();
+                } catch (error) {
+                    console.error('加载数据失败:', error);
+                    showNotification('数据加载失败', '可能数据已损坏，将使用默认数据', 'error', 5000);
+                    groups = [];
+                    linkPairs = [];
+                    promotionLinks = [];
+                    imageLinks = [];
+                    videoLinks = [];
+                    otherLinks = [];
+                    initSampleGroups();
+                    initSampleLinkPairs();
+                    initSampleCategoryLinks();
                 }
+            }
+            
+            // 加载分类链接数据
+            function loadCategoryLinks() {
+                try {
+                    // 加载推广链接
+                    const savedPromotionLinks = localStorage.getItem(STORAGE_KEYS.PROMOTION_LINKS);
+                    if (savedPromotionLinks) {
+                        promotionLinks = JSON.parse(savedPromotionLinks);
+                    } else {
+                        promotionLinks = [];
+                    }
+                    
+                    // 加载图片链接
+                    const savedImageLinks = localStorage.getItem(STORAGE_KEYS.IMAGE_LINKS);
+                    if (savedImageLinks) {
+                        imageLinks = JSON.parse(savedImageLinks);
+                    } else {
+                        imageLinks = [];
+                    }
+                    
+                    // 加载视频链接
+                    const savedVideoLinks = localStorage.getItem(STORAGE_KEYS.VIDEO_LINKS);
+                    if (savedVideoLinks) {
+                        videoLinks = JSON.parse(savedVideoLinks);
+                    } else {
+                        videoLinks = [];
+                    }
+                    
+                    // 加载其他链接
+                    const savedOtherLinks = localStorage.getItem(STORAGE_KEYS.OTHER_LINKS);
+                    if (savedOtherLinks) {
+                        otherLinks = JSON.parse(savedOtherLinks);
+                    } else {
+                        otherLinks = [];
+                    }
+                } catch (error) {
+                    console.error('加载分类链接失败:', error);
+                    promotionLinks = [];
+                    imageLinks = [];
+                    videoLinks = [];
+                    otherLinks = [];
+                }
+            }
+            
+            // 保存数据到本地存储
+            function saveToStorage() {
+                try {
+                    localStorage.setItem(STORAGE_KEYS.GROUPS, JSON.stringify(groups));
+                    localStorage.setItem(STORAGE_KEYS.LINK_PAIRS, JSON.stringify(linkPairs));
+                    
+                    // 保存分类链接
+                    localStorage.setItem(STORAGE_KEYS.PROMOTION_LINKS, JSON.stringify(promotionLinks));
+                    localStorage.setItem(STORAGE_KEYS.IMAGE_LINKS, JSON.stringify(imageLinks));
+                    localStorage.setItem(STORAGE_KEYS.VIDEO_LINKS, JSON.stringify(videoLinks));
+                    localStorage.setItem(STORAGE_KEYS.OTHER_LINKS, JSON.stringify(otherLinks));
+                    
+                    if (botTokenInput.value.trim()) {
+                        localStorage.setItem(STORAGE_KEYS.BOT_TOKEN, botTokenInput.value.trim());
+                    }
+                    
+                    // 保存分组标签设置
+                    const tagsData = {
+                        availableTags: availableGroupTags,
+                        savedAt: new Date().toISOString()
+                    };
+                    localStorage.setItem(STORAGE_KEYS.GROUP_TAGS, JSON.stringify(tagsData));
+                    
+                    // 保存@人物话术
+                    const templatesData = {
+                        custom: mentionTemplates.custom,
+                        savedAt: new Date().toISOString()
+                    };
+                    localStorage.setItem(STORAGE_KEYS.MENTION_TEMPLATES, JSON.stringify(templatesData));
+                    
+                    updateBadges();
+                    updateStorageInfo();
+                    updateBindStats();
+                    updateLinkMatchStats();
+                    updateGroupTagsStats();
+                    
+                    const now = Date.now();
+                    const lastSave = localStorage.getItem('lastSaveTime') || 0;
+                    if (now - lastSave > 10000) {
+                        showNotification('数据已保存', '所有更改已自动保存到本地存储', 'success', 2000);
+                        localStorage.setItem('lastSaveTime', now);
+                    }
+                } catch (error) {
+                    console.error('保存数据失败:', error);
+                    showNotification('保存失败', '数据可能太大，请删除一些数据', 'error', 5000);
+                }
+            }
+            
+            // 初始化示例分类链接
+            function initSampleCategoryLinks() {
+                promotionLinks = [
+                    {
+                        id: generateId(),
+                        oldUrl: 'https://d0x6am7em5.effectsj.com/imp04/?cid=5100525',
+                        newUrl: 'https://izwq30lgis.comingf.com/imp04/?cid=5100525',
+                        cid: '5100525',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: generateId(),
+                        oldUrl: 'https://7147niredb.effectsk.com/imp04/?cid=2860906',
+                        newUrl: 'https://4ipt8ik9v4.yearsc.com/imp04/?cid=2860906',
+                        cid: '2860906',
+                        createdAt: new Date().toISOString()
+                    }
+                ];
                 
-                const newGroup = {
-                    id: id,
-                    name: name,
-                    channel: channel,
-                    cids: cids,
-                    sizes: sizes,
-                    mentionUsers: mentionUsers,
-                    mentionDelay: mentionDelay,
-                    mentionMessage: mentionMessage,
-                    tags: tags,
-                    bound: true,
-                    boundDate: new Date().toISOString().split('T')[0],
-                    selected: false,
-                    lastSent: null,
-                    createdAt: new Date().toISOString()
-                };
+                imageLinks = [
+                    {
+                        id: generateId(),
+                        oldUrl: 'https://example.com/100-100/image.gif',
+                        newUrl: 'https://newexample.com/100-100/image.gif',
+                        size: '100-100',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: generateId(),
+                        oldUrl: 'https://example.com/200-200/banner.jpg',
+                        newUrl: 'https://newexample.com/200-200/banner.jpg',
+                        size: '200-200',
+                        createdAt: new Date().toISOString()
+                    }
+                ];
                 
-                groups.push(newGroup);
+                videoLinks = [];
+                otherLinks = [];
+                
                 saveToStorage();
-                
-                // 清空表单
-                document.getElementById('groupName').value = '';
-                document.getElementById('channelName').value = '';
-                document.getElementById('chatId').value = '';
-                selectedCids = [];
-                selectedSizes = [];
-                selectedMentions = [];
-                selectedGroupTags = [];
-                updateCidTags();
-                updateSizeTags();
-                updateMentionTags();
-                updateGroupTags();
-                
-                showNotification('群组已添加', `成功添加群组: ${name}`, 'success');
-            });
+            }
             
-            // 测试绑定
-            testBindBtn.addEventListener('click', async function() {
-                const token = botTokenInput.value.trim();
-                const chatId = document.getElementById('chatId').value.trim();
-                const testMessage = document.getElementById('testMessage').value.trim();
+            // 更新消息预览（支持多种格式）
+            function updateMessagePreview() {
+                const groupsWithLinks = getGroupsWithLinks();
+                let exampleGroup = null;
                 
-                if (!token) {
-                    showNotification('请输入Token', '请先输入Telegram Bot Token', 'error');
+                if (groupsWithLinks.length > 0) {
+                    exampleGroup = groupsWithLinks[0];
+                } else if (groups.length > 0) {
+                    exampleGroup = groups[0];
+                }
+                
+                if (!exampleGroup) {
+                    messagePreview.innerHTML = '<div style="color: #999; text-align: center; padding: 20px;">暂无群组数据</div>';
                     return;
                 }
                 
-                if (!chatId) {
-                    showNotification('请输入Chat ID', '请先填写Chat ID', 'error');
+                // 获取该群组的所有匹配链接
+                const matchedPromotionLinks = getMatchedCategoryLinks(exampleGroup, promotionLinks);
+                const matchedImageLinks = getMatchedCategoryLinks(exampleGroup, imageLinks);
+                const matchedVideoLinks = getMatchedCategoryLinks(exampleGroup, videoLinks);
+                const matchedOtherLinks = getMatchedCategoryLinks(exampleGroup, otherLinks);
+                
+                // 生成预览消息
+                let preview = '';
+                
+                switch (currentSendFormat) {
+                    case 'simple':
+                        preview = generateSimpleFormat(exampleGroup, matchedPromotionLinks, matchedImageLinks);
+                        break;
+                    case 'separate':
+                        preview = generateSeparateFormat(exampleGroup, matchedPromotionLinks, matchedImageLinks);
+                        break;
+                    case 'compact':
+                        preview = generateCompactFormat(exampleGroup, matchedPromotionLinks, matchedImageLinks);
+                        break;
+                    case 'custom':
+                        preview = generateCustomFormat(exampleGroup, matchedPromotionLinks, matchedImageLinks);
+                        break;
+                    default:
+                        preview = generateSimpleFormat(exampleGroup, matchedPromotionLinks, matchedImageLinks);
+                }
+                
+                // 如果有@人物设置，添加到预览中
+                if (exampleGroup.mentionUsers && exampleGroup.mentionUsers.length > 0) {
+                    const delay = exampleGroup.mentionDelay || 3;
+                    const templateText = getMentionTemplateText(exampleGroup.name);
+                    const mentions = exampleGroup.mentionUsers.map(m => `@${m}`).join(' ');
+                    
+                    preview += `\n\n--- 二次@人物 (${delay}秒后) ---\n${templateText}\n${mentions}`;
+                }
+                
+                const highlightedPreview = preview
+                    .replace(exampleGroup.name, `<span class="channel-name">${exampleGroup.name}</span>`)
+                    .replace(/推广链接 旧 (https?:\/\/[^\s]+)/g, `<span class="old-url">推广链接 旧 $1</span>`)
+                    .replace(/推广链接 新 (https?:\/\/[^\s]+)/g, `<span class="new-url">推广链接 新 $1</span>`)
+                    .replace(/图片链接 旧 (https?:\/\/[^\s]+)/g, `<span class="old-url">图片链接 旧 $1</span>`)
+                    .replace(/图片链接 新 (https?:\/\/[^\s]+)/g, `<span class="new-url">图片链接 新 $1</span>`)
+                    .replace(/旧 (https?:\/\/[^\s]+)/g, `<span class="old-url">旧 $1</span>`)
+                    .replace(/新 (https?:\/\/[^\s]+)/g, `<span class="new-url">新 $1</span>`)
+                    .replace(/--- 二次@人物 \([\d]+秒后\) ---/g, '<span style="color: #bb86fc;">--- 二次@人物 ---</span>')
+                    .replace(/@([\w_]+)/g, '<span class="mention-users">@$1</span>')
+                    .replace(/\n/g, '<br>');
+                
+                messagePreview.innerHTML = highlightedPreview;
+            }
+            
+            // 生成简单格式
+            function generateSimpleFormat(group, promotionLinks, imageLinks) {
+                let result = `${group.name}\n`;
+                
+                // 添加推广链接
+                promotionLinks.forEach(link => {
+                    result += `旧 ${link.oldUrl}\n新 ${link.newUrl}\n`;
+                });
+                
+                // 添加图片链接
+                imageLinks.forEach(link => {
+                    result += `旧 ${link.oldUrl}\n新 ${link.newUrl}\n`;
+                });
+                
+                return result.trim();
+            }
+            
+            // 生成分开格式（推广和图片分开）
+            function generateSeparateFormat(group, promotionLinks, imageLinks) {
+                let result = `${group.name}\n`;
+                
+                // 添加推广链接
+                if (promotionLinks.length > 0) {
+                    promotionLinks.forEach(link => {
+                        result += `推广链接 旧 ${link.oldUrl}\n推广链接 新 ${link.newUrl}\n`;
+                    });
+                    result += '\n';
+                }
+                
+                // 添加图片链接
+                if (imageLinks.length > 0) {
+                    imageLinks.forEach(link => {
+                        result += `图片链接 旧 ${link.oldUrl}\n图片链接 新 ${link.newUrl}\n`;
+                    });
+                }
+                
+                return result.trim();
+            }
+            
+            // 生成紧凑格式
+            function generateCompactFormat(group, promotionLinks, imageLinks) {
+                let result = `${group.name}\n`;
+                
+                // 添加推广链接
+                promotionLinks.forEach(link => {
+                    result += `${link.oldUrl}\n${link.newUrl}\n`;
+                });
+                
+                // 添加图片链接
+                imageLinks.forEach(link => {
+                    result += `${link.oldUrl}\n${link.newUrl}\n`;
+                });
+                
+                return result.trim();
+            }
+            
+            // 生成自定义格式
+            function generateCustomFormat(group, promotionLinks, imageLinks) {
+                let template = customFormatTemplate.value.trim();
+                if (!template) {
+                    template = '[名称]\n推广旧: [推广旧链接]\n推广新: [推广新链接]\n图片旧: [图片旧链接]\n图片新: [图片新链接]';
+                }
+                
+                let result = template;
+                
+                // 替换占位符
+                result = result.replace(/\[名称\]/g, group.name);
+                
+                // 处理推广链接
+                if (promotionLinks.length > 0) {
+                    const promotionOld = promotionLinks.map(l => l.oldUrl).join('\n');
+                    const promotionNew = promotionLinks.map(l => l.newUrl).join('\n');
+                    result = result.replace(/\[推广旧链接\]/g, promotionOld);
+                    result = result.replace(/\[推广新链接\]/g, promotionNew);
+                } else {
+                    result = result.replace(/\[推广旧链接\]/g, '无');
+                    result = result.replace(/\[推广新链接\]/g, '无');
+                }
+                
+                // 处理图片链接
+                if (imageLinks.length > 0) {
+                    const imageOld = imageLinks.map(l => l.oldUrl).join('\n');
+                    const imageNew = imageLinks.map(l => l.newUrl).join('\n');
+                    result = result.replace(/\[图片旧链接\]/g, imageOld);
+                    result = result.replace(/\[图片新链接\]/g, imageNew);
+                } else {
+                    result = result.replace(/\[图片旧链接\]/g, '无');
+                    result = result.replace(/\[图片新链接\]/g, '无');
+                }
+                
+                return result.trim();
+            }
+            
+            // 获取匹配的分类链接
+            function getMatchedCategoryLinks(group, categoryLinks) {
+                return categoryLinks.filter(link => {
+                    // 按CID匹配
+                    if (link.cid && group.cids && group.cids.includes(link.cid)) {
+                        return true;
+                    }
+                    
+                    // 按尺寸匹配
+                    if (link.size && group.sizes && group.sizes.includes(link.size)) {
+                        return true;
+                    }
+                    
+                    return false;
+                });
+            }
+            
+            // 获取@人物话术文本
+            function getMentionTemplateText(groupName = '') {
+                let template = mentionTemplates[currentMentionTemplate];
+                if (currentMentionTemplate === 'custom') {
+                    template = customMentionTemplate.value.trim() || mentionTemplates.custom;
+                }
+                
+                // 替换占位符
+                template = template.replace(/\[名称\]/g, groupName);
+                
+                return template;
+            }
+            
+            // 更新@人物话术预览
+            function updateTemplatePreview() {
+                const templateText = getMentionTemplateText('小狼狗');
+                const mentions = ['admin1', 'manager'].map(m => `@${m}`).join(' ');
+                
+                let preview = `话术预览:\n${templateText}\n${mentions}`;
+                
+                templatePreview.innerHTML = preview.replace(/\n/g, '<br>');
+            }
+            
+            // 新增：处理手动批量添加的链接
+            function processManualBatchLinks(inputText, category) {
+                if (!inputText.trim()) {
+                    return [];
+                }
+                
+                const lines = inputText.split('\n').map(line => line.trim()).filter(line => line);
+                const linkPairs = [];
+                
+                lines.forEach(line => {
+                    // 尝试解析不同格式
+                    let oldUrl, newUrl;
+                    
+                    if (line.includes('|')) {
+                        // 竖线分隔格式
+                        const parts = line.split('|').map(p => p.trim());
+                        if (parts.length >= 2) {
+                            [oldUrl, newUrl] = parts.slice(0, 2);
+                        }
+                    } else if (line.includes(',')) {
+                        // 逗号分隔格式
+                        const parts = line.split(',').map(p => p.trim());
+                        if (parts.length >= 2) {
+                            [oldUrl, newUrl] = parts.slice(0, 2);
+                        }
+                    } else {
+                        // 自动识别格式（旧链接和新链接交替）
+                        const linesArray = inputText.split('\n').map(l => l.trim()).filter(l => l);
+                        for (let i = 0; i < linesArray.length - 1; i += 2) {
+                            oldUrl = linesArray[i];
+                            newUrl = linesArray[i + 1];
+                            linkPairs.push({ oldUrl, newUrl });
+                        }
+                        return linkPairs;
+                    }
+                    
+                    if (oldUrl && newUrl) {
+                        linkPairs.push({ oldUrl, newUrl });
+                    }
+                });
+                
+                return linkPairs;
+            }
+            
+            // 新增：处理手动批量推广链接
+            processManualBatchPromotionBtn.addEventListener('click', function() {
+                const inputText = manualBatchPromotionInput.value.trim();
+                if (!inputText) {
+                    showNotification('输入为空', '请输入要处理的推广链接', 'warning');
                     return;
                 }
                 
-                try {
-                    const bot = telegramBot || new TelegramBotAPI(token);
-                    const message = testMessage || `测试消息 - ${new Date().toLocaleString()}`;
-                    await bot.sendMessage(chatId, message);
-                    showNotification('测试成功', '消息已发送到指定群组', 'success');
-                } catch (error) {
-                    showNotification('测试失败', error.message, 'error');
+                const linkPairs = processManualBatchLinks(inputText, 'promotion');
+                let addedCount = 0;
+                
+                linkPairs.forEach(pair => {
+                    // 提取CID信息
+                    const oldInfo = extractInfoFromUrl(pair.oldUrl);
+                    const newInfo = extractInfoFromUrl(pair.newUrl);
+                    
+                    const linkData = {
+                        id: generateId(),
+                        oldUrl: pair.oldUrl,
+                        newUrl: pair.newUrl,
+                        cid: oldInfo.cid || newInfo.cid,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    // 检查是否已存在
+                    const exists = promotionLinks.some(link => 
+                        link.oldUrl === pair.oldUrl && link.newUrl === pair.newUrl
+                    );
+                    
+                    if (!exists) {
+                        promotionLinks.push(linkData);
+                        addedCount++;
+                    }
+                });
+                
+                if (addedCount > 0) {
+                    saveToStorage();
+                    showNotification('处理完成', `成功添加 ${addedCount} 个推广链接对`, 'success');
+                    manualBatchPromotionInput.value = '';
+                } else {
+                    showNotification('没有新链接', '所有链接对都已存在', 'info');
                 }
             });
             
-            // 添加单个链接对
-            addSingleLinkBtn.addEventListener('click', function() {
-                const oldUrl = document.getElementById('singleOldUrl').value.trim();
-                const newUrl = document.getElementById('singleNewUrl').value.trim();
+            // 新增：处理手动批量图片链接
+            processManualBatchImageBtn.addEventListener('click', function() {
+                const inputText = manualBatchImageInput.value.trim();
+                if (!inputText) {
+                    showNotification('输入为空', '请输入要处理的图片链接', 'warning');
+                    return;
+                }
+                
+                const linkPairs = processManualBatchLinks(inputText, 'image');
+                let addedCount = 0;
+                
+                linkPairs.forEach(pair => {
+                    // 提取尺寸信息
+                    const oldInfo = extractInfoFromUrl(pair.oldUrl);
+                    const newInfo = extractInfoFromUrl(pair.newUrl);
+                    
+                    const linkData = {
+                        id: generateId(),
+                        oldUrl: pair.oldUrl,
+                        newUrl: pair.newUrl,
+                        size: oldInfo.sizes[0] || newInfo.sizes[0],
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    // 检查是否已存在
+                    const exists = imageLinks.some(link => 
+                        link.oldUrl === pair.oldUrl && link.newUrl === pair.newUrl
+                    );
+                    
+                    if (!exists) {
+                        imageLinks.push(linkData);
+                        addedCount++;
+                    }
+                });
+                
+                if (addedCount > 0) {
+                    saveToStorage();
+                    showNotification('处理完成', `成功添加 ${addedCount} 个图片链接对`, 'success');
+                    manualBatchImageInput.value = '';
+                } else {
+                    showNotification('没有新链接', '所有链接对都已存在', 'info');
+                }
+            });
+            
+            // 新增：处理所有手动批量链接
+            processAllManualBatchBtn.addEventListener('click', function() {
+                const promotionText = manualBatchPromotionInput.value.trim();
+                const imageText = manualBatchImageInput.value.trim();
+                
+                if (!promotionText && !imageText) {
+                    showNotification('输入为空', '请输入要处理的链接', 'warning');
+                    return;
+                }
+                
+                let totalAdded = 0;
+                
+                // 处理推广链接
+                if (promotionText) {
+                    const promotionPairs = processManualBatchLinks(promotionText, 'promotion');
+                    promotionPairs.forEach(pair => {
+                        const oldInfo = extractInfoFromUrl(pair.oldUrl);
+                        const newInfo = extractInfoFromUrl(pair.newUrl);
+                        
+                        const linkData = {
+                            id: generateId(),
+                            oldUrl: pair.oldUrl,
+                            newUrl: pair.newUrl,
+                            cid: oldInfo.cid || newInfo.cid,
+                            createdAt: new Date().toISOString()
+                        };
+                        
+                        const exists = promotionLinks.some(link => 
+                            link.oldUrl === pair.oldUrl && link.newUrl === pair.newUrl
+                        );
+                        
+                        if (!exists) {
+                            promotionLinks.push(linkData);
+                            totalAdded++;
+                        }
+                    });
+                }
+                
+                // 处理图片链接
+                if (imageText) {
+                    const imagePairs = processManualBatchLinks(imageText, 'image');
+                    imagePairs.forEach(pair => {
+                        const oldInfo = extractInfoFromUrl(pair.oldUrl);
+                        const newInfo = extractInfoFromUrl(pair.newUrl);
+                        
+                        const linkData = {
+                            id: generateId(),
+                            oldUrl: pair.oldUrl,
+                            newUrl: pair.newUrl,
+                            size: oldInfo.sizes[0] || newInfo.sizes[0],
+                            createdAt: new Date().toISOString()
+                        };
+                        
+                        const exists = imageLinks.some(link => 
+                            link.oldUrl === pair.oldUrl && link.newUrl === pair.newUrl
+                        );
+                        
+                        if (!exists) {
+                            imageLinks.push(linkData);
+                            totalAdded++;
+                        }
+                    });
+                }
+                
+                if (totalAdded > 0) {
+                    saveToStorage();
+                    showNotification('处理完成', `成功添加 ${totalAdded} 个链接对`, 'success');
+                    manualBatchPromotionInput.value = '';
+                    manualBatchImageInput.value = '';
+                } else {
+                    showNotification('没有新链接', '所有链接对都已存在', 'info');
+                }
+            });
+            
+            // 新增：清空手动批量输入
+            clearManualBatchBtn.addEventListener('click', function() {
+                if (confirm('确定要清空所有手动批量输入吗？')) {
+                    manualBatchPromotionInput.value = '';
+                    manualBatchImageInput.value = '';
+                    showNotification('已清空', '所有手动批量输入已清空', 'info');
+                }
+            });
+            
+            // 新增：添加推广链接
+            addPromotionLinkBtn.addEventListener('click', function() {
+                const oldUrl = promotionOldUrlInput.value.trim();
+                const newUrl = promotionNewUrlInput.value.trim();
                 
                 if (!oldUrl || !newUrl) {
-                    showNotification('信息不全', '请填写新旧链接', 'error');
+                    showNotification('信息不全', '请填写推广新旧链接', 'error');
                     return;
                 }
                 
-                // 提取CID和尺寸
+                // 提取CID信息
                 const oldInfo = extractInfoFromUrl(oldUrl);
                 const newInfo = extractInfoFromUrl(newUrl);
                 
-                let cid = oldInfo.cid || null;
-                let sizes = oldInfo.sizes.length > 0 ? oldInfo.sizes : [];
-                const linkType = detectLinkType(oldUrl);
+                // 检查是否已存在
+                const exists = promotionLinks.some(link => 
+                    link.oldUrl === oldUrl && link.newUrl === newUrl
+                );
                 
-                const newLinkPair = {
+                if (exists) {
+                    showNotification('链接已存在', '相同的推广链接对已存在', 'warning');
+                    return;
+                }
+                
+                const linkData = {
                     id: generateId(),
-                    cid: cid,
-                    sizes: sizes,
                     oldUrl: oldUrl,
                     newUrl: newUrl,
-                    linkType: linkType,
+                    cid: oldInfo.cid || newInfo.cid,
                     createdAt: new Date().toISOString()
                 };
                 
-                linkPairs.push(newLinkPair);
+                promotionLinks.push(linkData);
+                
+                promotionOldUrlInput.value = '';
+                promotionNewUrlInput.value = '';
+                
                 saveToStorage();
-                
-                // 清空表单
-                document.getElementById('singleOldUrl').value = '';
-                document.getElementById('singleNewUrl').value = '';
-                document.getElementById('singleExtractResult').style.display = 'none';
-                
-                const typeText = linkType === 'promotion' ? '推广链接' : linkType === 'image' ? '图片链接' : '通用链接';
-                showNotification('链接对已添加', `成功添加${cid ? ' CID: ' + cid : ' 尺寸: ' + sizes.join(', ')}的${typeText}`, 'success');
+                showNotification('添加成功', '推广链接对已添加', 'success');
             });
             
-            // 添加链接对（链接管理页面）
-            addLinkPairBtn.addEventListener('click', function() {
-                const cid = document.getElementById('linkCid').value.trim();
-                const sizeStr = document.getElementById('linkSize').value.trim();
-                const oldUrl = document.getElementById('linkOldUrl').value.trim();
-                const newUrl = document.getElementById('linkNewUrl').value.trim();
+            // 新增：批量添加推广链接
+            addBatchPromotionLinksBtn.addEventListener('click', function() {
+                const oldUrlsInput = batchPromotionOldUrlsInput.value.trim();
+                const newUrlsInput = batchPromotionNewUrlsInput.value.trim();
+                
+                if (!oldUrlsInput || !newUrlsInput) {
+                    showNotification('输入为空', '请填写左右两边的推广链接列表', 'warning');
+                    return;
+                }
+                
+                const oldUrls = oldUrlsInput.split('\n').map(url => url.trim()).filter(url => url);
+                const newUrls = newUrlsInput.split('\n').map(url => url.trim()).filter(url => url);
+                
+                if (oldUrls.length !== newUrls.length) {
+                    showNotification('数量不匹配', '左右两边推广链接数量必须相同', 'error');
+                    return;
+                }
+                
+                let addedCount = 0;
+                
+                for (let i = 0; i < oldUrls.length; i++) {
+                    const oldUrl = oldUrls[i];
+                    const newUrl = newUrls[i];
+                    
+                    // 检查是否已存在
+                    const exists = promotionLinks.some(link => 
+                        link.oldUrl === oldUrl && link.newUrl === newUrl
+                    );
+                    
+                    if (!exists) {
+                        const oldInfo = extractInfoFromUrl(oldUrl);
+                        const newInfo = extractInfoFromUrl(newUrl);
+                        
+                        promotionLinks.push({
+                            id: generateId(),
+                            oldUrl: oldUrl,
+                            newUrl: newUrl,
+                            cid: oldInfo.cid || newInfo.cid,
+                            createdAt: new Date().toISOString()
+                        });
+                        addedCount++;
+                    }
+                }
+                
+                if (addedCount > 0) {
+                    saveToStorage();
+                    showNotification('批量添加完成', `成功添加 ${addedCount} 个推广链接对`, 'success');
+                    batchPromotionOldUrlsInput.value = '';
+                    batchPromotionNewUrlsInput.value = '';
+                } else {
+                    showNotification('没有新链接', '所有推广链接对都已存在', 'info');
+                }
+            });
+            
+            // 新增：添加图片链接
+            addImageLinkBtn.addEventListener('click', function() {
+                const oldUrl = imageOldUrlInput.value.trim();
+                const newUrl = imageNewUrlInput.value.trim();
                 
                 if (!oldUrl || !newUrl) {
-                    showNotification('信息不全', '请填写新旧链接', 'error');
+                    showNotification('信息不全', '请填写图片新旧链接', 'error');
                     return;
                 }
                 
-                let sizes = [];
-                if (sizeStr) {
-                    sizes = sizeStr.split(',').map(s => s.trim()).filter(s => s);
+                // 提取尺寸信息
+                const oldInfo = extractInfoFromUrl(oldUrl);
+                const newInfo = extractInfoFromUrl(newUrl);
+                
+                // 检查是否已存在
+                const exists = imageLinks.some(link => 
+                    link.oldUrl === oldUrl && link.newUrl === newUrl
+                );
+                
+                if (exists) {
+                    showNotification('链接已存在', '相同的图片链接对已存在', 'warning');
+                    return;
                 }
                 
-                const linkType = detectLinkType(oldUrl);
-                
-                const newLinkPair = {
+                const linkData = {
                     id: generateId(),
-                    cid: cid || null,
-                    sizes: sizes,
                     oldUrl: oldUrl,
                     newUrl: newUrl,
-                    linkType: linkType,
+                    size: oldInfo.sizes[0] || newInfo.sizes[0],
                     createdAt: new Date().toISOString()
                 };
                 
-                linkPairs.push(newLinkPair);
+                imageLinks.push(linkData);
+                
+                imageOldUrlInput.value = '';
+                imageNewUrlInput.value = '';
+                
                 saveToStorage();
-                
-                // 清空表单
-                document.getElementById('linkCid').value = '';
-                document.getElementById('linkSize').value = '';
-                document.getElementById('linkOldUrl').value = '';
-                document.getElementById('linkNewUrl').value = '';
-                
-                const typeText = linkType === 'promotion' ? '推广链接' : linkType === 'image' ? '图片链接' : '通用链接';
-                showNotification('链接对已添加', `成功添加${cid ? ' CID: ' + cid : ' 尺寸: ' + sizes.join(', ')}的${typeText}`, 'success');
+                showNotification('添加成功', '图片链接对已添加', 'success');
             });
             
-            // 清空所有链接
-            clearAllLinksBtn.addEventListener('click', function() {
-                if (confirm('确定要清空所有链接对吗？')) {
-                    linkPairs = [];
+            // 新增：批量添加图片链接
+            addBatchImageLinksBtn.addEventListener('click', function() {
+                const oldUrlsInput = batchImageOldUrlsInput.value.trim();
+                const newUrlsInput = batchImageNewUrlsInput.value.trim();
+                
+                if (!oldUrlsInput || !newUrlsInput) {
+                    showNotification('输入为空', '请填写左右两边的图片链接列表', 'warning');
+                    return;
+                }
+                
+                const oldUrls = oldUrlsInput.split('\n').map(url => url.trim()).filter(url => url);
+                const newUrls = newUrlsInput.split('\n').map(url => url.trim()).filter(url => url);
+                
+                if (oldUrls.length !== newUrls.length) {
+                    showNotification('数量不匹配', '左右两边图片链接数量必须相同', 'error');
+                    return;
+                }
+                
+                let addedCount = 0;
+                
+                for (let i = 0; i < oldUrls.length; i++) {
+                    const oldUrl = oldUrls[i];
+                    const newUrl = newUrls[i];
+                    
+                    // 检查是否已存在
+                    const exists = imageLinks.some(link => 
+                        link.oldUrl === oldUrl && link.newUrl === newUrl
+                    );
+                    
+                    if (!exists) {
+                        const oldInfo = extractInfoFromUrl(oldUrl);
+                        const newInfo = extractInfoFromUrl(newUrl);
+                        
+                        imageLinks.push({
+                            id: generateId(),
+                            oldUrl: oldUrl,
+                            newUrl: newUrl,
+                            size: oldInfo.sizes[0] || newInfo.sizes[0],
+                            createdAt: new Date().toISOString()
+                        });
+                        addedCount++;
+                    }
+                }
+                
+                if (addedCount > 0) {
                     saveToStorage();
-                    showNotification('已清空', '所有链接对已清空', 'success');
+                    showNotification('批量添加完成', `成功添加 ${addedCount} 个图片链接对`, 'success');
+                    batchImageOldUrlsInput.value = '';
+                    batchImageNewUrlsInput.value = '';
+                } else {
+                    showNotification('没有新链接', '所有图片链接对都已存在', 'info');
                 }
             });
             
-            // 批量发送消息
-            sendBatchBtn.addEventListener('click', async function() {
-                if (isSending) {
-                    showNotification('正在发送', '请等待当前发送任务完成', 'warning');
+            // 新增：添加视频链接
+            addVideoLinkBtn.addEventListener('click', function() {
+                const oldUrl = videoOldUrlInput.value.trim();
+                const newUrl = videoNewUrlInput.value.trim();
+                
+                if (!oldUrl || !newUrl) {
+                    showNotification('信息不全', '请填写视频新旧链接', 'error');
                     return;
                 }
                 
-                const token = botTokenInput.value.trim();
-                if (!token) {
-                    showNotification('请输入Token', '请先输入Telegram Bot Token', 'error');
+                // 检查是否已存在
+                const exists = videoLinks.some(link => 
+                    link.oldUrl === oldUrl && link.newUrl === newUrl
+                );
+                
+                if (exists) {
+                    showNotification('链接已存在', '相同的视频链接对已存在', 'warning');
                     return;
                 }
                 
-                const selectedGroups = groups.filter(g => g.selected && g.bound);
+                videoLinks.push({
+                    id: generateId(),
+                    oldUrl: oldUrl,
+                    newUrl: newUrl,
+                    createdAt: new Date().toISOString()
+                });
+                
+                videoOldUrlInput.value = '';
+                videoNewUrlInput.value = '';
+                
+                saveToStorage();
+                showNotification('添加成功', '视频链接对已添加', 'success');
+            });
+            
+            // 新增：添加其他链接
+            addOtherLinkBtn.addEventListener('click', function() {
+                const oldUrl = otherOldUrlInput.value.trim();
+                const newUrl = otherNewUrlInput.value.trim();
+                
+                if (!oldUrl || !newUrl) {
+                    showNotification('信息不全', '请填写其他新旧链接', 'error');
+                    return;
+                }
+                
+                // 检查是否已存在
+                const exists = otherLinks.some(link => 
+                    link.oldUrl === oldUrl && link.newUrl === newUrl
+                );
+                
+                if (exists) {
+                    showNotification('链接已存在', '相同的其他链接对已存在', 'warning');
+                    return;
+                }
+                
+                otherLinks.push({
+                    id: generateId(),
+                    oldUrl: oldUrl,
+                    newUrl: newUrl,
+                    createdAt: new Date().toISOString()
+                });
+                
+                otherOldUrlInput.value = '';
+                otherNewUrlInput.value = '';
+                
+                saveToStorage();
+                showNotification('添加成功', '其他链接对已添加', 'success');
+            });
+            
+            // 批量发送消息（支持多种格式和@人物话术）
+            document.getElementById('sendBatchBtn').addEventListener('click', async function() {
+                let selectedGroups;
+                
+                if (currentSendMethod === 'all') {
+                    selectedGroups = groups.filter(g => g.bound);
+                } else if (currentSendMethod === 'by-group') {
+                    // 获取选中的分组
+                    const selectedTagElement = document.querySelector('.send-group-option.selected');
+                    if (!selectedTagElement) {
+                        showNotification('请选择分组', '请先选择一个分组', 'warning');
+                        return;
+                    }
+                    
+                    const selectedTag = selectedTagElement.getAttribute('data-tag');
+                    if (selectedTag === 'all') {
+                        selectedGroups = groups.filter(g => g.bound);
+                    } else {
+                        selectedGroups = groups.filter(g => 
+                            g.bound && g.tags && g.tags.includes(selectedTag)
+                        );
+                    }
+                } else {
+                    selectedGroups = groups.filter(g => g.selected && g.bound);
+                }
+                
                 if (selectedGroups.length === 0) {
-                    showNotification('没有可发送的群组', '请先选择并绑定群组', 'warning');
+                    showNotification('没有可发送的群组', '请先选择或绑定群组', 'warning');
+                    return;
+                }
+                
+                const botToken = botTokenInput.value.trim();
+                if (!botToken) {
+                    showNotification('Bot Token为空', '请先输入Bot Token', 'error');
                     return;
                 }
                 
                 const sendDelay = parseInt(document.getElementById('sendDelay').value) || 1000;
+                const sendMode = sendSecondaryMentionSelect.value;
                 
-                isSending = true;
-                stopSending = false;
+                // 筛选出有匹配链接的群组
+                let groupsToSend = [];
+                selectedGroups.forEach(group => {
+                    const matchedPromotionLinks = getMatchedCategoryLinks(group, promotionLinks);
+                    const matchedImageLinks = getMatchedCategoryLinks(group, imageLinks);
+                    const matchedVideoLinks = getMatchedCategoryLinks(group, videoLinks);
+                    const matchedOtherLinks = getMatchedCategoryLinks(group, otherLinks);
+                    
+                    const hasLinks = matchedPromotionLinks.length > 0 || 
+                                     matchedImageLinks.length > 0 || 
+                                     matchedVideoLinks.length > 0 || 
+                                     matchedOtherLinks.length > 0;
+                    
+                    // 只有匹配到链接的群组才加入发送列表
+                    if (hasLinks) {
+                        groupsToSend.push({
+                            group: group,
+                            promotionLinks: matchedPromotionLinks,
+                            imageLinks: matchedImageLinks,
+                            videoLinks: matchedVideoLinks,
+                            otherLinks: matchedOtherLinks
+                        });
+                    }
+                });
+                
+                if (groupsToSend.length === 0) {
+                    showNotification('没有可发送的群组', '选中的群组都没有匹配到链接', 'warning');
+                    return;
+                }
+                
+                groups.forEach(group => {
+                    if (selectedGroups.includes(group)) {
+                        group.sending = false;
+                        group.sendSuccess = false;
+                    }
+                });
                 
                 const resultArea = document.getElementById('sendResultArea');
                 const logOutput = document.getElementById('sendLogOutput');
@@ -3618,80 +5144,134 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 const progressFill = document.getElementById('progressFill');
                 const stopSendingBtn = document.getElementById('stopSending');
                 
-                totalSendCount.textContent = selectedGroups.length;
+                totalSendCount.textContent = groupsToSend.length;
                 successSendCount.textContent = '0';
                 failedSendCount.textContent = '0';
-                pendingSendCount.textContent = selectedGroups.length;
+                pendingSendCount.textContent = groupsToSend.length;
                 progressPercent.textContent = '0%';
                 progressFill.style.width = '0%';
                 
                 stopSendingBtn.style.display = 'block';
+                stopSending = false;
+                isSending = true;
                 
                 addLogToOutput('开始批量发送消息...', 'info');
-                addLogToOutput(`共 ${selectedGroups.length} 个群组`, 'info');
+                addLogToOutput(`发送方式: ${currentSendMethod === 'all' ? '所有已绑定群组' : currentSendMethod === 'by-group' ? '按分组发送' : '选中群组'}`, 'info');
+                addLogToOutput(`发送格式: ${currentSendFormat === 'simple' ? '简单格式' : currentSendFormat === 'separate' ? '分开格式' : currentSendFormat === 'compact' ? '紧凑格式' : '自定义格式'}`, 'info');
+                addLogToOutput(`发送模式: ${sendMode === 'all' ? '链接+@人物' : sendMode === 'link-only' ? '仅链接' : '仅@人物'}`, 'info');
+                addLogToOutput(`@人物话术: ${currentMentionTemplate}`, 'info');
+                addLogToOutput(`共 ${groupsToSend.length} 个有匹配链接的群组`, 'info');
+                addLogToOutput(`跳过了 ${selectedGroups.length - groupsToSend.length} 个无匹配链接的群组`, 'info');
                 addLogToOutput(`发送延迟: ${sendDelay}ms`, 'info');
                 
                 let successCount = 0;
                 let failCount = 0;
+                let linkSuccessCount = 0;
+                let mentionSuccessCount = 0;
                 
                 try {
-                    if (!telegramBot || telegramBot.botToken !== token) {
-                        telegramBot = new TelegramBotAPI(token);
+                    if (!telegramBot || telegramBot.botToken !== botToken) {
+                        telegramBot = new TelegramBotAPI(botToken);
                     }
                     
-                    for (let i = 0; i < selectedGroups.length; i++) {
+                    for (let i = 0; i < groupsToSend.length; i++) {
                         if (stopSending) {
                             addLogToOutput('发送已停止', 'warning');
                             break;
                         }
                         
-                        const group = selectedGroups[i];
+                        const { group, promotionLinks, imageLinks, videoLinks, otherLinks } = groupsToSend[i];
+                        const groupIndex = groups.findIndex(g => g.id === group.id);
+                        
+                        groups[groupIndex].sending = true;
+                        
+                        addLogToOutput(`发送到 ${group.name} (${i+1}/${groupsToSend.length})...`, 'info');
                         
                         try {
-                            // 获取该群组匹配的链接对
-                            const matchedPairs = getGroupLinkPairs(group);
+                            let linkSent = false;
+                            let mentionSent = false;
                             
-                            if (matchedPairs.length === 0) {
-                                addLogToOutput(`✗ ${group.name} 没有匹配的链接对，跳过`, 'warning');
-                                failCount++;
-                                continue;
+                            // 发送链接消息（如果需要）
+                            if (sendMode === 'all' || sendMode === 'link-only') {
+                                let message = '';
+                                
+                                switch (currentSendFormat) {
+                                    case 'simple':
+                                        message = generateSimpleFormat(group, promotionLinks, imageLinks);
+                                        break;
+                                    case 'separate':
+                                        message = generateSeparateFormat(group, promotionLinks, imageLinks);
+                                        break;
+                                    case 'compact':
+                                        message = generateCompactFormat(group, promotionLinks, imageLinks);
+                                        break;
+                                    case 'custom':
+                                        message = generateCustomFormat(group, promotionLinks, imageLinks);
+                                        break;
+                                }
+                                
+                                if (message.trim()) {
+                                    await telegramBot.sendMessage(group.id, message);
+                                    linkSent = true;
+                                    linkSuccessCount++;
+                                    addLogToOutput(`  ✓ 链接发送成功 (${promotionLinks.length}推广/${imageLinks.length}图片)`, 'success');
+                                } else {
+                                    addLogToOutput(`  ⓘ 没有链接可发送`, 'info');
+                                }
                             }
                             
-                            // 构建消息
-                            let message = `${group.name}\n`;
-                            matchedPairs.forEach((pair, index) => {
-                                const prefix = getLinkTypePrefix(pair.linkType);
-                                message += `${prefix ? prefix + ' ' : ''}旧 ${pair.oldUrl}\n`;
-                                message += `${prefix ? prefix + ' ' : ''}新 ${pair.newUrl}`;
-                                if (index < matchedPairs.length - 1) {
-                                    message += '\n\n';
+                            // 发送@人物消息（如果需要）
+                            if (sendMode === 'all' || sendMode === 'mention-only') {
+                                if (group.mentionUsers && group.mentionUsers.length > 0) {
+                                    const delay = group.mentionDelay || 3;
+                                    const templateText = getMentionTemplateText(group.name);
+                                    const mentions = group.mentionUsers.map(m => `@${m}`).join(' ');
+                                    const mentionMessage = `${templateText}\n${mentions}`;
+                                    
+                                    addLogToOutput(`  等待 ${delay} 秒后@ ${group.mentionUsers.length} 个人物...`, 'info');
+                                    
+                                    // 等待指定秒数
+                                    await new Promise(resolve => setTimeout(resolve, delay * 1000));
+                                    
+                                    await telegramBot.sendMessage(group.id, mentionMessage);
+                                    mentionSent = true;
+                                    mentionSuccessCount++;
+                                    addLogToOutput(`  ✓ @人物发送成功`, 'success');
+                                } else {
+                                    addLogToOutput(`  未设置@人物，跳过`, 'info');
                                 }
-                            });
+                            }
                             
-                            await telegramBot.sendMessage(group.id, message);
-                            successCount++;
-                            successSendCount.textContent = successCount;
-                            
-                            // 更新群组最后发送时间
-                            group.lastSent = new Date().toISOString();
-                            
-                            addLogToOutput(`✓ 成功发送到 ${group.name} (${i+1}/${selectedGroups.length})`, 'success');
-                            
+                            // 检查是否至少有一项发送成功
+                            if ((sendMode === 'all' && (linkSent || mentionSent)) ||
+                                (sendMode === 'link-only' && linkSent) ||
+                                (sendMode === 'mention-only' && mentionSent)) {
+                                groups[groupIndex].sendSuccess = true;
+                                groups[groupIndex].lastSent = new Date().toISOString().split('T')[0];
+                                successCount++;
+                                successSendCount.textContent = successCount;
+                                
+                                addLogToOutput(`✓ 成功发送到 ${group.name}`, 'success');
+                            } else {
+                                addLogToOutput(`✗ ${group.name} 没有内容可发送，跳过`, 'warning');
+                            }
                         } catch (error) {
+                            groups[groupIndex].sendSuccess = false;
                             failCount++;
                             failedSendCount.textContent = failCount;
+                            
                             addLogToOutput(`✗ 发送到 ${group.name} 失败: ${error.message}`, 'error');
                         }
                         
                         const sentCount = successCount + failCount;
-                        const percent = Math.round((sentCount / selectedGroups.length) * 100);
+                        const percent = Math.round((sentCount / groupsToSend.length) * 100);
                         progressPercent.textContent = `${percent}%`;
                         progressFill.style.width = `${percent}%`;
-                        pendingSendCount.textContent = selectedGroups.length - sentCount;
+                        pendingSendCount.textContent = groupsToSend.length - sentCount;
                         
                         saveToStorage();
                         
-                        if (i < selectedGroups.length - 1 && !stopSending) {
+                        if (i < groupsToSend.length - 1 && !stopSending) {
                             await new Promise(resolve => setTimeout(resolve, sendDelay));
                         }
                     }
@@ -3699,626 +5279,41 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     isSending = false;
                     stopSendingBtn.style.display = 'none';
                     
-                    const finalMessage = `批量发送完成！成功: ${successCount}, 失败: ${failCount}`;
-                    addLogToOutput(finalMessage, successCount === selectedGroups.length ? 'success' : 'warning');
-                    showNotification('发送完成', finalMessage, successCount === selectedGroups.length ? 'success' : 'warning');
+                    let finalMessage = `批量发送完成！`;
+                    if (sendMode === 'all' || sendMode === 'link-only') {
+                        finalMessage += ` 链接成功: ${linkSuccessCount}`;
+                    }
+                    if (sendMode === 'all' || sendMode === 'mention-only') {
+                        finalMessage += ` @人物成功: ${mentionSuccessCount}`;
+                    }
+                    finalMessage += `, 总成功: ${successCount}, 失败: ${failCount}`;
                     
+                    // 添加跳过的群组信息
+                    const skippedCount = selectedGroups.length - groupsToSend.length;
+                    if (skippedCount > 0) {
+                        finalMessage += `, 跳过了 ${skippedCount} 个无匹配链接的群组`;
+                    }
+                    
+                    addLogToOutput(finalMessage, successCount === groupsToSend.length ? 'success' : 'warning');
+                    
+                    showNotification('发送完成', finalMessage, 
+                        successCount === groupsToSend.length ? 'success' : 'warning');
                 } catch (error) {
                     addLogToOutput(`✗ 初始化失败: ${error.message}`, 'error');
-                    showNotification('发送失败', error.message, 'error');
+                    showNotification('发送失败', error.message || '初始化Telegram Bot失败', 'error');
                     isSending = false;
                     stopSendingBtn.style.display = 'none';
                 }
             });
             
-            // 停止发送
-            document.getElementById('stopSending').addEventListener('click', function() {
-                stopSending = true;
-                isSending = false;
-                showNotification('已停止', '批量发送已停止', 'warning');
-            });
-            
-            // 清空所有数据
-            clearStorageBtn.addEventListener('click', function() {
-                if (confirm('确定要清除所有数据吗？这将删除所有群组和链接对。')) {
-                    localStorage.clear();
-                    groups = [];
-                    linkPairs = [];
-                    telegramBot = null;
-                    botTokenInput.value = '';
-                    
-                    showNotification('数据已清除', '所有本地数据已清空', 'success');
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                }
-            });
-            
-            // 恢复示例数据
-            resetStorageBtn.addEventListener('click', function() {
-                if (confirm('确定要恢复示例数据吗？这将替换现有数据。')) {
-                    initSampleGroups();
-                    initSampleLinkPairs();
-                    showNotification('示例数据已恢复', '已加载示例群组和链接对', 'success');
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                }
-            });
-            
-            // 数据导入
-            selectImportFileBtn.addEventListener('click', function() {
-                importFileInput.click();
-            });
-            
-            importFileInput.addEventListener('change', function() {
-                const fileName = this.files[0]?.name || '未选择文件';
-                document.getElementById('importFileName').textContent = `已选择: ${fileName}`;
-            });
-            
-            importDataBtn.addEventListener('click', function() {
-                const file = importFileInput.files[0];
-                if (!file) {
-                    showNotification('请选择文件', '请先选择要导入的文件', 'error');
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const content = e.target.result;
-                        const action = document.getElementById('importAction').value;
-                        
-                        if (action === 'replace') {
-                            groups = [];
-                            linkPairs = [];
-                        }
-                        
-                        // 尝试解析JSON
-                        try {
-                            const data = JSON.parse(content);
-                            if (data.groups && Array.isArray(data.groups)) {
-                                groups = groups.concat(data.groups);
-                            }
-                            if (data.linkPairs && Array.isArray(data.linkPairs)) {
-                                linkPairs = linkPairs.concat(data.linkPairs);
-                            }
-                        } catch (jsonError) {
-                            // 如果不是JSON，尝试其他格式
-                            const lines = content.split('\n').filter(line => line.trim());
-                            if (lines.length > 0) {
-                                // 尝试解析CSV或TXT格式
-                                lines.forEach(line => {
-                                    const parts = line.split('|');
-                                    if (parts.length >= 3) {
-                                        const group = {
-                                            id: parts[2]?.trim(),
-                                            name: parts[0]?.trim(),
-                                            channel: parts[1]?.trim(),
-                                            cids: parts[3]?.split(',').map(c => c.trim()).filter(c => c) || [],
-                                            sizes: parts[4]?.split(',').map(s => s.trim()).filter(s => s) || [],
-                                            bound: true,
-                                            boundDate: new Date().toISOString().split('T')[0],
-                                            selected: false,
-                                            createdAt: new Date().toISOString()
-                                        };
-                                        groups.push(group);
-                                    }
-                                });
-                            }
-                        }
-                        
-                        saveToStorage();
-                        showNotification('导入成功', `已导入 ${groups.length} 个群组和 ${linkPairs.length} 个链接对`, 'success');
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                        
-                    } catch (error) {
-                        showNotification('导入失败', '文件格式不正确', 'error');
-                    }
-                };
-                reader.readAsText(file);
-            });
-            
-            // 工具函数
-            function generateId() {
-                return Date.now().toString(36) + Math.random().toString(36).substr(2);
-            }
-            
-            function extractInfoFromUrl(url) {
-                if (!url) return { cid: null, sizes: [], domain: null };
-                
-                let cid = null;
-                let sizes = [];
-                
-                // 提取CID
-                const cidMatch = url.match(/[\?&]cid=(\d+)/);
-                if (cidMatch) {
-                    cid = cidMatch[1];
-                }
-                
-                // 提取尺寸
-                const sizeMatches = url.matchAll(/\/(\d{2,4})-(\d{2,4})\//g);
-                for (const match of sizeMatches) {
-                    sizes.push(`${match[1]}-${match[2]}`);
-                }
-                
-                return { cid, sizes, domain: null };
-            }
-            
-            function detectLinkType(url) {
-                if (!url) return 'general';
-                
-                if (url.includes('?cid=') || url.includes('&cid=') || url.includes('/imp04/?cid=')) {
-                    return 'promotion';
-                }
-                
-                const sizePattern = /\/(\d{2,4})-(\d{2,4})\//;
-                if (sizePattern.test(url)) {
-                    return 'image';
-                }
-                
-                const imageExtensions = ['.gif', '.jpg', '.jpeg', '.png', '.bmp', '.webp'];
-                for (const ext of imageExtensions) {
-                    if (url.toLowerCase().includes(ext)) {
-                        return 'image';
-                    }
-                }
-                
-                return 'general';
-            }
-            
-            function getLinkTypePrefix(linkType) {
-                switch (linkType) {
-                    case 'promotion':
-                        return '<span class="link-type-promotion">推广链接</span>';
-                    case 'image':
-                        return '<span class="link-type-image">图片链接</span>';
-                    default:
-                        return '';
-                }
-            }
-            
-            function sizesMatch(linkSizes, groupSizes) {
-                if (!linkSizes || linkSizes.length === 0) return false;
-                if (!groupSizes || groupSizes.length === 0) return false;
-                
-                return linkSizes.some(linkSize => groupSizes.includes(linkSize));
-            }
-            
-            function getGroupLinkPairs(group) {
-                const allMatchedPairs = [];
-                
-                linkPairs.forEach(pair => {
-                    let matched = false;
-                    
-                    // 按CID匹配
-                    if (pair.cid && group.cids && group.cids.includes(pair.cid)) {
-                        matched = true;
-                    }
-                    // 按尺寸匹配
-                    else if (pair.sizes && pair.sizes.length > 0 && group.sizes && group.sizes.length > 0) {
-                        if (sizesMatch(pair.sizes, group.sizes)) {
-                            matched = true;
-                        }
-                    }
-                    
-                    if (matched) {
-                        allMatchedPairs.push(pair);
-                    }
-                });
-                
-                return allMatchedPairs;
-            }
-            
-            function addLogToOutput(message, type = 'info') {
-                const logOutput = document.getElementById('sendLogOutput');
-                const iconMap = {
-                    success: 'check-circle',
-                    error: 'times-circle',
-                    warning: 'exclamation-triangle',
-                    info: 'info-circle'
-                };
-                
-                const logEntry = document.createElement('div');
-                logEntry.className = `log-entry ${type}`;
-                logEntry.innerHTML = `
-                    <div class="log-icon">
-                        <i class="fas fa-${iconMap[type]}"></i>
-                    </div>
-                    <div>${message}</div>
-                `;
-                
-                logOutput.appendChild(logEntry);
-                logOutput.scrollTop = logOutput.scrollHeight;
-            }
-            
-            function saveToStorage() {
-                try {
-                    localStorage.setItem(STORAGE_KEYS.GROUPS, JSON.stringify(groups));
-                    localStorage.setItem(STORAGE_KEYS.LINK_PAIRS, JSON.stringify(linkPairs));
-                    updateBadges();
-                    showNotification('数据已保存', '所有更改已保存到本地存储', 'success', 2000);
-                } catch (error) {
-                    console.error('保存数据失败:', error);
-                }
-            }
-            
-            function updateBadges() {
-                const totalGroups = groups.length;
-                const boundGroups = groups.filter(g => g.bound).length;
-                const selectedGroups = groups.filter(g => g.selected).length;
-                const totalLinks = linkPairs.length;
-                
-                document.getElementById('bindTabBadge').textContent = boundGroups;
-                document.getElementById('sendTabBadge').textContent = selectedGroups;
-                document.getElementById('manageTabBadge').textContent = totalGroups;
-                document.getElementById('linksTabBadge').textContent = totalLinks;
-                document.getElementById('totalGroupsCount').textContent = `共 ${totalGroups} 个群组`;
-                document.getElementById('sendSelectedCount').textContent = `已选择 ${selectedGroups} 个群组`;
-                document.getElementById('linkPairsCount').textContent = `共 ${totalLinks} 个链接对`;
-            }
-            
-            function initSampleGroups() {
-                groups = [
-                    { 
-                        id: "-1001234567890", 
-                        name: "爱液", 
-                        channel: "aiyec",
-                        cids: ["5100525", "5100526", "5100527"],
-                        sizes: ["100-100", "200-200"],
-                        mentionUsers: ["admin1", "manager"],
-                        mentionDelay: 3,
-                        mentionMessage: "链接已更新，请相关人员查看",
-                        tags: ["group1", "group2"],
-                        bound: true,
-                        boundDate: "2023-10-01",
-                        selected: false,
-                        lastSent: null,
-                        createdAt: new Date().toISOString()
-                    },
-                    { 
-                        id: "-1009876543210", 
-                        name: "悟空站", 
-                        channel: "wukong",
-                        cids: ["5547607", "5547608"],
-                        sizes: ["300-250", "728-90"],
-                        mentionUsers: ["admin1"],
-                        mentionDelay: 5,
-                        mentionMessage: "新链接已发布",
-                        tags: ["group1"],
-                        bound: true,
-                        boundDate: "2023-10-02",
-                        selected: false,
-                        lastSent: "2023-10-15",
-                        createdAt: new Date().toISOString()
-                    }
-                ];
-            }
-            
-            function initSampleLinkPairs() {
-                linkPairs = [
-                    {
-                        id: generateId(),
-                        cid: "5100525",
-                        sizes: [],
-                        oldUrl: "https://d0x6am7em5.effectsj.com/imp04/?cid=5100525",
-                        newUrl: "https://izwq30lgis.comingf.com/imp04/?cid=5100525",
-                        linkType: "promotion",
-                        createdAt: new Date().toISOString()
-                    },
-                    {
-                        id: generateId(),
-                        cid: null,
-                        sizes: ["100-100"],
-                        oldUrl: "https://example.com/100-100/image.gif",
-                        newUrl: "https://newexample.com/100-100/image.gif",
-                        linkType: "image",
-                        createdAt: new Date().toISOString()
-                    }
-                ];
-            }
-            
-            function loadFromStorage() {
-                try {
-                    // 加载群组数据
-                    const savedGroups = localStorage.getItem(STORAGE_KEYS.GROUPS);
-                    if (savedGroups) {
-                        groups = JSON.parse(savedGroups);
-                    } else {
-                        initSampleGroups();
-                    }
-                    
-                    // 加载链接对数据
-                    const savedLinkPairs = localStorage.getItem(STORAGE_KEYS.LINK_PAIRS);
-                    if (savedLinkPairs) {
-                        linkPairs = JSON.parse(savedLinkPairs);
-                    } else {
-                        initSampleLinkPairs();
-                    }
-                    
-                    // 加载Bot Token
-                    const savedToken = localStorage.getItem(STORAGE_KEYS.BOT_TOKEN);
-                    if (savedToken) {
-                        botTokenInput.value = savedToken;
-                        telegramBot = new TelegramBotAPI(savedToken);
-                    }
-                    
-                    updateBadges();
-                    showNotification('数据加载成功', `已加载 ${groups.length} 个群组和 ${linkPairs.length} 个链接对`, 'success', 3000);
-                    
-                } catch (error) {
-                    console.error('加载数据失败:', error);
-                    groups = [];
-                    linkPairs = [];
-                    initSampleGroups();
-                    initSampleLinkPairs();
-                }
-            }
-            
-            // Telegram Bot API 封装类
-            class TelegramBotAPI {
-                constructor(botToken) {
-                    this.botToken = botToken;
-                    this.apiBaseUrl = 'https://api.telegram.org/bot';
-                }
-                
-                async request(method, params = {}) {
-                    const url = `${this.apiBaseUrl}${this.botToken}/${method}`;
-                    
-                    try {
-                        const formData = new FormData();
-                        Object.keys(params).forEach(key => {
-                            formData.append(key, params[key]);
-                        });
-                        
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            body: formData
-                        });
-                        
-                        const data = await response.json();
-                        
-                        if (data.ok) {
-                            return data.result;
-                        } else {
-                            throw new Error(data.description || 'Telegram API错误');
-                        }
-                    } catch (error) {
-                        console.error('Telegram API请求失败:', error);
-                        throw error;
-                    }
-                }
-                
-                async getMe() {
-                    return await this.request('getMe');
-                }
-                
-                async sendMessage(chatId, text, options = {}) {
-                    const params = {
-                        chat_id: chatId,
-                        text: text,
-                        parse_mode: 'HTML',
-                        ...options
-                    };
-                    
-                    return await this.request('sendMessage', params);
-                }
-            }
-            
             // 初始化
             loadFromStorage();
+            renderManageGroupsByTag();
+            renderSendGroupsByTag();
+            updateMessagePreview();
+            renderCurrentLinks();
+            updateMentionMessagePreview();
             
-            // 绑定其他事件
-            document.getElementById('sendSelectAll').addEventListener('click', function() {
-                groups.forEach(group => group.selected = true);
-                saveToStorage();
-                updateBadges();
-            });
-            
-            document.getElementById('sendSelectNone').addEventListener('click', function() {
-                groups.forEach(group => group.selected = false);
-                saveToStorage();
-                updateBadges();
-            });
-            
-            document.getElementById('manageSelectAll').addEventListener('click', function() {
-                groups.forEach(group => group.selected = true);
-                saveToStorage();
-                updateBadges();
-            });
-            
-            document.getElementById('manageSelectNone').addEventListener('click', function() {
-                groups.forEach(group => group.selected = false);
-                saveToStorage();
-                updateBadges();
-            });
-            
-            document.getElementById('deleteSelected').addEventListener('click', function() {
-                const selectedGroups = groups.filter(g => g.selected);
-                if (selectedGroups.length === 0) {
-                    showNotification('没有选中的群组', '请先选择要删除的群组', 'warning');
-                    return;
-                }
-                
-                if (confirm(`确定要删除选中的 ${selectedGroups.length} 个群组吗？`)) {
-                    groups = groups.filter(g => !g.selected);
-                    saveToStorage();
-                    showNotification('删除成功', `已删除 ${selectedGroups.length} 个群组`, 'success');
-                }
-            });
-            
-            // CID、尺寸、@人物标签管理函数
-            function updateCidTags() {
-                const container = document.getElementById('cidTags');
-                container.innerHTML = '';
-                selectedCids.forEach((cid, index) => {
-                    const tag = document.createElement('span');
-                    tag.className = 'cid-tag';
-                    tag.innerHTML = `${cid}<i class="fas fa-times" data-index="${index}"></i>`;
-                    container.appendChild(tag);
-                });
-                
-                container.querySelectorAll('.cid-tag i').forEach(icon => {
-                    icon.addEventListener('click', function() {
-                        const index = parseInt(this.getAttribute('data-index'));
-                        selectedCids.splice(index, 1);
-                        updateCidTags();
-                    });
-                });
-            }
-            
-            function updateSizeTags() {
-                const container = document.getElementById('sizeTags');
-                container.innerHTML = '';
-                selectedSizes.forEach((size, index) => {
-                    const tag = document.createElement('span');
-                    tag.className = 'size-tag';
-                    tag.innerHTML = `${size}<i class="fas fa-times" data-index="${index}"></i>`;
-                    container.appendChild(tag);
-                });
-                
-                container.querySelectorAll('.size-tag i').forEach(icon => {
-                    icon.addEventListener('click', function() {
-                        const index = parseInt(this.getAttribute('data-index'));
-                        selectedSizes.splice(index, 1);
-                        updateSizeTags();
-                    });
-                });
-            }
-            
-            function updateMentionTags() {
-                const container = document.getElementById('mentionTags');
-                container.innerHTML = '';
-                selectedMentions.forEach((mention, index) => {
-                    const tag = document.createElement('span');
-                    tag.className = 'mention-tag';
-                    tag.innerHTML = `@${mention}<i class="fas fa-times" data-index="${index}"></i>`;
-                    container.appendChild(tag);
-                });
-                
-                container.querySelectorAll('.mention-tag i').forEach(icon => {
-                    icon.addEventListener('click', function() {
-                        const index = parseInt(this.getAttribute('data-index'));
-                        selectedMentions.splice(index, 1);
-                        updateMentionTags();
-                    });
-                });
-            }
-            
-            function updateGroupTags() {
-                const container = document.getElementById('groupTags');
-                container.innerHTML = '';
-                selectedGroupTags.forEach((tag, index) => {
-                    const tagNum = tag.replace('group', '');
-                    const tagClass = `color-${tagNum}`;
-                    const tagElement = document.createElement('span');
-                    tagElement.className = `group-tag ${tagClass}`;
-                    tagElement.innerHTML = `${tag}<i class="fas fa-times" data-index="${index}"></i>`;
-                    container.appendChild(tagElement);
-                });
-                
-                container.querySelectorAll('.group-tag i').forEach(icon => {
-                    icon.addEventListener('click', function() {
-                        const index = parseInt(this.getAttribute('data-index'));
-                        selectedGroupTags.splice(index, 1);
-                        updateGroupTags();
-                    });
-                });
-            }
-            
-            // 绑定添加按钮
-            document.getElementById('addCidBtn').addEventListener('click', function() {
-                const input = document.getElementById('groupCids');
-                const cids = input.value.trim();
-                if (!cids) return;
-                
-                const newCids = cids.split(',').map(c => c.trim()).filter(c => c);
-                newCids.forEach(cid => {
-                    if (/^\d+$/.test(cid) && !selectedCids.includes(cid)) {
-                        selectedCids.push(cid);
-                    }
-                });
-                
-                input.value = '';
-                updateCidTags();
-            });
-            
-            document.getElementById('addSizeBtn').addEventListener('click', function() {
-                const input = document.getElementById('imageSize');
-                const size = input.value.trim();
-                if (!size) return;
-                
-                const sizes = size.split(',').map(s => s.trim()).filter(s => s);
-                sizes.forEach(s => {
-                    if (/^\d{2,4}-\d{2,4}$/.test(s) && !selectedSizes.includes(s)) {
-                        selectedSizes.push(s);
-                    }
-                });
-                
-                input.value = '';
-                updateSizeTags();
-            });
-            
-            document.getElementById('addMentionBtn').addEventListener('click', function() {
-                const input = document.getElementById('mentionUsers');
-                const mention = input.value.trim();
-                if (!mention) return;
-                
-                const mentions = mention.split(',').map(m => m.trim().replace('@', '')).filter(m => m);
-                mentions.forEach(m => {
-                    if (m && !selectedMentions.includes(m)) {
-                        selectedMentions.push(m);
-                    }
-                });
-                
-                input.value = '';
-                updateMentionTags();
-            });
-            
-            document.getElementById('addGroupTagBtn').addEventListener('click', function() {
-                const select = document.getElementById('groupTagSelect');
-                const tag = select.value;
-                if (tag && !selectedGroupTags.includes(tag)) {
-                    selectedGroupTags.push(tag);
-                    updateGroupTags();
-                    select.value = '';
-                }
-            });
-            
-            // 绑定快速添加按钮
-            document.querySelectorAll('.cid-quick-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const cid = this.getAttribute('data-cid');
-                    if (!selectedCids.includes(cid)) {
-                        selectedCids.push(cid);
-                        updateCidTags();
-                    }
-                });
-            });
-            
-            document.querySelectorAll('.size-quick-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const size = this.getAttribute('data-size');
-                    if (!selectedSizes.includes(size)) {
-                        selectedSizes.push(size);
-                        updateSizeTags();
-                    }
-                });
-            });
-            
-            document.querySelectorAll('.group-tag-quick-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const tag = this.getAttribute('data-tag');
-                    if (!selectedGroupTags.includes(tag)) {
-                        selectedGroupTags.push(tag);
-                        updateGroupTags();
-                    }
-                });
-            });
-            
-            // 页面加载完成后显示通知
             setTimeout(() => {
                 showNotification('系统已就绪', '所有数据已从本地存储加载', 'success', 3000);
             }, 1000);
