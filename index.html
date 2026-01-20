@@ -6988,198 +6988,135 @@ ${matchedPairs.map(pair => `${linkPrefix} 旧 ${pair.oldUrl}\n${linkPrefix} 新 
             
             // 导出绑定群组数据
             exportBindingsBtn.addEventListener('click', function() {
-                const filter = exportFilter.value;
-                let groupsToExport = [];
-                
-                // 根据筛选条件选择群组
-                switch (filter) {
-                    case 'all':
-                        groupsToExport = groups;
-                        break;
-                    case 'bound':
-                        groupsToExport = groups.filter(g => g.bound);
-                        break;
-                    case 'selected':
-                        groupsToExport = groups.filter(g => g.selected);
-                        break;
-                    case 'by-group':
-                        // 获取选中的分组
-                        const selectedTags = [];
-                        exportGroupTagList.querySelectorAll('.group-tag-checkbox:checked').forEach(checkbox => {
-                            selectedTags.push(checkbox.getAttribute('data-tag'));
-                        });
-                        
-                        if (selectedTags.length === 0) {
-                            showNotification('请选择分组', '请至少选择一个分组', 'warning');
-                            return;
+                                        // 如果有选中的分组，则导出这些分组的群组
+                        if (selectedTags.length > 0) {
+                            groupsToExport = groups.filter(g => 
+                                g.tags && g.tags.some(tag => selectedTags.includes(tag))
+                            );
+                        } else {
+                            // 如果没有选中任何分组，导出所有群组
+                            groupsToExport = groups;
+                            showNotification('未选择分组', '将导出所有群组', 'warning');
                         }
-                        
-                        groupsToExport = groups.filter(g => 
-                            g.tags && g.tags.some(tag => selectedTags.includes(tag))
-                        );
                         break;
                 }
                 
                 if (groupsToExport.length === 0) {
-                    showNotification('没有数据', '没有符合条件的群组数据', 'warning');
+                    showNotification('没有可导出的数据', '根据筛选条件没有找到群组', 'warning');
                     return;
                 }
                 
-                // 根据格式生成数据
-                let dataStr, mimeType, fileName;
+                // 根据选择的格式导出
+                let exportData = '';
+                let fileName = `telegram_groups_${new Date().toISOString().split('T')[0]}`;
                 
                 switch (currentExportFormat) {
                     case 'json':
-                        const exportData = {
-                            meta: {
-                                exportedAt: new Date().toISOString(),
-                                version: '1.3',
-                                system: 'Telegram群组绑定与消息发送系统',
-                                features: ['多CID支持', '二次@人物功能', '分组功能']
-                            },
-                            groups: groupsToExport.map(g => ({
-                                id: g.id,
-                                name: g.name,
-                                channel: g.channel,
-                                cids: g.cids || [],
-                                sizes: g.sizes || [],
-                                mentionUsers: g.mentionUsers || [],
-                                mentionDelay: g.mentionDelay || 3,
-                                mentionMessage: g.mentionMessage || '链接已更新，请相关人员查看',
-                                tags: g.tags || [],
-                                bound: g.bound || false,
-                                boundDate: g.boundDate || null,
-                                lastSent: g.lastSent || null,
-                                createdAt: g.createdAt || new Date().toISOString()
-                            })),
-                            stats: {
-                                totalGroups: groupsToExport.length,
-                                boundGroups: groupsToExport.filter(g => g.bound).length,
-                                groupsWithTags: groupsToExport.filter(g => g.tags && g.tags.length > 0).length,
-                                groupsWithMentions: groupsToExport.filter(g => g.mentionUsers && g.mentionUsers.length > 0).length
-                            }
+                        const jsonData = {
+                            groups: groupsToExport,
+                            exportedAt: new Date().toISOString(),
+                            total: groupsToExport.length,
+                            bound: groupsToExport.filter(g => g.bound).length,
+                            unbound: groupsToExport.filter(g => !g.bound).length
                         };
-                        dataStr = JSON.stringify(exportData, null, 2);
-                        mimeType = 'application/json';
-                        fileName = `telegram-groups-${new Date().toISOString().slice(0,10)}.json`;
-                        
-                        // 显示预览
-                        exportPreview.style.display = 'block';
-                        exportPreview.textContent = dataStr.substring(0, 2000) + (dataStr.length > 2000 ? '\n\n... (数据过长，已截断)' : '');
+                        exportData = JSON.stringify(jsonData, null, 2);
+                        fileName += '.json';
                         break;
                         
                     case 'csv':
-                        const csvHeaders = ['渠道名称', '渠道标识', 'Chat ID', 'CID列表', '图片尺寸', '@人物', '@延迟', '@消息', '分组标签', '绑定状态', '绑定日期', '最后发送'];
-                        const csvRows = groupsToExport.map(g => [
-                            `"${g.name}"`,
-                            `"${g.channel}"`,
-                            g.id,
-                            g.cids?.join(',') || '',
-                            g.sizes?.join(',') || '',
-                            g.mentionUsers?.join(',') || '',
-                            g.mentionDelay || 3,
-                            `"${g.mentionMessage || ''}"`,
-                            g.tags?.join(',') || '',
-                            g.bound ? '是' : '否',
-                            g.boundDate || '',
-                            g.lastSent || ''
-                        ].join(','));
-                        dataStr = [csvHeaders.join(','), ...csvRows].join('\n');
-                        mimeType = 'text/csv';
-                        fileName = `telegram-groups-${new Date().toISOString().slice(0,10)}.csv`;
+                        // 创建CSV头部
+                        const csvHeaders = [
+                            '渠道名称',
+                            '渠道标识', 
+                            'Chat ID',
+                            'CID列表',
+                            '图片尺寸',
+                            '@人物',
+                            '@延迟(秒)',
+                            '@话术模板',
+                            '@消息',
+                            '分组标签',
+                            '绑定状态',
+                            '绑定日期',
+                            '最后发送',
+                            '创建时间'
+                        ];
                         
-                        // 显示预览
-                        exportPreview.style.display = 'block';
-                        exportPreview.textContent = dataStr.substring(0, 2000) + (dataStr.length > 2000 ? '\n\n... (数据过长，已截断)' : '');
+                        // 创建CSV数据行
+                        const csvRows = groupsToExport.map(group => {
+                            return [
+                                `"${group.name}"`,
+                                `"${group.channel}"`,
+                                `"${group.id}"`,
+                                `"${(group.cids || []).join(',')}"`,
+                                `"${(group.sizes || []).join(',')}"`,
+                                `"${(group.mentionUsers || []).join(',')}"`,
+                                group.mentionDelay || 3,
+                                `"${group.mentionTemplate || 'template1'}"`,
+                                `"${group.mentionMessage || ''}"`,
+                                `"${(group.tags || []).join(',')}"`,
+                                group.bound ? '是' : '否',
+                                `"${group.boundDate || ''}"`,
+                                `"${group.lastSent || ''}"`,
+                                `"${group.createdAt || ''}"`
+                            ].join(',');
+                        });
+                        
+                        exportData = [csvHeaders.join(','), ...csvRows].join('\n');
+                        fileName += '.csv';
                         break;
                         
                     case 'txt':
-                        dataStr = groupsToExport.map(g => 
-                            `${g.name}|${g.channel}|${g.id}|${g.cids?.join(',') || ''}|${g.sizes?.join(',') || ''}|${g.mentionUsers?.join(',') || ''}|${g.mentionDelay || 3}|${g.mentionMessage || ''}|${g.tags?.join(',') || ''}|${g.bound ? '是' : '否'}|${g.boundDate || ''}|${g.lastSent || ''}`
-                        ).join('\n');
-                        mimeType = 'text/plain';
-                        fileName = `telegram-groups-${new Date().toISOString().slice(0,10)}.txt`;
+                        // 创建TXT格式（竖线分隔）
+                        const txtRows = groupsToExport.map(group => {
+                            return [
+                                group.name,
+                                group.channel,
+                                group.id,
+                                (group.cids || []).join(','),
+                                (group.sizes || []).join(','),
+                                (group.mentionUsers || []).join(','),
+                                group.mentionDelay || 3,
+                                group.mentionTemplate || 'template1',
+                                group.mentionMessage || '',
+                                (group.tags || []).join(','),
+                                group.bound ? '是' : '否',
+                                group.boundDate || '',
+                                group.lastSent || '',
+                                group.createdAt || ''
+                            ].join('|');
+                        });
                         
-                        // 显示预览
-                        exportPreview.style.display = 'block';
-                        exportPreview.textContent = dataStr.substring(0, 2000) + (dataStr.length > 2000 ? '\n\n... (数据过长，已截断)' : '');
+                        exportData = txtRows.join('\n');
+                        fileName += '.txt';
                         break;
                 }
                 
-                // 创建下载链接
-                const dataUri = `data:${mimeType};charset=utf-8,${encodeURIComponent(dataStr)}`;
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', fileName);
-                linkElement.click();
+                // 显示预览
+                exportPreview.style.display = 'block';
+                exportPreview.textContent = exportData.substring(0, 1000) + (exportData.length > 1000 ? '\n...（完整内容将在下载文件中）' : '');
                 
-                showNotification('导出成功', `已导出 ${groupsToExport.length} 个群组数据为 ${currentExportFormat.toUpperCase()} 格式`, 'success');
+                // 创建下载链接
+                const blob = new Blob([exportData], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = fileName;
+                
+                // 触发下载
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                showNotification('导出成功', `已导出 ${groupsToExport.length} 个群组数据`, 'success');
             });
             
-            // 单个链接对提取信息
-            function updateSingleExtractInfo() {
-                const oldUrl = singleOldUrlInput.value.trim();
-                const newUrl = singleNewUrlInput.value.trim();
-                
-                if (!oldUrl || !newUrl) {
-                    singleExtractResult.style.display = 'none';
-                    return;
-                }
-                
-                const validation = validateLinkPair(oldUrl, newUrl);
-                
-                if (validation.valid) {
-                    // 显示提取的CID
-                    if (validation.cid) {
-                        singleExtractedCid.textContent = validation.cid;
-                        singleExtractedSize.textContent = '无';
-                    } else if (validation.sizes.length > 0) {
-                        singleExtractedCid.textContent = '无';
-                        singleExtractedSize.textContent = validation.sizes.join(', ');
-                    } else {
-                        singleExtractedCid.textContent = '无';
-                        singleExtractedSize.textContent = '无';
-                    }
-                    
-                    // 检查匹配的群组
-                    let matchText = '';
-                    let matchedGroupNames = [];
-                    
-                    if (validation.cid) {
-                        const matchingGroups = groups.filter(group => 
-                            group.cids && group.cids.includes(validation.cid)
-                        );
-                        matchText = matchingGroups.length > 0 ? 
-                            `匹配到 ${matchingGroups.length} 个群组` : '无匹配群组';
-                        matchedGroupNames = matchingGroups.map(g => g.name);
-                    } else if (validation.sizes.length > 0) {
-                        const matchingGroups = groups.filter(group => 
-                            group.sizes && group.sizes.length > 0 &&
-                            sizesMatch(validation.sizes, group.sizes)
-                        );
-                        matchText = matchingGroups.length > 0 ? 
-                            `匹配到 ${matchingGroups.length} 个群组` : '无匹配群组';
-                        matchedGroupNames = matchingGroups.map(g => g.name);
-                    } else {
-                        matchText = '通用链接（发送到所有群组）';
-                        matchedGroupNames = groups.map(g => g.name);
-                    }
-                    
-                    singleMatchStatus.textContent = matchText;
-                    singleMatchStatus.style.color = matchText.includes('匹配到') ? 'var(--success-color)' : 
-                                                   matchText.includes('通用链接') ? 'var(--primary-color)' : 'var(--warning-color)';
-                    
-                    singleMatchedGroups.textContent = matchedGroupNames.join(', ') || '无';
-                    
-                    singleExtractResult.style.display = 'block';
-                } else {
-                    singleExtractResult.style.display = 'none';
-                }
-            }
-            
-            // 监听单个链接输入变化
-            singleOldUrlInput.addEventListener('input', updateSingleExtractInfo);
-            singleNewUrlInput.addEventListener('input', updateSingleExtractInfo);
+            // 清空批量导出输入
+            clearBatchExportInputBtn.addEventListener('click', function() {
+                batchExportFormatInput.value = '';
+                showNotification('已清空', '批量添加输入框已清空', 'info');
+            });
             
             // 添加单个链接对
             addSingleLinkBtn.addEventListener('click', function() {
@@ -7187,7 +7124,7 @@ ${matchedPairs.map(pair => `${linkPrefix} 旧 ${pair.oldUrl}\n${linkPrefix} 新 
                 const newUrl = singleNewUrlInput.value.trim();
                 
                 if (!oldUrl || !newUrl) {
-                    showNotification('信息不全', '请填写新旧链接', 'error');
+                    showNotification('链接为空', '请输入新旧链接', 'error');
                     return;
                 }
                 
@@ -7198,6 +7135,7 @@ ${matchedPairs.map(pair => `${linkPrefix} 旧 ${pair.oldUrl}\n${linkPrefix} 新 
                     return;
                 }
                 
+                // 检查是否已存在
                 const existingIndex = linkPairs.findIndex(pair => 
                     ((validation.cid && pair.cid === validation.cid) || 
                      (validation.sizes.length > 0 && JSON.stringify(pair.sizes.sort()) === JSON.stringify(validation.sizes.sort()))) && 
@@ -7206,23 +7144,28 @@ ${matchedPairs.map(pair => `${linkPrefix} 旧 ${pair.oldUrl}\n${linkPrefix} 新 
                 );
                 
                 if (existingIndex >= 0) {
-                    showNotification('链接对已存在', '相同的链接对已存在', 'warning');
+                    showNotification('链接对已存在', '相同的链接对已存在，无需重复添加', 'warning');
                     return;
                 }
                 
-                linkPairs.push({
+                // 创建新的链接对
+                const newPair = {
                     id: generateId(),
                     cid: validation.cid,
                     sizes: validation.sizes,
                     oldUrl: oldUrl,
                     newUrl: newUrl,
                     createdAt: new Date().toISOString()
-                });
+                };
                 
+                linkPairs.push(newPair);
+                
+                // 清空输入框
                 singleOldUrlInput.value = '';
                 singleNewUrlInput.value = '';
                 singleExtractResult.style.display = 'none';
                 
+                // 保存并更新
                 saveToStorage();
                 renderCurrentLinks();
                 renderLinkPairs();
@@ -7230,628 +7173,207 @@ ${matchedPairs.map(pair => `${linkPrefix} 旧 ${pair.oldUrl}\n${linkPrefix} 新 
                 updateLinkMatchStats();
                 updateMessagePreview();
                 
-                showNotification('链接对已添加', `成功添加${validation.cid ? ' CID: ' + validation.cid : ' 尺寸: ' + validation.sizes.join(', ')}的链接对`, 'success');
-                
-                linkTabs.forEach(t => t.classList.remove('active'));
-                linkTabContents.forEach(c => c.classList.remove('active'));
-                document.querySelector('.link-tab[data-tab="manage-links"]').classList.add('active');
-                document.getElementById('manageLinksTab').classList.add('active');
+                showNotification('链接对已添加', validation.message, 'success');
             });
             
-            // 智能批量添加链接对
-            function addBatchLinksSmart() {
-                const oldUrlsInput = batchOldUrlsInput.value.trim();
-                const newUrlsInput = batchNewUrlsInput.value.trim();
+            // 批量添加链接对
+            addBatchLinksBtn.addEventListener('click', function() {
+                const oldUrlsText = batchOldUrlsInput.value.trim();
+                const newUrlsText = batchNewUrlsInput.value.trim();
                 
-                if (!oldUrlsInput || !newUrlsInput) {
-                    showNotification('输入为空', '请填写左右两边的链接列表', 'warning');
+                if (!oldUrlsText || !newUrlsText) {
+                    showNotification('链接为空', '请输入新旧链接列表', 'error');
                     return;
                 }
                 
-                const oldUrls = oldUrlsInput.split('\n').map(url => url.trim()).filter(url => url);
-                const newUrls = newUrlsInput.split('\n').map(url => url.trim()).filter(url => url);
+                const oldUrls = oldUrlsText.split('\n').map(url => url.trim()).filter(url => url);
+                const newUrls = newUrlsText.split('\n').map(url => url.trim()).filter(url => url);
                 
-                const oldLinksInfo = oldUrls.map(url => extractInfoFromUrl(url));
-                const newLinksInfo = newUrls.map(url => extractInfoFromUrl(url));
-                
-                // 按CID分组
-                const oldLinksByCid = {};
-                const newLinksByCid = {};
-                
-                oldLinksInfo.forEach((link, index) => {
-                    if (link.cid) {
-                        if (!oldLinksByCid[link.cid]) {
-                            oldLinksByCid[link.cid] = [];
-                        }
-                        oldLinksByCid[link.cid].push({ ...link, url: oldUrls[index] });
-                    }
-                });
-                
-                newLinksInfo.forEach((link, index) => {
-                    if (link.cid) {
-                        if (!newLinksByCid[link.cid]) {
-                            newLinksByCid[link.cid] = [];
-                        }
-                        newLinksByCid[link.cid].push({ ...link, url: newUrls[index] });
-                    }
-                });
-                
-                // 按尺寸分组（支持多尺寸）
-                const oldLinksBySize = {};
-                const newLinksBySize = {};
-                
-                oldLinksInfo.forEach((link, index) => {
-                    link.sizes.forEach(size => {
-                        if (!oldLinksBySize[size]) {
-                            oldLinksBySize[size] = [];
-                        }
-                        oldLinksBySize[size].push({ ...link, url: oldUrls[index] });
-                    });
-                });
-                
-                newLinksInfo.forEach((link, index) => {
-                    link.sizes.forEach(size => {
-                        if (!newLinksBySize[size]) {
-                            newLinksBySize[size] = [];
-                        }
-                        newLinksBySize[size].push({ ...link, url: newUrls[index] });
-                    });
-                });
-                
-                // 通用链接
-                const oldGeneralLinks = oldLinksInfo
-                    .map((link, index) => ({ ...link, url: oldUrls[index] }))
-                    .filter(link => !link.cid && link.sizes.length === 0);
-                
-                const newGeneralLinks = newLinksInfo
-                    .map((link, index) => ({ ...link, url: newUrls[index] }))
-                    .filter(link => !link.cid && link.sizes.length === 0);
+                // 获取匹配模式
+                const matchMode = document.querySelector('input[name="batchMatchMode"]:checked').value;
                 
                 let addedCount = 0;
-                let duplicateCount = 0;
-                const extractedCids = new Set();
-                const extractedSizes = new Set();
+                let errorCount = 0;
+                const errorMessages = [];
                 
-                // 按CID匹配
-                Object.keys(oldLinksByCid).forEach(cid => {
-                    const oldLinks = oldLinksByCid[cid];
-                    const newLinks = newLinksByCid[cid] || [];
-                    
-                    if (oldLinks.length > 0 && newLinks.length > 0) {
-                        const maxPairs = Math.min(oldLinks.length, newLinks.length);
-                        
-                        for (let i = 0; i < maxPairs; i++) {
-                            const oldUrl = oldLinks[i].url;
-                            const newUrl = newLinks[i].url;
-                            
-                            const existingIndex = linkPairs.findIndex(pair => 
-                                pair.cid === cid && 
-                                pair.oldUrl === oldUrl && 
-                                pair.newUrl === newUrl
-                            );
-                            
-                            if (existingIndex >= 0) {
-                                duplicateCount++;
-                                continue;
-                            }
-                            
-                            linkPairs.push({
-                                id: generateId(),
-                                cid: cid,
-                                sizes: [],
-                                oldUrl: oldUrl,
-                                newUrl: newUrl,
-                                createdAt: new Date().toISOString()
-                            });
-                            addedCount++;
-                            extractedCids.add(cid);
-                        }
+                if (matchMode === 'strict') {
+                    // 严格匹配模式：按行一一对应
+                    if (oldUrls.length !== newUrls.length) {
+                        showNotification('数量不匹配', '严格匹配模式下，左右链接数量必须相同', 'error');
+                        return;
                     }
-                });
-                
-                // 按尺寸匹配（支持多尺寸）
-                Object.keys(oldLinksBySize).forEach(size => {
-                    const oldLinks = oldLinksBySize[size];
-                    const newLinks = newLinksBySize[size] || [];
                     
-                    if (oldLinks.length > 0 && newLinks.length > 0) {
-                        const maxPairs = Math.min(oldLinks.length, newLinks.length);
+                    for (let i = 0; i < oldUrls.length; i++) {
+                        const oldUrl = oldUrls[i];
+                        const newUrl = newUrls[i];
                         
-                        for (let i = 0; i < maxPairs; i++) {
-                            const oldUrl = oldLinks[i].url;
-                            const newUrl = newLinks[i].url;
-                            
-                            const existingIndex = linkPairs.findIndex(pair => 
-                                pair.sizes.includes(size) && 
-                                pair.oldUrl === oldUrl && 
-                                pair.newUrl === newUrl
-                            );
-                            
-                            if (existingIndex >= 0) {
-                                duplicateCount++;
-                                continue;
-                            }
-                            
-                            // 检查是否已存在相同URL但不同尺寸的链接对
-                            const existingPairIndex = linkPairs.findIndex(pair => 
-                                pair.oldUrl === oldUrl && 
-                                pair.newUrl === newUrl
-                            );
-                            
-                            if (existingPairIndex >= 0) {
-                                // 更新现有链接对，添加尺寸
-                                if (!linkPairs[existingPairIndex].sizes.includes(size)) {
-                                    linkPairs[existingPairIndex].sizes.push(size);
-                                }
-                                duplicateCount++;
-                            } else {
-                                // 添加新链接对
-                                linkPairs.push({
-                                    id: generateId(),
-                                    cid: null,
-                                    sizes: [size],
-                                    oldUrl: oldUrl,
-                                    newUrl: newUrl,
-                                    createdAt: new Date().toISOString()
-                                });
-                                addedCount++;
-                            }
-                            extractedSizes.add(size);
+                        const validation = validateLinkPair(oldUrl, newUrl);
+                        
+                        if (!validation.valid) {
+                            errorCount++;
+                            errorMessages.push(`第 ${i + 1} 行: ${validation.message}`);
+                            continue;
                         }
-                    }
-                });
-                
-                // 处理通用链接
-                if (oldGeneralLinks.length > 0 && newGeneralLinks.length > 0) {
-                    const maxPairs = Math.min(oldGeneralLinks.length, newGeneralLinks.length);
-                    
-                    for (let i = 0; i < maxPairs; i++) {
-                        const oldUrl = oldGeneralLinks[i].url;
-                        const newUrl = newGeneralLinks[i].url;
                         
+                        // 检查是否已存在
                         const existingIndex = linkPairs.findIndex(pair => 
-                            !pair.cid && pair.sizes.length === 0 && 
+                            ((validation.cid && pair.cid === validation.cid) || 
+                             (validation.sizes.length > 0 && JSON.stringify(pair.sizes.sort()) === JSON.stringify(validation.sizes.sort()))) && 
                             pair.oldUrl === oldUrl && 
                             pair.newUrl === newUrl
                         );
                         
-                        if (existingIndex >= 0) {
-                            duplicateCount++;
-                            continue;
+                        if (existingIndex === -1) {
+                            const newPair = {
+                                id: generateId(),
+                                cid: validation.cid,
+                                sizes: validation.sizes,
+                                oldUrl: oldUrl,
+                                newUrl: newUrl,
+                                createdAt: new Date().toISOString()
+                            };
+                            
+                            linkPairs.push(newPair);
+                            addedCount++;
                         }
-                        
-                        linkPairs.push({
-                            id: generateId(),
-                            cid: null,
-                            sizes: [],
-                            oldUrl: oldUrl,
-                            newUrl: newUrl,
-                            createdAt: new Date().toISOString()
-                        });
-                        addedCount++;
                     }
-                }
-                
-                // 计算未匹配的链接数量
-                let unmatchedOld = 0;
-                let unmatchedNew = 0;
-                
-                // 计算旧链接未匹配数量
-                Object.keys(oldLinksByCid).forEach(cid => {
-                    if (!newLinksByCid[cid]) {
-                        unmatchedOld += oldLinksByCid[cid].length;
-                    } else {
-                        unmatchedOld += Math.max(0, oldLinksByCid[cid].length - newLinksByCid[cid].length);
-                    }
-                });
-                
-                Object.keys(oldLinksBySize).forEach(size => {
-                    if (!newLinksBySize[size]) {
-                        unmatchedOld += oldLinksBySize[size].length;
-                    } else {
-                        unmatchedOld += Math.max(0, oldLinksBySize[size].length - newLinksBySize[size].length);
-                    }
-                });
-                
-                // 计算新链接未匹配数量
-                Object.keys(newLinksByCid).forEach(cid => {
-                    if (!oldLinksByCid[cid]) {
-                        unmatchedNew += newLinksByCid[cid].length;
-                    } else {
-                        unmatchedNew += Math.max(0, newLinksByCid[cid].length - oldLinksByCid[cid].length);
-                    }
-                });
-                
-                Object.keys(newLinksBySize).forEach(size => {
-                    if (!oldLinksBySize[size]) {
-                        unmatchedNew += newLinksBySize[size].length;
-                    } else {
-                        unmatchedNew += Math.max(0, newLinksBySize[size].length - oldLinksBySize[size].length);
-                    }
-                });
-                
-                // 通用链接未匹配
-                if (oldGeneralLinks.length > newGeneralLinks.length) {
-                    unmatchedOld += oldGeneralLinks.length - newGeneralLinks.length;
-                }
-                if (newGeneralLinks.length > oldGeneralLinks.length) {
-                    unmatchedNew += newGeneralLinks.length - oldGeneralLinks.length;
-                }
-                
-                const totalUnmatched = unmatchedOld + unmatchedNew;
-                
-                if (addedCount > 0) {
-                    saveToStorage();
-                    renderCurrentLinks();
-                    renderLinkPairs();
-                    updateLinksStats();
-                    updateLinkMatchStats();
-                    updateMessagePreview();
-                    
-                    batchExtractedCids.textContent = Array.from(extractedCids).join(', ') || '无';
-                    batchExtractedSizes.textContent = Array.from(extractedSizes).join(', ') || '无';
-                    batchSuccessCount.textContent = addedCount;
-                    batchUnmatchedCount.textContent = `${unmatchedOld}个旧链接, ${unmatchedNew}个新链接`;
-                    batchExtractResult.style.display = 'block';
-                    
-                    batchOldUrlsInput.value = '';
-                    batchNewUrlsInput.value = '';
-                }
-                
-                let message = '';
-                if (addedCount > 0) message += `成功添加 ${addedCount} 个链接对`;
-                if (duplicateCount > 0) message += `${message ? '，' : ''}跳过 ${duplicateCount} 个重复项`;
-                if (totalUnmatched > 0) message += `${message ? '，' : ''}未匹配: ${unmatchedOld}个旧链接, ${unmatchedNew}个新链接`;
-                
-                showNotification('智能匹配完成', message, addedCount > 0 ? 'success' : 'warning');
-                
-                if (addedCount > 0) {
-                    linkTabs.forEach(t => t.classList.remove('active'));
-                    linkTabContents.forEach(c => c.classList.remove('active'));
-                    document.querySelector('.link-tab[data-tab="manage-links"]').classList.add('active');
-                    document.getElementById('manageLinksTab').classList.add('active');
-                }
-            }
-            
-            // 严格批量添加链接对
-            function addBatchLinksStrict() {
-                const oldUrlsInput = batchOldUrlsInput.value.trim();
-                const newUrlsInput = batchNewUrlsInput.value.trim();
-                
-                if (!oldUrlsInput || !newUrlsInput) {
-                    showNotification('输入为空', '请填写左右两边的链接列表', 'warning');
-                    return;
-                }
-                
-                const oldUrls = oldUrlsInput.split('\n').map(url => url.trim()).filter(url => url);
-                const newUrls = newUrlsInput.split('\n').map(url => url.trim()).filter(url => url);
-                
-                if (oldUrls.length !== newUrls.length) {
-                    showNotification('数量不匹配', '左右两边链接数量必须相同', 'error');
-                    return;
-                }
-                
-                let addedCount = 0;
-                let errorCount = 0;
-                let duplicateCount = 0;
-                const extractedCids = new Set();
-                const extractedSizes = new Set();
-                
-                for (let i = 0; i < oldUrls.length; i++) {
-                    const oldUrl = oldUrls[i];
-                    const newUrl = newUrls[i];
-                    
-                    const validation = validateLinkPair(oldUrl, newUrl);
-                    
-                    if (!validation.valid) {
-                        errorCount++;
-                        console.error(`第 ${i + 1} 对无效: ${validation.message}`);
-                        continue;
-                    }
-                    
-                    const existingIndex = linkPairs.findIndex(pair => 
-                        ((validation.cid && pair.cid === validation.cid) || 
-                         (validation.sizes.length > 0 && JSON.stringify(pair.sizes.sort()) === JSON.stringify(validation.sizes.sort()))) && 
-                        pair.oldUrl === oldUrl && 
-                        pair.newUrl === newUrl
-                    );
-                    
-                    if (existingIndex >= 0) {
-                        duplicateCount++;
-                        continue;
-                    }
-                    
-                    linkPairs.push({
-                        id: generateId(),
-                        cid: validation.cid,
-                        sizes: validation.sizes,
-                        oldUrl: oldUrl,
-                        newUrl: newUrl,
-                        createdAt: new Date().toISOString()
-                    });
-                    addedCount++;
-                    
-                    if (validation.cid) {
-                        extractedCids.add(validation.cid);
-                    } else if (validation.sizes.length > 0) {
-                        validation.sizes.forEach(size => extractedSizes.add(size));
-                    }
-                }
-                
-                if (addedCount > 0) {
-                    saveToStorage();
-                    renderCurrentLinks();
-                    renderLinkPairs();
-                    updateLinksStats();
-                    updateLinkMatchStats();
-                    updateMessagePreview();
-                    
-                    batchExtractedCids.textContent = Array.from(extractedCids).join(', ') || '无';
-                    batchExtractedSizes.textContent = Array.from(extractedSizes).join(', ') || '无';
-                    batchSuccessCount.textContent = addedCount;
-                    batchUnmatchedCount.textContent = errorCount > 0 ? `${errorCount} 对格式错误` : '无';
-                    batchExtractResult.style.display = 'block';
-                    
-                    batchOldUrlsInput.value = '';
-                    batchNewUrlsInput.value = '';
-                }
-                
-                let message = '';
-                if (addedCount > 0) message += `成功添加 ${addedCount} 个链接对`;
-                if (duplicateCount > 0) message += `${message ? '，' : ''}跳过 ${duplicateCount} 个重复项`;
-                if (errorCount > 0) message += `${message ? '，' : ''}${errorCount} 对格式错误`;
-                
-                showNotification('批量添加完成', message, addedCount > 0 ? 'success' : 'warning');
-                
-                if (addedCount > 0) {
-                    linkTabs.forEach(t => t.classList.remove('active'));
-                    linkTabContents.forEach(c => c.classList.remove('active'));
-                    document.querySelector('.link-tab[data-tab="manage-links"]').classList.add('active');
-                    document.getElementById('manageLinksTab').classList.add('active');
-                }
-            }
-            
-            // 批量添加链接对
-            addBatchLinksBtn.addEventListener('click', function() {
-                const matchMode = document.querySelector('input[name="batchMatchMode"]:checked').value;
-                
-                if (matchMode === 'smart') {
-                    addBatchLinksSmart();
                 } else {
-                    addBatchLinksStrict();
-                }
-            });
-            
-            // 添加链接对（链接管理页面）
-            addLinkPairBtn.addEventListener('click', function() {
-                const cid = linkCidInput.value.trim();
-                const sizeStr = linkSizeInput.value.trim();
-                const oldUrl = linkOldUrlInput.value.trim();
-                const newUrl = linkNewUrlInput.value.trim();
-                
-                if (!oldUrl || !newUrl) {
-                    showNotification('信息不全', '请填写所有字段', 'error');
-                    return;
-                }
-                
-                if (!cid && !sizeStr) {
-                    showNotification('信息不全', '请至少填写CID或图片尺寸', 'warning');
-                }
-                
-                if (cid && !/^\d+$/.test(cid)) {
-                    showNotification('CID格式错误', 'CID应为数字', 'error');
-                    return;
-                }
-                
-                // 解析尺寸
-                const sizes = sizeStr.split(',').map(s => s.trim()).filter(s => s);
-                const invalidSizes = sizes.filter(size => !/^\d{2,4}-\d{2,4}$/.test(size));
-                if (invalidSizes.length > 0) {
-                    showNotification('尺寸格式错误', `无效的尺寸格式: ${invalidSizes.join(', ')}`, 'error');
-                    return;
-                }
-                
-                const existingIndex = linkPairs.findIndex(pair => 
-                    ((cid && pair.cid === cid) || 
-                     (sizes.length > 0 && JSON.stringify(pair.sizes.sort()) === JSON.stringify(sizes.sort()))) && 
-                    pair.oldUrl === oldUrl && 
-                    pair.newUrl === newUrl
-                );
-                
-                if (existingIndex >= 0) {
-                    showNotification('链接对已存在', '相同的链接对已存在', 'warning');
-                    return;
-                }
-                
-                linkPairs.push({
-                    id: generateId(),
-                    cid: cid || null,
-                    sizes: sizes,
-                    oldUrl: oldUrl,
-                    newUrl: newUrl,
-                    createdAt: new Date().toISOString()
-                });
-                
-                linkCidInput.value = '';
-                linkSizeInput.value = '';
-                linkOldUrlInput.value = '';
-                linkNewUrlInput.value = '';
-                
-                saveToStorage();
-                renderLinkPairs();
-                updateLinkMatchStats();
-                updateMessagePreview();
-                updateLinksStats();
-                
-                showNotification('链接对已添加', `成功添加${cid ? ' CID: ' + cid : sizes.length > 0 ? ' 尺寸: ' + sizes.join(', ') : ' 通用'}链接对`, 'success');
-            });
-            
-            // 批量添加链接对（链接管理页面）
-            addBatchLinks2Btn.addEventListener('click', function() {
-                const input = batchLinksInput.value.trim();
-                if (!input) {
-                    showNotification('输入为空', '请输入要添加的链接对', 'warning');
-                    return;
-                }
-                
-                const lines = input.split('\n');
-                let addedCount = 0;
-                let errorCount = 0;
-                let duplicateCount = 0;
-                
-                lines.forEach((line, lineIndex) => {
-                    const trimmedLine = line.trim();
-                    if (!trimmedLine) return;
-                    
-                    const parts = trimmedLine.split('|').map(part => part.trim());
-                    if (parts.length < 3) {
-                        errorCount++;
-                        console.error(`第 ${lineIndex + 1} 行格式错误: ${line}`);
-                        return;
-                    }
-                    
-                    const [identifier, oldUrl, newUrl] = parts;
-                    
-                    let cid = null;
-                    let sizes = [];
-                    
-                    if (/^\d+$/.test(identifier)) {
-                        cid = identifier;
-                    } else if (identifier.includes(',')) {
-                        // 多尺寸
-                        sizes = identifier.split(',').map(s => s.trim()).filter(s => s);
-                        const invalidSizes = sizes.filter(size => !/^\d{2,4}-\d{2,4}$/.test(size));
-                        if (invalidSizes.length > 0) {
-                            showNotification('标识符格式错误', `第 ${lineIndex + 1} 行: 无效的尺寸格式`, 'warning');
-                            errorCount++;
-                            return;
-                        }
-                    } else if (/^\d{2,4}-\d{2,4}$/.test(identifier)) {
-                        // 单尺寸
-                        sizes = [identifier];
-                    } else {
-                        showNotification('标识符格式错误', `第 ${lineIndex + 1} 行: 应为CID或尺寸`, 'warning');
-                        errorCount++;
-                        return;
-                    }
-                    
-                    const existingIndex = linkPairs.findIndex(pair => 
-                        ((cid && pair.cid === cid) || 
-                         (sizes.length > 0 && JSON.stringify(pair.sizes.sort()) === JSON.stringify(sizes.sort()))) && 
-                        pair.oldUrl === oldUrl && 
-                        pair.newUrl === newUrl
-                    );
-                    
-                    if (existingIndex >= 0) {
-                        duplicateCount++;
-                        return;
-                    }
-                    
-                    linkPairs.push({
-                        id: generateId(),
-                        cid: cid,
-                        sizes: sizes,
-                        oldUrl: oldUrl,
-                        newUrl: newUrl,
-                        createdAt: new Date().toISOString()
+                    // 智能匹配模式：按CID或尺寸自动匹配
+                    const oldUrlInfos = oldUrls.map(url => {
+                        const info = extractInfoFromUrl(url);
+                        return { url, ...info };
                     });
-                    addedCount++;
-                });
-                
-                saveToStorage();
-                renderLinkPairs();
-                updateLinkMatchStats();
-                updateMessagePreview();
-                updateLinksStats();
-                
-                let message = '';
-                if (addedCount > 0) message += `成功添加 ${addedCount} 个链接对`;
-                if (duplicateCount > 0) message += `${message ? '，' : ''}跳过 ${duplicateCount} 个重复项`;
-                if (errorCount > 0) message += `${message ? '，' : ''}${errorCount} 行格式错误`;
-                
-                showNotification('批量添加完成', message, 'success');
-                batchLinksInput.value = '';
-            });
-            
-            // 编辑链接对
-            function editLinkPair(id) {
-                const pairIndex = linkPairs.findIndex(pair => pair.id === id);
-                if (pairIndex === -1) return;
-                
-                const pair = linkPairs[pairIndex];
-                
-                let identifier = pair.cid || pair.sizes?.join(', ') || '';
-                const identifierType = pair.cid ? 'CID' : pair.sizes && pair.sizes.length > 0 ? '尺寸' : '通用';
-                
-                const newIdentifier = prompt(`请输入新的${identifierType}:`, identifier);
-                if (newIdentifier === null) return;
-                
-                const newOldUrl = prompt('请输入新的旧链接:', pair.oldUrl);
-                if (newOldUrl === null) return;
-                
-                const newNewUrl = prompt('请输入新的新链接:', pair.newUrl);
-                if (newNewUrl === null) return;
-                
-                let newCid = null;
-                let newSizes = [];
-                
-                if (pair.cid) {
-                    if (!/^\d+$/.test(newIdentifier.trim())) {
-                        showNotification('CID格式错误', 'CID应为数字', 'error');
-                        return;
+                    
+                    const newUrlInfos = newUrls.map(url => {
+                        const info = extractInfoFromUrl(url);
+                        return { url, ...info };
+                    });
+                    
+                    // 先按CID匹配
+                    const cidPairs = [];
+                    for (const oldInfo of oldUrlInfos) {
+                        if (oldInfo.cid) {
+                            const matchingNewUrl = newUrlInfos.find(newInfo => newInfo.cid === oldInfo.cid);
+                            if (matchingNewUrl) {
+                                cidPairs.push({
+                                    oldUrl: oldInfo.url,
+                                    newUrl: matchingNewUrl.url,
+                                    cid: oldInfo.cid,
+                                    sizes: []
+                                });
+                            }
+                        }
                     }
-                    newCid = newIdentifier.trim();
-                } else if (pair.sizes && pair.sizes.length > 0) {
-                    newSizes = newIdentifier.split(',').map(s => s.trim()).filter(s => s);
-                    const invalidSizes = newSizes.filter(size => !/^\d{2,4}-\d{2,4}$/.test(size));
-                    if (invalidSizes.length > 0) {
-                        showNotification('尺寸格式错误', `无效的尺寸格式: ${invalidSizes.join(', ')}`, 'error');
-                        return;
+                    
+                    // 再按尺寸匹配（排除已经匹配的）
+                    const sizePairs = [];
+                    for (const oldInfo of oldUrlInfos) {
+                        if (oldInfo.sizes.length > 0 && !cidPairs.some(pair => pair.oldUrl === oldInfo.url)) {
+                            // 寻找有共同尺寸的新链接
+                            for (const newInfo of newUrlInfos) {
+                                if (newInfo.sizes.length > 0 && !cidPairs.some(pair => pair.newUrl === newInfo.url)) {
+                                    const commonSizes = oldInfo.sizes.filter(size => newInfo.sizes.includes(size));
+                                    if (commonSizes.length > 0) {
+                                        sizePairs.push({
+                                            oldUrl: oldInfo.url,
+                                            newUrl: newInfo.url,
+                                            cid: null,
+                                            sizes: commonSizes
+                                        });
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 合并所有匹配对
+                    const allPairs = [...cidPairs, ...sizePairs];
+                    
+                    // 添加匹配对
+                    allPairs.forEach(pair => {
+                        // 检查是否已存在
+                        const existingIndex = linkPairs.findIndex(existingPair => 
+                            ((pair.cid && existingPair.cid === pair.cid) || 
+                             (pair.sizes.length > 0 && JSON.stringify(existingPair.sizes.sort()) === JSON.stringify(pair.sizes.sort()))) && 
+                            existingPair.oldUrl === pair.oldUrl && 
+                            existingPair.newUrl === pair.newUrl
+                        );
+                        
+                        if (existingIndex === -1) {
+                            const newPair = {
+                                id: generateId(),
+                                cid: pair.cid,
+                                sizes: pair.sizes,
+                                oldUrl: pair.oldUrl,
+                                newUrl: pair.newUrl,
+                                createdAt: new Date().toISOString()
+                            };
+                            
+                            linkPairs.push(newPair);
+                            addedCount++;
+                        }
+                    });
+                    
+                    // 统计未匹配的链接
+                    const matchedOldUrls = allPairs.map(p => p.oldUrl);
+                    const matchedNewUrls = allPairs.map(p => p.newUrl);
+                    const unmatchedOldUrls = oldUrls.filter(url => !matchedOldUrls.includes(url));
+                    const unmatchedNewUrls = newUrls.filter(url => !matchedNewUrls.includes(url));
+                    
+                    if (unmatchedOldUrls.length > 0 || unmatchedNewUrls.length > 0) {
+                        errorCount += unmatchedOldUrls.length + unmatchedNewUrls.length;
+                        if (unmatchedOldUrls.length > 0) {
+                            errorMessages.push(`未匹配的旧链接: ${unmatchedOldUrls.length}个`);
+                        }
+                        if (unmatchedNewUrls.length > 0) {
+                            errorMessages.push(`未匹配的新链接: ${unmatchedNewUrls.length}个`);
+                        }
                     }
                 }
                 
-                linkPairs[pairIndex].cid = newCid;
-                linkPairs[pairIndex].sizes = newSizes;
-                linkPairs[pairIndex].oldUrl = newOldUrl.trim();
-                linkPairs[pairIndex].newUrl = newNewUrl.trim();
-                
-                saveToStorage();
-                renderLinkPairs();
-                renderCurrentLinks();
-                updateLinkMatchStats();
-                updateMessagePreview();
-                updateLinksStats();
-                
-                showNotification('链接对已更新', `已更新${newCid ? ' CID: ' + newCid : newSizes.length > 0 ? ' 尺寸: ' + newSizes.join(', ') : ' 通用'}链接对`, 'success');
-            }
-            
-            // 删除链接对
-            function deleteLinkPair(id) {
-                const pairIndex = linkPairs.findIndex(pair => pair.id === id);
-                if (pairIndex === -1) return;
-                
-                const pair = linkPairs[pairIndex];
-                
-                const identifier = pair.cid ? `CID: ${pair.cid}` : 
-                                 pair.sizes && pair.sizes.length > 0 ? `尺寸: ${pair.sizes.join(', ')}` : '通用链接';
-                
-                if (confirm(`确定要删除这个链接对吗？\n${identifier}\n旧链接: ${pair.oldUrl}\n新链接: ${pair.newUrl}`)) {
-                    linkPairs.splice(pairIndex, 1);
+                // 更新批量提取结果
+                if (addedCount > 0) {
+                    // 提取所有CID和尺寸用于显示
+                    const allCids = [...new Set(linkPairs.filter(p => p.cid).map(p => p.cid))];
+                    const allSizes = [...new Set(linkPairs.flatMap(p => p.sizes || []))];
+                    
+                    batchExtractedCids.textContent = allCids.length > 0 ? allCids.join(', ') : '无';
+                    batchExtractedSizes.textContent = allSizes.length > 0 ? allSizes.join(', ') : '无';
+                    
+                    const matchedGroups = getGroupsWithLinks().length;
+                    batchSuccessCount.textContent = `${addedCount}个链接对已添加，匹配${matchedGroups}个群组`;
+                    batchUnmatchedCount.textContent = errorCount;
+                    
+                    batchExtractResult.style.display = 'block';
+                    
+                    // 保存并更新
                     saveToStorage();
-                    renderLinkPairs();
                     renderCurrentLinks();
+                    renderLinkPairs();
+                    updateLinksStats();
                     updateLinkMatchStats();
                     updateMessagePreview();
-                    updateLinksStats();
-                    
-                    showNotification('链接对已删除', '链接对已成功删除', 'success');
                 }
-            }
+                
+                // 显示错误信息
+                if (errorMessages.length > 0) {
+                    showNotification('部分链接未匹配', errorMessages.join('；'), 'warning');
+                }
+                
+                if (addedCount > 0) {
+                    showNotification('批量添加完成', `成功添加 ${addedCount} 个链接对`, 'success');
+                    batchOldUrlsInput.value = '';
+                    batchNewUrlsInput.value = '';
+                } else if (errorCount > 0) {
+                    showNotification('添加失败', '所有链接对都未匹配成功', 'error');
+                }
+            });
             
             // 清空所有链接对
             clearAllLinksBtn.addEventListener('click', function() {
                 if (linkPairs.length === 0) {
-                    showNotification('没有链接对', '当前没有可清除的链接对', 'warning');
+                    showNotification('没有链接对', '当前没有链接对可以清空', 'info');
                     return;
                 }
                 
@@ -7864,913 +7386,272 @@ ${matchedPairs.map(pair => `${linkPrefix} 旧 ${pair.oldUrl}\n${linkPrefix} 新 
                     updateLinkMatchStats();
                     updateMessagePreview();
                     
-                    showNotification('链接对已清空', '所有链接对已成功清除', 'success');
+                    showNotification('已清空', '所有链接对已清空', 'success');
                 }
             });
             
-            // 文件导入功能
-            document.getElementById('importJsonBtn').addEventListener('click', function() {
-                document.getElementById('importFileInput').click();
-            });
-            
-            document.getElementById('importCsvBtn').addEventListener('click', function() {
-                document.getElementById('importFileInput').click();
-            });
-            
-            document.getElementById('importTxtBtn').addEventListener('click', function() {
-                document.getElementById('importFileInput').click();
-            });
-            
-            document.getElementById('importFileInput').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
+            // 链接管理页面添加链接对
+            addLinkPairBtn.addEventListener('click', function() {
+                const cid = linkCidInput.value.trim();
+                const size = linkSizeInput.value.trim();
+                const oldUrl = linkOldUrlInput.value.trim();
+                const newUrl = linkNewUrlInput.value.trim();
                 
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    try {
-                        const content = event.target.result;
-                        const lines = content.split('\n');
-                        let importedCount = 0;
-                        
-                        lines.forEach(line => {
-                            const trimmedLine = line.trim();
-                            if (!trimmedLine) return;
-                            
-                            let parts;
-                            if (trimmedLine.includes(',')) {
-                                parts = trimmedLine.split(',').map(p => p.trim().replace(/^"|"$/g, ''));
-                            } else if (trimmedLine.includes('|')) {
-                                parts = trimmedLine.split('|').map(p => p.trim());
-                            } else {
-                                try {
-                                    const data = JSON.parse(content);
-                                    if (Array.isArray(data)) {
-                                        data.forEach(item => {
-                                            if (item.id && item.name) {
-                                                // 兼容旧版本（cid字段）和新版本（cids字段）
-                                                const cids = item.cids || (item.cid ? [item.cid] : []);
-                                                const sizes = item.sizes || (item.size ? [item.size] : []);
-                                                const mentionUsers = item.mentionUsers || [];
-                                                const tags = item.tags || [];
-                                                groups.push({
-                                                    id: item.id,
-                                                    name: item.name,
-                                                    channel: item.channel || item.name.toLowerCase().replace(/\s+/g, ''),
-                                                    cids: cids,
-                                                    sizes: sizes,
-                                                    mentionUsers: mentionUsers,
-                                                    mentionDelay: item.mentionDelay || 3,
-                                                    mentionMessage: item.mentionMessage || '链接已更新，请相关人员查看',
-                                                    tags: tags,
-                                                    bound: item.bound || true,
-                                                    boundDate: item.boundDate || new Date().toISOString().split('T')[0],
-                                                    selected: false,
-                                                    lastSent: item.lastSent || null,
-                                                    createdAt: new Date().toISOString()
-                                                });
-                                                importedCount++;
-                                            }
-                                        });
-                                    }
-                                    return;
-                                } catch (jsonError) {
-                                    console.error('JSON解析失败:', jsonError);
-                                    return;
-                                }
-                            }
-                            
-                            if (parts.length >= 4) {
-                                const [name, channel, id, cidsStr] = parts;
-                                const sizesStr = parts[4] || '';
-                                const mentionUsersStr = parts[5] || '';
-                                const mentionDelay = parseInt(parts[6]) || 3;
-                                const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
-                                const tagsStr = parts[8] || '';
-                                
-                                const cids = cidsStr.split(',').map(c => c.trim()).filter(c => c);
-                                const sizes = sizesStr.split(',').map(s => s.trim()).filter(s => s);
-                                const mentionUsers = mentionUsersStr
-                                    .split(',')
-                                    .map(user => user.trim().replace('@', ''))
-                                    .filter(user => user);
-                                const tags = tagsStr
-                                    .split(',')
-                                    .map(tag => tag.trim())
-                                    .filter(tag => tag);
-                                
-                                const existingIndex = groups.findIndex(g => g.id === id);
-                                
-                                if (existingIndex >= 0) {
-                                    groups[existingIndex].name = name;
-                                    groups[existingIndex].channel = channel;
-                                    groups[existingIndex].cids = cids.length > 0 ? cids : [];
-                                    groups[existingIndex].sizes = sizes.length > 0 ? sizes : [];
-                                    groups[existingIndex].mentionUsers = mentionUsers;
-                                    groups[existingIndex].mentionDelay = mentionDelay;
-                                    groups[existingIndex].mentionMessage = mentionMessage;
-                                    groups[existingIndex].tags = tags;
-                                } else {
-                                    groups.push({
-                                        id,
-                                        name,
-                                        channel,
-                                        cids: cids,
-                                        sizes: sizes,
-                                        mentionUsers: mentionUsers,
-                                        mentionDelay: mentionDelay,
-                                        mentionMessage: mentionMessage,
-                                        tags: tags,
-                                        bound: true,
-                                        boundDate: new Date().toISOString().split('T')[0],
-                                        selected: false,
-                                        lastSent: null,
-                                        createdAt: new Date().toISOString()
-                                    });
-                                    importedCount++;
-                                }
-                            }
-                        });
-                        
-                        if (importedCount > 0) {
-                            saveToStorage();
-                            renderManageGroupsByTag();
-                            renderSendGroupsByTag();
-                            renderBindHistory();
-                            updateLinkMatchStats();
-                            updateExportGroupOptions();
-                            updateSendGroupOptions();
-                            showNotification('导入成功', `成功导入 ${importedCount} 个群组`, 'success');
-                        } else {
-                            showNotification('导入失败', '文件格式不正确或没有新数据', 'warning');
-                        }
-                    } catch (error) {
-                        console.error('导入失败:', error);
-                        showNotification('导入失败', '文件格式不正确', 'error');
+                if (!oldUrl || !newUrl) {
+                    showNotification('链接为空', '请输入新旧链接', 'error');
+                    return;
+                }
+                
+                // 验证尺寸格式（如果有）
+                let sizes = [];
+                if (size) {
+                    sizes = size.split(',').map(s => s.trim()).filter(s => s);
+                    const invalidSizes = sizes.filter(s => !/^\d{2,4}-\d{2,4}$/.test(s));
+                    if (invalidSizes.length > 0) {
+                        showNotification('尺寸格式错误', `无效的尺寸格式: ${invalidSizes.join(', ')}`, 'error');
+                        return;
                     }
+                }
+                
+                // 验证CID格式（如果有）
+                if (cid && !/^\d+$/.test(cid)) {
+                    showNotification('CID格式错误', 'CID必须是纯数字', 'error');
+                    return;
+                }
+                
+                // 检查是否已存在
+                const existingIndex = linkPairs.findIndex(pair => 
+                    ((cid && pair.cid === cid) || 
+                     (sizes.length > 0 && JSON.stringify(pair.sizes.sort()) === JSON.stringify(sizes.sort()))) && 
+                    pair.oldUrl === oldUrl && 
+                    pair.newUrl === newUrl
+                );
+                
+                if (existingIndex >= 0) {
+                    showNotification('链接对已存在', '相同的链接对已存在，无需重复添加', 'warning');
+                    return;
+                }
+                
+                // 创建新的链接对
+                const newPair = {
+                    id: generateId(),
+                    cid: cid || null,
+                    sizes: sizes,
+                    oldUrl: oldUrl,
+                    newUrl: newUrl,
+                    createdAt: new Date().toISOString()
                 };
                 
-                reader.readAsText(file);
-                e.target.value = '';
+                linkPairs.push(newPair);
+                
+                // 清空输入框
+                linkCidInput.value = '';
+                linkSizeInput.value = '';
+                linkOldUrlInput.value = '';
+                linkNewUrlInput.value = '';
+                
+                // 保存并更新
+                saveToStorage();
+                renderCurrentLinks();
+                renderLinkPairs();
+                updateLinksStats();
+                updateLinkMatchStats();
+                updateMessagePreview();
+                
+                showNotification('链接对已添加', '链接对已成功添加', 'success');
             });
             
-            // API获取群组
-            document.getElementById('fetchGroupsApi').addEventListener('click', async function() {
-                const botToken = botTokenInput.value.trim();
-                if (!botToken) {
-                    showNotification('Token为空', '请先输入Bot Token', 'error');
+            // 链接管理页面批量添加链接对
+            addBatchLinks2Btn.addEventListener('click', function() {
+                const input = batchLinksInput.value.trim();
+                if (!input) {
+                    showNotification('输入为空', '请输入要添加的链接对', 'warning');
                     return;
                 }
                 
-                showNotification('获取中', '正在通过API获取群组列表...', 'info');
+                const lines = input.split('\n');
+                let addedCount = 0;
+                let errorCount = 0;
+                const errorMessages = [];
                 
-                try {
-                    if (!telegramBot || telegramBot.botToken !== botToken) {
-                        telegramBot = new TelegramBotAPI(botToken);
-                    }
+                lines.forEach((line, lineIndex) => {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine) return;
                     
-                    const botInfo = await telegramBot.getMe();
-                    const updates = await telegramBot.getUpdates();
-                    
-                    let addedCount = 0;
-                    
-                    for (const update of updates) {
-                        if (update.message && update.message.chat) {
-                            const chat = update.message.chat;
-                            
-                            if (chat.type === 'group' || chat.type === 'supergroup' || chat.type === 'channel') {
-                                const chatId = chat.id.toString();
-                                
-                                const existingIndex = groups.findIndex(g => g.id === chatId);
-                                
-                                if (existingIndex === -1) {
-                                    let chatTitle = chat.title || chat.username || '未知群组';
-                                    let memberCount = 0;
-                                    
-                                    try {
-                                        const chatInfo = await telegramBot.getChat(chatId);
-                                        chatTitle = chatInfo.title || chatInfo.username || chatTitle;
-                                        
-                                        try {
-                                            memberCount = await telegramBot.getChatMembersCount(chatId);
-                                        } catch (e) {
-                                            console.warn('无法获取成员数量:', e);
-                                        }
-                                    } catch (error) {
-                                        console.warn('无法获取聊天详情:', error);
-                                    }
-                                    
-                                    const channelName = chatTitle.toLowerCase()
-                                        .replace(/[^\w\u4e00-\u9fa5]/g, '')
-                                        .replace(/\s+/g, '')
-                                        .substring(0, 20);
-                                    
-                                    groups.push({
-                                        id: chatId,
-                                        name: chatTitle,
-                                        channel: channelName || `group${Date.now()}`,
-                                        cids: [],
-                                        sizes: [],
-                                        mentionUsers: [],
-                                        mentionDelay: 3,
-                                        mentionMessage: '链接已更新，请相关人员查看',
-                                        tags: [],
-                                        bound: true,
-                                        boundDate: new Date().toISOString().split('T')[0],
-                                        selected: false,
-                                        lastSent: null,
-                                        memberCount: memberCount,
-                                        createdAt: new Date().toISOString()
-                                    });
-                                    addedCount++;
-                                }
-                            }
-                        }
-                    }
-                    
-                    if (addedCount > 0) {
-                        saveToStorage();
-                        renderManageGroupsByTag();
-                        renderSendGroupsByTag();
-                        renderBindHistory();
-                        updateLinkMatchStats();
-                        updateExportGroupOptions();
-                        updateSendGroupOptions();
-                        showNotification('获取成功', `通过API获取到 ${addedCount} 个新群组`, 'success');
-                    } else {
-                        showNotification('获取完成', '没有发现新的群组', 'info');
-                    }
-                } catch (error) {
-                    console.error('获取群组失败:', error);
-                    showNotification('获取失败', error.message || '无法获取群组列表', 'error');
-                }
-            });
-            
-            // 测试发送
-            document.getElementById('testSendBtn').addEventListener('click', async function() {
-                let selectedGroups;
-                
-                if (currentSendMethod === 'all') {
-                    selectedGroups = groups.filter(g => g.bound);
-                } else if (currentSendMethod === 'by-group') {
-                    // 获取选中的分组
-                    const selectedTagElement = document.querySelector('.send-group-option.selected');
-                    if (!selectedTagElement) {
-                        showNotification('请选择分组', '请先选择一个分组', 'warning');
+                    const parts = trimmedLine.split('|').map(part => part.trim());
+                    if (parts.length !== 3) {
+                        errorCount++;
+                        errorMessages.push(`第 ${lineIndex + 1} 行: 格式错误，应为 CID或尺寸|旧链接|新链接`);
                         return;
                     }
                     
-                    const selectedTag = selectedTagElement.getAttribute('data-tag');
-                    if (selectedTag === 'all') {
-                        selectedGroups = groups.filter(g => g.bound);
-                    } else {
-                        selectedGroups = groups.filter(g => 
-                            g.bound && g.tags && g.tags.includes(selectedTag)
-                        );
-                    }
-                } else {
-                    selectedGroups = groups.filter(g => g.selected && g.bound);
-                }
-                
-                if (selectedGroups.length === 0) {
-                    showNotification('没有可发送的群组', '请先选择或绑定群组', 'warning');
-                    return;
-                }
-                
-                const botToken = botTokenInput.value.trim();
-                if (!botToken) {
-                    showNotification('Bot Token为空', '请先输入Bot Token', 'error');
-                    return;
-                }
-                
-                const sendMode = sendSecondaryMentionSelect.value;
-                
-                showNotification('测试中', `正在测试${sendMode === 'link-only' ? '链接' : sendMode === 'mention-only' ? '@人物' : '链接+@人物'}发送到 ${selectedGroups.length} 个群组...`, 'info');
-                
-                try {
-                    if (!telegramBot || telegramBot.botToken !== botToken) {
-                        telegramBot = new TelegramBotAPI(botToken);
-                    }
+                    const [cidOrSize, oldUrl, newUrl] = parts;
                     
-                    let successCount = 0;
-                    const testGroups = selectedGroups.slice(0, 3);
-                    
-                    for (const group of testGroups) {
-                        try {
-                            // 发送链接消息（如果需要）
-                            if (sendMode === 'all' || sendMode === 'link-only') {
-                                const matchedPairs = getGroupLinkPairs(group);
-                                
-                                if (matchedPairs.length === 0) {
-                                    const message = `测试消息 - ${group.name}\n这是一条测试消息，用于验证发送功能。`;
-                                    await telegramBot.sendMessage(group.id, message);
-                                } else {
-                                    const pair = matchedPairs[0];
-                                    const message = `${group.name}\n旧 ${pair.oldUrl}\n新 ${pair.newUrl}`;
-                                    await telegramBot.sendMessage(group.id, message);
-                                }
-                            }
-                            
-                            // 发送@人物消息（如果需要）
-                            if (sendMode === 'all' || sendMode === 'mention-only') {
-                                if (group.mentionUsers && group.mentionUsers.length > 0) {
-                                    const delay = group.mentionDelay || 3;
-                                    const message = group.mentionMessage || '链接已更新，请相关人员查看';
-                                    const mentions = group.mentionUsers.map(m => `@${m}`).join(' ');
-                                    const mentionMessage = `${message}\n${mentions}`;
-                                    
-                                    // 等待指定秒数
-                                    await new Promise(resolve => setTimeout(resolve, delay * 1000));
-                                    
-                                    await telegramBot.sendMessage(group.id, mentionMessage);
-                                }
-                            }
-                            
-                            successCount++;
-                        } catch (error) {
-                            console.error(`发送到 ${group.name} 失败:`, error);
-                        }
-                    }
-                    
-                    showNotification('测试完成', `成功测试 ${successCount} 个群组`, 'success');
-                } catch (error) {
-                    console.error('测试发送失败:', error);
-                    showNotification('测试失败', error.message || '测试发送失败', 'error');
-                }
-            });
-            
-            // 批量发送消息（支持分组发送和二次@人物）
-            document.getElementById('sendBatchBtn').addEventListener('click', async function() {
-                let selectedGroups;
-                
-                if (currentSendMethod === 'all') {
-                    selectedGroups = groups.filter(g => g.bound);
-                } else if (currentSendMethod === 'by-group') {
-                    // 获取选中的分组
-                    const selectedTagElement = document.querySelector('.send-group-option.selected');
-                    if (!selectedTagElement) {
-                        showNotification('请选择分组', '请先选择一个分组', 'warning');
+                    if (!oldUrl || !newUrl) {
+                        errorCount++;
+                        errorMessages.push(`第 ${lineIndex + 1} 行: 链接不能为空`);
                         return;
                     }
                     
-                    const selectedTag = selectedTagElement.getAttribute('data-tag');
-                    if (selectedTag === 'all') {
-                        selectedGroups = groups.filter(g => g.bound);
-                    } else {
-                        selectedGroups = groups.filter(g => 
-                            g.bound && g.tags && g.tags.includes(selectedTag)
-                        );
-                    }
-                } else {
-                    selectedGroups = groups.filter(g => g.selected && g.bound);
-                }
-                
-                if (selectedGroups.length === 0) {
-                    showNotification('没有可发送的群组', '请先选择或绑定群组', 'warning');
-                    return;
-                }
-                
-                const botToken = botTokenInput.value.trim();
-                if (!botToken) {
-                    showNotification('Bot Token为空', '请先输入Bot Token', 'error');
-                    return;
-                }
-                
-                const sendDelay = parseInt(document.getElementById('sendDelay').value) || 1000;
-                const sendMode = sendSecondaryMentionSelect.value;
-                
-                // 筛选出有匹配链接的群组
-                let groupsToSend = [];
-                selectedGroups.forEach(group => {
-                    const matchedPairs = getGroupLinkPairs(group);
-                    const generalLinks = linkPairs.filter(pair => !pair.cid && pair.sizes.length === 0);
+                    let cid = null;
+                    let sizes = [];
                     
-                    // 只有匹配到链接的群组才加入发送列表
-                    if (matchedPairs.length > 0 || generalLinks.length > 0) {
-                        groupsToSend.push({
-                            group: group,
-                            matchedPairs: matchedPairs,
-                            hasGeneralLinks: generalLinks.length > 0
-                        });
+                    // 判断是CID还是尺寸
+                    if (/^\d+$/.test(cidOrSize)) {
+                        // 是CID
+                        cid = cidOrSize;
+                    } else if (cidOrSize.includes('-')) {
+                        // 可能是尺寸（支持多个尺寸逗号分隔）
+                        sizes = cidOrSize.split(',').map(s => s.trim()).filter(s => s);
+                        const invalidSizes = sizes.filter(s => !/^\d{2,4}-\d{2,4}$/.test(s));
+                        if (invalidSizes.length > 0) {
+                            errorCount++;
+                            errorMessages.push(`第 ${lineIndex + 1} 行: 无效的尺寸格式: ${invalidSizes.join(', ')}`);
+                            return;
+                        }
+                    } else if (cidOrSize) {
+                        errorCount++;
+                        errorMessages.push(`第 ${lineIndex + 1} 行: 无效的CID或尺寸格式: ${cidOrSize}`);
+                        return;
+                    }
+                    
+                    // 验证链接对
+                    const validation = validateLinkPair(oldUrl, newUrl);
+                    if (!validation.valid) {
+                        errorCount++;
+                        errorMessages.push(`第 ${lineIndex + 1} 行: ${validation.message}`);
+                        return;
+                    }
+                    
+                    // 如果输入中有CID/尺寸，但链接中也有CID/尺寸，需要检查是否一致
+                    if (cid && validation.cid && cid !== validation.cid) {
+                        errorCount++;
+                        errorMessages.push(`第 ${lineIndex + 1} 行: 输入的CID(${cid})与链接中的CID(${validation.cid})不一致`);
+                        return;
+                    }
+                    
+                    if (sizes.length > 0 && validation.sizes.length > 0) {
+                        // 检查尺寸是否匹配
+                        const hasCommonSize = sizes.some(size => validation.sizes.includes(size));
+                        if (!hasCommonSize) {
+                            errorCount++;
+                            errorMessages.push(`第 ${lineIndex + 1} 行: 输入的尺寸(${sizes.join(',')})与链接中的尺寸(${validation.sizes.join(',')})不匹配`);
+                            return;
+                        }
+                    }
+                    
+                    // 使用最终的CID和尺寸（优先使用链接中提取的）
+                    const finalCid = validation.cid || cid;
+                    const finalSizes = validation.sizes.length > 0 ? validation.sizes : sizes;
+                    
+                    // 检查是否已存在
+                    const existingIndex = linkPairs.findIndex(pair => 
+                        ((finalCid && pair.cid === finalCid) || 
+                         (finalSizes.length > 0 && JSON.stringify(pair.sizes.sort()) === JSON.stringify(finalSizes.sort()))) && 
+                        pair.oldUrl === oldUrl && 
+                        pair.newUrl === newUrl
+                    );
+                    
+                    if (existingIndex === -1) {
+                        const newPair = {
+                            id: generateId(),
+                            cid: finalCid,
+                            sizes: finalSizes,
+                            oldUrl: oldUrl,
+                            newUrl: newUrl,
+                            createdAt: new Date().toISOString()
+                        };
+                        
+                        linkPairs.push(newPair);
+                        addedCount++;
                     }
                 });
                 
-                if (groupsToSend.length === 0) {
-                    showNotification('没有可发送的群组', '选中的群组都没有匹配到链接', 'warning');
+                if (errorMessages.length > 0) {
+                    showNotification('部分行有错误', `成功: ${addedCount}，错误: ${errorCount}`, 'warning');
+                }
+                
+                if (addedCount > 0) {
+                    saveToStorage();
+                    renderCurrentLinks();
+                    renderLinkPairs();
+                    updateLinksStats();
+                    updateLinkMatchStats();
+                    updateMessagePreview();
+                    
+                    showNotification('批量添加完成', `成功添加 ${addedCount} 个链接对`, 'success');
+                    batchLinksInput.value = '';
+                } else if (errorCount > 0) {
+                    showNotification('添加失败', '所有行都有格式错误', 'error');
+                }
+            });
+            
+            // 编辑链接对
+            function editLinkPair(id) {
+                const pair = linkPairs.find(p => p.id === id);
+                if (!pair) return;
+                
+                const newOldUrl = prompt('请输入新的旧链接:', pair.oldUrl);
+                if (newOldUrl === null) return;
+                
+                const newNewUrl = prompt('请输入新的新链接:', pair.newUrl);
+                if (newNewUrl === null) return;
+                
+                const newCid = prompt('请输入新的CID（留空则保持不变）:', pair.cid || '');
+                if (newCid === null) return;
+                
+                const newSizes = prompt('请输入新的图片尺寸（多个用逗号分隔，留空则保持不变）:', pair.sizes?.join(', ') || '');
+                if (newSizes === null) return;
+                
+                // 验证链接对
+                const validation = validateLinkPair(newOldUrl, newNewUrl);
+                if (!validation.valid) {
+                    showNotification('链接对无效', validation.message, 'error');
                     return;
                 }
                 
-                groups.forEach(group => {
-                    if (selectedGroups.includes(group)) {
-                        group.sending = false;
-                        group.sendSuccess = false;
-                    }
-                });
+                // 更新链接对
+                pair.oldUrl = newOldUrl.trim();
+                pair.newUrl = newNewUrl.trim();
+                pair.cid = newCid.trim() || validation.cid || pair.cid;
+                pair.sizes = newSizes.trim() ? newSizes.split(',').map(s => s.trim()).filter(s => s) : validation.sizes.length > 0 ? validation.sizes : pair.sizes;
                 
-                const resultArea = document.getElementById('sendResultArea');
-                const logOutput = document.getElementById('sendLogOutput');
-                resultArea.style.display = 'block';
-                logOutput.innerHTML = '';
+                saveToStorage();
+                renderCurrentLinks();
+                renderLinkPairs();
+                updateLinksStats();
+                updateLinkMatchStats();
+                updateMessagePreview();
                 
-                const totalSendCount = document.getElementById('totalSendCount');
-                const successSendCount = document.getElementById('successSendCount');
-                const failedSendCount = document.getElementById('failedSendCount');
-                const pendingSendCount = document.getElementById('pendingSendCount');
-                const progressPercent = document.getElementById('progressPercent');
-                const progressFill = document.getElementById('progressFill');
-                const stopSendingBtn = document.getElementById('stopSending');
-                
-                totalSendCount.textContent = groupsToSend.length;
-                successSendCount.textContent = '0';
-                failedSendCount.textContent = '0';
-                pendingSendCount.textContent = groupsToSend.length;
-                progressPercent.textContent = '0%';
-                progressFill.style.width = '0%';
-                
-                stopSendingBtn.style.display = 'block';
-                stopSending = false;
-                isSending = true;
-                
-                addLogToOutput('开始批量发送消息...', 'info');
-                addLogToOutput(`发送方式: ${currentSendMethod === 'all' ? '所有已绑定群组' : currentSendMethod === 'by-group' ? '按分组发送' : '选中群组'}`, 'info');
-                addLogToOutput(`发送模式: ${sendMode === 'all' ? '链接+@人物' : sendMode === 'link-only' ? '仅链接' : '仅@人物'}`, 'info');
-                addLogToOutput(`共 ${groupsToSend.length} 个有匹配链接的群组`, 'info');
-                addLogToOutput(`跳过了 ${selectedGroups.length - groupsToSend.length} 个无匹配链接的群组`, 'info');
-                addLogToOutput(`发送延迟: ${sendDelay}ms`, 'info');
-                addLogToOutput(`可用链接对: ${linkPairs.length}个`, 'info');
-                
-                let successCount = 0;
-                let failCount = 0;
-                let linkSuccessCount = 0;
-                let mentionSuccessCount = 0;
-                
-                try {
-                    if (!telegramBot || telegramBot.botToken !== botToken) {
-                        telegramBot = new TelegramBotAPI(botToken);
-                    }
-                    
-                    for (let i = 0; i < groupsToSend.length; i++) {
-                        if (stopSending) {
-                            addLogToOutput('发送已停止', 'warning');
-                            break;
-                        }
-                        
-                        const { group, matchedPairs, hasGeneralLinks } = groupsToSend[i];
-                        const groupIndex = groups.findIndex(g => g.id === group.id);
-                        
-                        groups[groupIndex].sending = true;
-                        
-                        addLogToOutput(`发送到 ${group.name} (${i+1}/${groupsToSend.length})...`, 'info');
-                        
-                        try {
-                            let linkSent = false;
-                            let mentionSent = false;
-                            
-                            // 发送链接消息（如果需要）
-                            if (sendMode === 'all' || sendMode === 'link-only') {
-                                let linksToSend = matchedPairs;
-                                
-                                // 如果无匹配但有关联链接，使用通用链接
-                                if (linksToSend.length === 0 && hasGeneralLinks) {
-                                    const generalLinks = linkPairs.filter(pair => !pair.cid && pair.sizes.length === 0);
-                                    linksToSend = generalLinks;
-                                    addLogToOutput(`  使用通用链接: ${generalLinks.length}个`, 'info');
-                                }
-                                
-                                addLogToOutput(`  发送 ${linksToSend.length} 个链接对`, 'info');
-                                
-                                let message = `${group.name}\n`;
-                                linksToSend.forEach((pair, index) => {
-                                    message += `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`;
-                                    if (index < linksToSend.length - 1) {
-                                        message += '\n\n';
-                                    }
-                                });
-                                
-                                await telegramBot.sendMessage(group.id, message);
-                                linkSent = true;
-                                linkSuccessCount++;
-                                addLogToOutput(`  ✓ 链接发送成功`, 'success');
-                            }
-                            
-                            // 发送@人物消息（如果需要）
-                            if (sendMode === 'all' || sendMode === 'mention-only') {
-                                if (group.mentionUsers && group.mentionUsers.length > 0) {
-                                    const delay = group.mentionDelay || 3;
-                                    const message = group.mentionMessage || '链接已更新，请相关人员查看';
-                                    const mentions = group.mentionUsers.map(m => `@${m}`).join(' ');
-                                    const mentionMessage = `${message}\n${mentions}`;
-                                    
-                                    addLogToOutput(`  等待 ${delay} 秒后@ ${group.mentionUsers.length} 个人物...`, 'info');
-                                    
-                                    // 等待指定秒数
-                                    await new Promise(resolve => setTimeout(resolve, delay * 1000));
-                                    
-                                    await telegramBot.sendMessage(group.id, mentionMessage);
-                                    mentionSent = true;
-                                    mentionSuccessCount++;
-                                    addLogToOutput(`  ✓ @人物发送成功`, 'success');
-                                } else {
-                                    addLogToOutput(`  未设置@人物，跳过`, 'info');
-                                }
-                            }
-                            
-                            // 检查是否至少有一项发送成功
-                            if ((sendMode === 'all' && (linkSent || mentionSent)) ||
-                                (sendMode === 'link-only' && linkSent) ||
-                                (sendMode === 'mention-only' && mentionSent)) {
-                                groups[groupIndex].sendSuccess = true;
-                                groups[groupIndex].lastSent = new Date().toISOString().split('T')[0];
-                                successCount++;
-                                successSendCount.textContent = successCount;
-                                
-                                addLogToOutput(`✓ 成功发送到 ${group.name}`, 'success');
-                            } else {
-                                addLogToOutput(`✗ ${group.name} 没有内容可发送，跳过`, 'warning');
-                            }
-                        } catch (error) {
-                            groups[groupIndex].sendSuccess = false;
-                            failCount++;
-                            failedSendCount.textContent = failCount;
-                            
-                            addLogToOutput(`✗ 发送到 ${group.name} 失败: ${error.message}`, 'error');
-                        }
-                        
-                        const sentCount = successCount + failCount;
-                        const percent = Math.round((sentCount / groupsToSend.length) * 100);
-                        progressPercent.textContent = `${percent}%`;
-                        progressFill.style.width = `${percent}%`;
-                        pendingSendCount.textContent = groupsToSend.length - sentCount;
-                        
-                        saveToStorage();
-                        
-                        if (i < groupsToSend.length - 1 && !stopSending) {
-                            await new Promise(resolve => setTimeout(resolve, sendDelay));
-                        }
-                    }
-                    
-                    isSending = false;
-                    stopSendingBtn.style.display = 'none';
-                    
-                    let finalMessage = `批量发送完成！`;
-                    if (sendMode === 'all' || sendMode === 'link-only') {
-                        finalMessage += ` 链接成功: ${linkSuccessCount}`;
-                    }
-                    if (sendMode === 'all' || sendMode === 'mention-only') {
-                        finalMessage += ` @人物成功: ${mentionSuccessCount}`;
-                    }
-                    finalMessage += `, 总成功: ${successCount}, 失败: ${failCount}`;
-                    
-                    // 添加跳过的群组信息
-                    const skippedCount = selectedGroups.length - groupsToSend.length;
-                    if (skippedCount > 0) {
-                        finalMessage += `, 跳过了 ${skippedCount} 个无匹配链接的群组`;
-                    }
-                    
-                    addLogToOutput(finalMessage, successCount === groupsToSend.length ? 'success' : 'warning');
-                    
-                    showNotification('发送完成', finalMessage, 
-                        successCount === groupsToSend.length ? 'success' : 'warning');
-                } catch (error) {
-                    addLogToOutput(`✗ 初始化失败: ${error.message}`, 'error');
-                    showNotification('发送失败', error.message || '初始化Telegram Bot失败', 'error');
-                    isSending = false;
-                    stopSendingBtn.style.display = 'none';
-                }
-            });
-            
-            // 停止发送
-            document.getElementById('stopSending').addEventListener('click', function() {
-                stopSending = true;
-                addLogToOutput('正在停止发送...', 'warning');
-            });
-            
-            // 导出发送日志
-            document.getElementById('exportSendLog').addEventListener('click', function() {
-                const logOutput = document.getElementById('sendLogOutput');
-                const logText = logOutput.innerText;
-                
-                if (!logText.trim()) {
-                    showNotification('日志为空', '没有可导出的日志', 'warning');
-                    return;
-                }
-                
-                const dataUri = `data:text/plain;charset=utf-8,${encodeURIComponent(logText)}`;
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', `send-log-${new Date().toISOString().slice(0,10)}.txt`);
-                linkElement.click();
-                
-                showNotification('日志导出成功', '发送日志已导出为TXT文件', 'success');
-            });
-            
-            // 添加日志到输出
-            function addLogToOutput(message, type = 'info') {
-                const logOutput = document.getElementById('sendLogOutput');
-                const logEntry = document.createElement('div');
-                logEntry.className = `log-entry ${type}`;
-                
-                let icon = 'info-circle';
-                if (type === 'success') icon = 'check-circle';
-                if (type === 'error') icon = 'times-circle';
-                if (type === 'warning') icon = 'exclamation-circle';
-                
-                logEntry.innerHTML = `
-                    <div class="log-icon">
-                        <i class="fas fa-${icon}"></i>
-                    </div>
-                    <div>${new Date().toLocaleTimeString()} - ${message}</div>
-                `;
-                
-                logOutput.appendChild(logEntry);
-                logOutput.scrollTop = logOutput.scrollHeight;
+                showNotification('链接对已更新', '链接对已成功更新', 'success');
             }
             
-            // 导出数据
-            document.getElementById('exportData').addEventListener('click', function() {
-                const format = document.getElementById('exportFormat').value;
+            // 删除链接对
+            function deleteLinkPair(id) {
+                const pair = linkPairs.find(p => p.id === id);
+                if (!pair) return;
                 
-                const exportData = {
-                    meta: {
-                        exportedAt: new Date().toISOString(),
-                        version: '1.3',
-                        system: 'Telegram群组绑定与消息发送系统',
-                        features: ['多CID支持', '二次@人物功能', '分组功能']
-                    },
-                    groups: groups,
-                    linkPairs: linkPairs,
-                    stats: {
-                        totalGroups: groups.length,
-                        boundGroups: groups.filter(g => g.bound).length,
-                        selectedGroups: groups.filter(g => g.selected).length,
-                        totalLinkPairs: linkPairs.length,
-                        groupsWithMentions: groups.filter(g => g.mentionUsers && g.mentionUsers.length > 0).length,
-                        groupsWithMultipleCids: groups.filter(g => g.cids && g.cids.length > 1).length,
-                        groupsWithTags: groups.filter(g => g.tags && g.tags.length > 0).length
-                    }
-                };
-                
-                let dataStr, mimeType, fileName;
-                
-                switch (format) {
-                    case 'json':
-                        dataStr = JSON.stringify(exportData, null, 2);
-                        mimeType = 'application/json';
-                        fileName = `telegram-data-${new Date().toISOString().slice(0,10)}.json`;
-                        break;
-                    case 'csv':
-                        const csvHeaders = ['渠道名称', '渠道标识', 'Chat ID', 'CID列表', '图片尺寸', '@人物', '@延迟', '@消息', '分组标签', '绑定状态', '绑定日期', '最后发送'];
-                        const csvRows = groups.map(g => [
-                            `"${g.name}"`,
-                            `"${g.channel}"`,
-                            g.id,
-                            g.cids?.join(',') || '',
-                            g.sizes?.join(',') || '',
-                            g.mentionUsers?.join(',') || '',
-                            g.mentionDelay || 3,
-                            `"${g.mentionMessage || ''}"`,
-                            g.tags?.join(',') || '',
-                            g.bound ? '是' : '否',
-                            g.boundDate || '',
-                            g.lastSent || ''
-                        ].join(','));
-                        dataStr = [csvHeaders.join(','), ...csvRows].join('\n');
-                        mimeType = 'text/csv';
-                        fileName = `telegram-groups-${new Date().toISOString().slice(0,10)}.csv`;
-                        break;
-                    case 'txt':
-                        dataStr = groups.map(g => 
-                            `${g.name}|${g.channel}|${g.id}|${g.cids?.join(',') || ''}|${g.sizes?.join(',') || ''}|${g.mentionUsers?.join(',') || ''}|${g.mentionDelay || 3}|${g.mentionMessage || ''}|${g.tags?.join(',') || ''}|${g.bound ? '已绑定' : '未绑定'}|${g.boundDate || ''}|${g.lastSent || ''}`
-                        ).join('\n');
-                        mimeType = 'text/plain';
-                        fileName = `telegram-groups-${new Date().toISOString().slice(0,10)}.txt`;
-                        break;
-                }
-                
-                const dataUri = `data:${mimeType};charset=utf-8,${encodeURIComponent(dataStr)}`;
-                const linkElement = document.createElement('a');
-                linkElement.setAttribute('href', dataUri);
-                linkElement.setAttribute('download', fileName);
-                linkElement.click();
-                
-                showNotification('导出成功', `数据已导出为 ${format.toUpperCase()} 文件`, 'success');
-                document.getElementById('exportTime').textContent = `上次导出: ${new Date().toLocaleString()}`;
-            });
-            
-            // 数据导入
-            document.getElementById('importData').addEventListener('click', function() {
-                const fileInput = document.getElementById('importFile');
-                if (!fileInput.files || fileInput.files.length === 0) {
-                    showNotification('未选择文件', '请先选择要导入的文件', 'warning');
-                    return;
-                }
-                
-                const file = fileInput.files[0];
-                const action = document.getElementById('importAction').value;
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const content = e.target.result;
-                        
-                        if (file.name.endsWith('.json')) {
-                            const data = JSON.parse(content);
-                            
-                            if (action === 'replace') {
-                                if (data.groups) groups = data.groups;
-                                if (data.linkPairs) linkPairs = data.linkPairs;
-                            } else if (action === 'merge') {
-                                if (data.groups && Array.isArray(data.groups)) {
-                                    data.groups.forEach(newGroup => {
-                                        const existingIndex = groups.findIndex(g => g.id === newGroup.id);
-                                        if (existingIndex === -1) {
-                                            groups.push({
-                                                ...newGroup,
-                                                selected: false,
-                                                createdAt: newGroup.createdAt || new Date().toISOString()
-                                            });
-                                        } else {
-                                            groups[existingIndex] = { 
-                                                ...groups[existingIndex], 
-                                                ...newGroup,
-                                                selected: groups[existingIndex].selected
-                                            };
-                                        }
-                                    });
-                                }
-                                
-                                if (data.linkPairs && Array.isArray(data.linkPairs)) {
-                                    data.linkPairs.forEach(newPair => {
-                                        const existingIndex = linkPairs.findIndex(p => 
-                                            ((newPair.cid && p.cid === newPair.cid) || 
-                                             (newPair.sizes && JSON.stringify(p.sizes.sort()) === JSON.stringify(newPair.sizes.sort()))) && 
-                                            p.oldUrl === newPair.oldUrl && 
-                                            p.newUrl === newPair.newUrl
-                                        );
-                                        if (existingIndex === -1) {
-                                            linkPairs.push({
-                                                ...newPair,
-                                                id: newPair.id || generateId(),
-                                                createdAt: newPair.createdAt || new Date().toISOString()
-                                            });
-                                        }
-                                    });
-                                }
-                            }
-                        } else {
-                            const lines = content.split('\n');
-                            const importedGroups = [];
-                            
-                            lines.forEach(line => {
-                                const trimmedLine = line.trim();
-                                if (!trimmedLine) return;
-                                
-                                let parts;
-                                if (trimmedLine.includes(',')) {
-                                    parts = trimmedLine.split(',').map(p => p.trim().replace(/^"|"$/g, ''));
-                                } else {
-                                    parts = trimmedLine.split('|').map(p => p.trim());
-                                }
-                                
-                                if (parts.length >= 3) {
-                                    const [name, channel, id] = parts;
-                                    const cidsStr = parts[3] || '';
-                                    const sizesStr = parts[4] || '';
-                                    const mentionUsersStr = parts[5] || '';
-                                    const mentionDelay = parseInt(parts[6]) || 3;
-                                    const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
-                                    const tagsStr = parts[8] || '';
-                                    
-                                    const cids = cidsStr.split(',').map(c => c.trim()).filter(c => c);
-                                    const sizes = sizesStr.split(',').map(s => s.trim()).filter(s => s);
-                                    const mentionUsers = mentionUsersStr
-                                        .split(',')
-                                        .map(user => user.trim().replace('@', ''))
-                                        .filter(user => user);
-                                    const tags = tagsStr
-                                        .split(',')
-                                        .map(tag => tag.trim())
-                                        .filter(tag => tag);
-                                    
-                                    importedGroups.push({
-                                        id,
-                                        name,
-                                        channel,
-                                        cids,
-                                        sizes,
-                                        mentionUsers,
-                                        mentionDelay,
-                                        mentionMessage,
-                                        tags,
-                                        bound: true,
-                                        boundDate: new Date().toISOString().split('T')[0],
-                                        selected: false,
-                                        lastSent: null,
-                                        createdAt: new Date().toISOString()
-                                    });
-                                }
-                            });
-                            
-                            if (action === 'replace') {
-                                groups = importedGroups;
-                            } else if (action === 'merge') {
-                                importedGroups.forEach(newGroup => {
-                                    const existingIndex = groups.findIndex(g => g.id === newGroup.id);
-                                    if (existingIndex === -1) {
-                                        groups.push(newGroup);
-                                    } else {
-                                        groups[existingIndex] = { ...groups[existingIndex], ...newGroup };
-                                    }
-                                });
-                            }
-                        }
-                        
-                        saveToStorage();
-                        renderManageGroupsByTag();
-                        renderSendGroupsByTag();
-                        renderBindHistory();
-                        renderLinkPairs();
-                        renderCurrentLinks();
-                        updateLinkMatchStats();
-                        updateLinksStats();
-                        updateExportGroupOptions();
-                        updateSendGroupOptions();
-                        
-                        showNotification('导入成功', `成功导入数据`, 'success');
-                        
-                        fileInput.value = '';
-                        document.getElementById('importFileName').textContent = '';
-                    } catch (error) {
-                        console.error('导入失败:', error);
-                        showNotification('导入失败', '文件格式不正确', 'error');
-                    }
-                };
-                
-                reader.readAsText(file);
-            });
-            
-            // 文件选择
-            document.getElementById('selectImportFile').addEventListener('click', function() {
-                document.getElementById('importFile').click();
-            });
-            
-            document.getElementById('importFile').addEventListener('change', function(e) {
-                if (e.target.files.length > 0) {
-                    document.getElementById('importFileName').textContent = `已选择: ${e.target.files[0].name}`;
-                }
-            });
-            
-            // 清除所有数据
-            document.getElementById('clearStorage').addEventListener('click', function() {
-                if (confirm('确定要清除所有数据吗？此操作不可恢复！')) {
-                    localStorage.clear();
-                    groups = [];
-                    linkPairs = [];
-                    selectedGroupTags = [];
-                    botTokenInput.value = '';
-                    telegramBot = null;
+                if (confirm(`确定要删除这个链接对吗？\n旧链接: ${pair.oldUrl}\n新链接: ${pair.newUrl}`)) {
+                    const index = linkPairs.findIndex(p => p.id === id);
+                    linkPairs.splice(index, 1);
                     
                     saveToStorage();
-                    renderManageGroupsByTag();
-                    renderSendGroupsByTag();
-                    renderLinkPairs();
                     renderCurrentLinks();
+                    renderLinkPairs();
+                    updateLinksStats();
+                    updateLinkMatchStats();
                     updateMessagePreview();
-                    updateBindStats();
-                    renderBindHistory();
-                    updateLinkMatchStats();
-                    updateLinksStats();
-                    updateExportGroupOptions();
-                    updateSendGroupOptions();
                     
-                    showNotification('数据已清除', '已恢复为初始状态', 'success');
+                    showNotification('链接对已删除', '链接对已成功删除', 'success');
                 }
-            });
-            
-            // 恢复示例数据
-            document.getElementById('resetStorage').addEventListener('click', function() {
-                if (confirm('确定要恢复示例数据吗？当前数据将被替换。')) {
-                    initSampleGroups();
-                    initSampleLinkPairs();
-                    renderManageGroupsByTag();
-                    renderSendGroupsByTag();
-                    renderLinkPairs();
-                    renderCurrentLinks();
-                    updateBindStats();
-                    renderBindHistory();
-                    updateLinkMatchStats();
-                    updateLinksStats();
-                    updateExportGroupOptions();
-                    updateSendGroupOptions();
-                    
-                    showNotification('数据已恢复', '已恢复为示例数据', 'success');
-                }
-            });
+            }
             
             // 验证机器人
             document.getElementById('verifyBot').addEventListener('click', async function() {
                 const botToken = botTokenInput.value.trim();
+                
                 if (!botToken) {
-                    showNotification('Token为空', '请输入Bot Token', 'error');
+                    showNotification('Bot Token为空', '请输入Bot Token', 'error');
                     return;
                 }
                 
@@ -8780,25 +7661,958 @@ ${matchedPairs.map(pair => `${linkPrefix} 旧 ${pair.oldUrl}\n${linkPrefix} 新 
                     telegramBot = new TelegramBotAPI(botToken);
                     const botInfo = await telegramBot.getMe();
                     
-                    showNotification('验证成功', `Bot Token有效！机器人: @${botInfo.username}`, 'success');
+                    showNotification('验证成功', `Bot名称: ${botInfo.username}，ID: ${botInfo.id}`, 'success');
+                    
+                    // 保存Bot Token
+                    localStorage.setItem(STORAGE_KEYS.BOT_TOKEN, botToken);
                 } catch (error) {
-                    console.error('验证失败:', error);
-                    showNotification('验证失败', error.message || 'Bot Token无效', 'error');
-                    telegramBot = null;
+                    console.error('Bot验证失败:', error);
+                    showNotification('验证失败', error.message || '无效的Bot Token', 'error');
                 }
             });
             
-            // 初始化
-            loadFromStorage();
-            renderManageGroupsByTag();
-            renderSendGroupsByTag();
-            updateMessagePreview();
-            renderCurrentLinks();
-            updateMentionMessagePreview();
+            // 批量发送消息
+            document.getElementById('sendBatchBtn').addEventListener('click', async function() {
+                if (!telegramBot) {
+                    showNotification('Bot未配置', '请先验证Bot Token', 'error');
+                    return;
+                }
+                
+                if (linkPairs.length === 0) {
+                    showNotification('没有链接对', '请先添加链接对', 'error');
+                    return;
+                }
+                
+                // 根据发送方式选择群组
+                let groupsToSend = [];
+                
+                switch (currentSendMethod) {
+                    case 'selected':
+                        groupsToSend = groups.filter(g => g.selected && g.bound);
+                        break;
+                    case 'all':
+                        groupsToSend = groups.filter(g => g.bound);
+                        break;
+                    case 'by-group':
+                        // 获取选中的分组
+                        const selectedTagOption = document.querySelector('.send-group-option.selected');
+                        if (!selectedTagOption) {
+                            showNotification('未选择分组', '请先选择要发送的分组', 'error');
+                            return;
+                        }
+                        
+                        const selectedTag = selectedTagOption.getAttribute('data-tag');
+                        if (selectedTag === 'all') {
+                            groupsToSend = groups.filter(g => g.bound);
+                        } else {
+                            groupsToSend = groups.filter(g => 
+                                g.bound && 
+                                g.tags && 
+                                g.tags.includes(selectedTag)
+                            );
+                        }
+                        break;
+                }
+                
+                if (groupsToSend.length === 0) {
+                    showNotification('没有可发送的群组', '请先选择或绑定群组', 'error');
+                    return;
+                }
+                
+                // 获取发送参数
+                const sendDelay = parseInt(document.getElementById('sendDelay').value) || 1000;
+                const secondaryMentionMode = document.getElementById('sendSecondaryMention').value;
+                
+                // 获取@人物话术
+                let mentionMessage = '';
+                const mentionTemplate = document.getElementById('sendMentionTemplate').value;
+                
+                if (mentionTemplate === 'custom') {
+                    mentionMessage = document.getElementById('customMentionMessage').value.trim();
+                } else if (mentionTemplate === 'use-group') {
+                    // 使用群组绑定的设置
+                } else if (mentionTemplates[mentionTemplate]) {
+                    mentionMessage = mentionTemplates[mentionTemplate];
+                }
+                
+                // 显示发送结果区域
+                const sendResultArea = document.getElementById('sendResultArea');
+                const sendLogOutput = document.getElementById('sendLogOutput');
+                const totalSendCount = document.getElementById('totalSendCount');
+                const successSendCount = document.getElementById('successSendCount');
+                const failedSendCount = document.getElementById('failedSendCount');
+                const pendingSendCount = document.getElementById('pendingSendCount');
+                const progressPercent = document.getElementById('progressPercent');
+                const progressFill = document.getElementById('progressFill');
+                const stopSendingBtn = document.getElementById('stopSending');
+                
+                sendResultArea.style.display = 'block';
+                sendLogOutput.innerHTML = '';
+                
+                // 重置统计
+                let totalCount = 0;
+                let successCount = 0;
+                let failedCount = 0;
+                let pendingCount = groupsToSend.length;
+                
+                totalSendCount.textContent = groupsToSend.length;
+                successSendCount.textContent = '0';
+                failedSendCount.textContent = '0';
+                pendingSendCount.textContent = groupsToSend.length.toString();
+                progressPercent.textContent = '0%';
+                progressFill.style.width = '0%';
+                
+                stopSendingBtn.style.display = 'block';
+                isSending = true;
+                stopSending = false;
+                
+                // 添加日志
+                function addLog(message, type = 'info') {
+                    const logEntry = document.createElement('div');
+                    logEntry.className = `log-entry ${type}`;
+                    
+                    const iconMap = {
+                        success: 'check-circle',
+                        error: 'times-circle',
+                        warning: 'exclamation-triangle',
+                        info: 'info-circle'
+                    };
+                    
+                    const now = new Date();
+                    const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                    
+                    logEntry.innerHTML = `
+                        <div class="log-icon">
+                            <i class="fas fa-${iconMap[type]}"></i>
+                        </div>
+                        <div class="log-message">
+                            [${timeStr}] ${message}
+                        </div>
+                    `;
+                    
+                    sendLogOutput.appendChild(logEntry);
+                    sendLogOutput.scrollTop = sendLogOutput.scrollHeight;
+                }
+                
+                addLog(`开始批量发送，共 ${groupsToSend.length} 个群组`, 'info');
+                
+                // 发送函数
+                async function sendToGroup(group, index) {
+                    if (stopSending) {
+                        addLog(`已停止发送 ${group.name}`, 'warning');
+                        return;
+                    }
+                    
+                    try {
+                        // 获取该群组匹配的链接对
+                        const matchedPairs = getGroupLinkPairs(group);
+                        
+                        if (matchedPairs.length === 0) {
+                            addLog(`${group.name} - 没有匹配的链接对，跳过`, 'warning');
+                            
+                            pendingCount--;
+                            failedCount++;
+                            pendingSendCount.textContent = pendingCount.toString();
+                            failedSendCount.textContent = failedCount.toString();
+                            updateProgress();
+                            
+                            return;
+                        }
+                        
+                        addLog(`${group.name} - 开始发送 (${matchedPairs.length}个链接对)`, 'info');
+                        
+                        // 根据当前发送格式选择前缀
+                        const linkPrefix = currentSendFormat === 'promo' ? '推广链接' : '图片链接';
+                        
+                        // 构建消息内容
+                        let messageContent = `${group.name}\n\n`;
+                        
+                        matchedPairs.forEach((pair, i) => {
+                            messageContent += `${linkPrefix} 旧 ${pair.oldUrl}\n`;
+                            messageContent += `${linkPrefix} 新 ${pair.newUrl}`;
+                            if (i < matchedPairs.length - 1) {
+                                messageContent += '\n\n';
+                            }
+                        });
+                        
+                        // 发送链接消息
+                        if (secondaryMentionMode !== 'mention-only') {
+                            await telegramBot.sendMessage(group.id, messageContent);
+                            addLog(`${group.name} - 链接消息发送成功`, 'success');
+                            
+                            // 更新群组最后发送时间
+                            const groupIndex = groups.findIndex(g => g.id === group.id);
+                            if (groupIndex >= 0) {
+                                groups[groupIndex].lastSent = new Date().toISOString().split('T')[0];
+                                saveToStorage();
+                            }
+                        }
+                        
+                        // 发送@人物消息
+                        if (secondaryMentionMode !== 'link-only' && 
+                            group.mentionUsers && 
+                            group.mentionUsers.length > 0) {
+                            
+                            // 等待延迟
+                            const delay = group.mentionDelay || 3;
+                            addLog(`${group.name} - 等待 ${delay} 秒后@人物`, 'info');
+                            
+                            await new Promise(resolve => setTimeout(resolve, delay * 1000));
+                            
+                            // 构建@人物消息
+                            let mentionContent = '';
+                            
+                            // 确定@人物消息内容
+                            let finalMentionMessage = '';
+                            if (mentionTemplate === 'use-group') {
+                                finalMentionMessage = group.mentionMessage || '链接已更新，请相关人员查看';
+                            } else if (mentionMessage) {
+                                finalMentionMessage = mentionMessage;
+                            } else {
+                                finalMentionMessage = '链接已更新，请相关人员查看';
+                            }
+                            
+                            mentionContent = `${finalMentionMessage}\n`;
+                            group.mentionUsers.forEach(user => {
+                                mentionContent += `@${user} `;
+                            });
+                            
+                            await telegramBot.sendMessage(group.id, mentionContent.trim());
+                            addLog(`${group.name} - @人物消息发送成功`, 'success');
+                        }
+                        
+                        pendingCount--;
+                        successCount++;
+                        pendingSendCount.textContent = pendingCount.toString();
+                        successSendCount.textContent = successCount.toString();
+                        updateProgress();
+                        
+                        addLog(`${group.name} - 发送完成`, 'success');
+                    } catch (error) {
+                        console.error(`发送到 ${group.name} 失败:`, error);
+                        addLog(`${group.name} - 发送失败: ${error.message}`, 'error');
+                        
+                        pendingCount--;
+                        failedCount++;
+                        pendingSendCount.textContent = pendingCount.toString();
+                        failedSendCount.textContent = failedCount.toString();
+                        updateProgress();
+                    }
+                }
+                
+                // 更新进度
+                function updateProgress() {
+                    const progress = Math.round(((successCount + failedCount) / groupsToSend.length) * 100);
+                    progressPercent.textContent = `${progress}%`;
+                    progressFill.style.width = `${progress}%`;
+                }
+                
+                // 停止发送按钮
+                stopSendingBtn.onclick = function() {
+                    stopSending = true;
+                    isSending = false;
+                    addLog('正在停止发送...', 'warning');
+                    stopSendingBtn.style.display = 'none';
+                };
+                
+                // 开始发送（带延迟）
+                for (let i = 0; i < groupsToSend.length; i++) {
+                    if (stopSending) break;
+                    
+                    await sendToGroup(groupsToSend[i], i);
+                    
+                    // 添加延迟（除了最后一个）
+                    if (i < groupsToSend.length - 1 && !stopSending) {
+                        await new Promise(resolve => setTimeout(resolve, sendDelay));
+                    }
+                }
+                
+                isSending = false;
+                stopSendingBtn.style.display = 'none';
+                
+                if (stopSending) {
+                    addLog('发送已停止', 'warning');
+                    showNotification('发送已停止', `成功: ${successCount}，失败: ${failedCount}，停止: ${pendingCount}`, 'warning');
+                } else {
+                    addLog('批量发送完成', 'success');
+                    showNotification('发送完成', `成功: ${successCount}，失败: ${failedCount}`, 'success');
+                    
+                    // 检查是否清空链接对
+                    if (clearAfterSendCheckbox.checked) {
+                        linkPairs = [];
+                        saveToStorage();
+                        renderCurrentLinks();
+                        renderLinkPairs();
+                        updateLinksStats();
+                        updateLinkMatchStats();
+                        updateMessagePreview();
+                        addLog('已自动清空所有链接对', 'info');
+                    }
+                }
+            });
             
-            setTimeout(() => {
-                showNotification('系统已就绪', '所有数据已从本地存储加载', 'success', 3000);
-            }, 1000);
+            // 测试发送
+            document.getElementById('testSendBtn').addEventListener('click', async function() {
+                if (!telegramBot) {
+                    showNotification('Bot未配置', '请先验证Bot Token', 'error');
+                    return;
+                }
+                
+                // 选择一个已绑定且有匹配链接的群组
+                const testGroup = groups.find(g => g.bound && getGroupLinkPairs(g).length > 0);
+                
+                if (!testGroup) {
+                    showNotification('没有可测试的群组', '请先绑定群组并添加匹配的链接对', 'error');
+                    return;
+                }
+                
+                showNotification('测试发送', `正在向 ${testGroup.name} 发送测试消息...`, 'info');
+                
+                try {
+                    const matchedPairs = getGroupLinkPairs(testGroup).slice(0, 1); // 只取第一个匹配的链接对
+                    
+                    if (matchedPairs.length === 0) {
+                        showNotification('测试失败', '该群组没有匹配的链接对', 'error');
+                        return;
+                    }
+                    
+                    const linkPrefix = currentSendFormat === 'promo' ? '推广链接' : '图片链接';
+                    const pair = matchedPairs[0];
+                    
+                    const testMessage = `[测试] ${testGroup.name}\n\n${linkPrefix} 旧 ${pair.oldUrl}\n${linkPrefix} 新 ${pair.newUrl}`;
+                    
+                    await telegramBot.sendMessage(testGroup.id, testMessage);
+                    
+                    showNotification('测试发送成功', `已向 ${testGroup.name} 发送测试消息`, 'success');
+                } catch (error) {
+                    console.error('测试发送失败:', error);
+                    showNotification('测试发送失败', error.message || '无法发送测试消息', 'error');
+                }
+            });
+            
+            // 导出发送日志
+            document.getElementById('exportSendLog').addEventListener('click', function() {
+                const logOutput = document.getElementById('sendLogOutput');
+                if (!logOutput.textContent.trim()) {
+                    showNotification('没有日志', '当前没有可导出的日志', 'warning');
+                    return;
+                }
+                
+                const logText = logOutput.textContent;
+                const blob = new Blob([logText], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `send_log_${new Date().toISOString().split('T')[0]}_${Date.now()}.txt`;
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                showNotification('日志已导出', '发送日志已导出为TXT文件', 'success');
+            });
+            
+            // 数据导出功能
+            document.getElementById('exportData').addEventListener('click', function() {
+                const format = document.getElementById('exportFormat').value;
+                
+                let exportData = '';
+                let fileName = `telegram_system_backup_${new Date().toISOString().split('T')[0]}`;
+                
+                const backupData = {
+                    groups: groups,
+                    linkPairs: linkPairs,
+                    config: {
+                        botToken: botTokenInput.value.trim() ? '***（已保存）***' : '',
+                        lastBackup: new Date().toISOString(),
+                        version: '1.0.0'
+                    },
+                    exportedAt: new Date().toISOString(),
+                    stats: {
+                        totalGroups: groups.length,
+                        boundGroups: groups.filter(g => g.bound).length,
+                        totalLinks: linkPairs.length,
+                        matchedGroups: getGroupsWithLinks().length
+                    }
+                };
+                
+                switch (format) {
+                    case 'json':
+                        exportData = JSON.stringify(backupData, null, 2);
+                        fileName += '.json';
+                        break;
+                        
+                    case 'csv':
+                        // 创建包含所有数据的CSV
+                        const csvLines = [];
+                        
+                        // 添加群组数据
+                        csvLines.push('=== 群组数据 ===');
+                        csvLines.push('名称,标识,ID,CID列表,图片尺寸,@人物,@延迟,@话术模板,@消息,分组标签,绑定状态,绑定日期,最后发送,创建时间');
+                        groups.forEach(group => {
+                            csvLines.push([
+                                `"${group.name}"`,
+                                `"${group.channel}"`,
+                                `"${group.id}"`,
+                                `"${(group.cids || []).join(',')}"`,
+                                `"${(group.sizes || []).join(',')}"`,
+                                `"${(group.mentionUsers || []).join(',')}"`,
+                                group.mentionDelay || 3,
+                                `"${group.mentionTemplate || 'template1'}"`,
+                                `"${group.mentionMessage || ''}"`,
+                                `"${(group.tags || []).join(',')}"`,
+                                group.bound ? '是' : '否',
+                                `"${group.boundDate || ''}"`,
+                                `"${group.lastSent || ''}"`,
+                                `"${group.createdAt || ''}"`
+                            ].join(','));
+                        });
+                        
+                        // 添加链接对数据
+                        csvLines.push('\n=== 链接对数据 ===');
+                        csvLines.push('ID,CID,图片尺寸,旧链接,新链接,创建时间');
+                        linkPairs.forEach(pair => {
+                            csvLines.push([
+                                `"${pair.id}"`,
+                                `"${pair.cid || ''}"`,
+                                `"${(pair.sizes || []).join(',')}"`,
+                                `"${pair.oldUrl}"`,
+                                `"${pair.newUrl}"`,
+                                `"${pair.createdAt}"`
+                            ].join(','));
+                        });
+                        
+                        exportData = csvLines.join('\n');
+                        fileName += '.csv';
+                        break;
+                        
+                    case 'txt':
+                        // 创建易于阅读的TXT格式
+                        const txtLines = [];
+                        
+                        txtLines.push('========== Telegram群组系统备份 ==========');
+                        txtLines.push(`导出时间: ${new Date().toLocaleString()}`);
+                        txtLines.push(`群组总数: ${groups.length} (已绑定: ${groups.filter(g => g.bound).length})`);
+                        txtLines.push(`链接对总数: ${linkPairs.length}`);
+                        txtLines.push('');
+                        
+                        txtLines.push('========== 群组列表 ==========');
+                        groups.forEach((group, index) => {
+                            txtLines.push(`${index + 1}. ${group.name} (${group.channel})`);
+                            txtLines.push(`   ID: ${group.id}`);
+                            if (group.cids && group.cids.length > 0) {
+                                txtLines.push(`   CID: ${group.cids.join(', ')}`);
+                            }
+                            if (group.sizes && group.sizes.length > 0) {
+                                txtLines.push(`   尺寸: ${group.sizes.join(', ')}`);
+                            }
+                            if (group.mentionUsers && group.mentionUsers.length > 0) {
+                                txtLines.push(`   @人物: ${group.mentionUsers.join(', ')} (${group.mentionDelay}秒后)`);
+                                txtLines.push(`   话术: ${group.mentionMessage || group.mentionTemplate}`);
+                            }
+                            if (group.tags && group.tags.length > 0) {
+                                txtLines.push(`   分组: ${group.tags.join(', ')}`);
+                            }
+                            txtLines.push(`   绑定: ${group.bound ? '是' : '否'} ${group.boundDate ? `(${group.boundDate})` : ''}`);
+                            txtLines.push('');
+                        });
+                        
+                        txtLines.push('========== 链接对列表 ==========');
+                        linkPairs.forEach((pair, index) => {
+                            txtLines.push(`${index + 1}. ${pair.cid ? `CID: ${pair.cid}` : `尺寸: ${pair.sizes?.join(', ') || '通用'}`}`);
+                            txtLines.push(`   旧链接: ${pair.oldUrl}`);
+                            txtLines.push(`   新链接: ${pair.newUrl}`);
+                            txtLines.push('');
+                        });
+                        
+                        exportData = txtLines.join('\n');
+                        fileName += '.txt';
+                        break;
+                }
+                
+                // 创建下载链接
+                const blob = new Blob([exportData], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = fileName;
+                
+                // 触发下载
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                // 更新导出时间显示
+                document.getElementById('exportTime').textContent = new Date().toLocaleString();
+                
+                showNotification('导出成功', `数据已导出为${format.toUpperCase()}文件`, 'success');
+            });
+            
+            // 数据导入功能
+            document.getElementById('selectImportFile').addEventListener('click', function() {
+                document.getElementById('importFile').click();
+            });
+            
+            document.getElementById('importFile').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    document.getElementById('importFileName').textContent = `已选择: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                }
+            });
+            
+            document.getElementById('importData').addEventListener('click', async function() {
+                const fileInput = document.getElementById('importFile');
+                const action = document.getElementById('importAction').value;
+                
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    showNotification('未选择文件', '请先选择要导入的文件', 'error');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                
+                if (!['json', 'csv', 'txt'].includes(fileExtension)) {
+                    showNotification('文件格式不支持', '仅支持JSON、CSV、TXT格式的文件', 'error');
+                    return;
+                }
+                
+                showNotification('导入中', '正在读取和解析文件...', 'info');
+                
+                try {
+                    const fileContent = await readFileAsText(file);
+                    
+                    if (action === 'replace') {
+                        // 替换所有数据
+                        if (confirm('确定要替换所有数据吗？当前数据将被覆盖，此操作不可恢复。')) {
+                            groups = [];
+                            linkPairs = [];
+                        } else {
+                            return;
+                        }
+                    }
+                    
+                    let importedGroups = [];
+                    let importedLinks = [];
+                    
+                    if (fileExtension === 'json') {
+                        const data = JSON.parse(fileContent);
+                        
+                        if (data.groups && Array.isArray(data.groups)) {
+                            importedGroups = data.groups;
+                        }
+                        
+                        if (data.linkPairs && Array.isArray(data.linkPairs)) {
+                            importedLinks = data.linkPairs;
+                        }
+                    } else if (fileExtension === 'csv') {
+                        const lines = fileContent.split('\n');
+                        let currentSection = null;
+                        
+                        for (const line of lines) {
+                            const trimmedLine = line.trim();
+                            if (!trimmedLine) continue;
+                            
+                            if (trimmedLine === '=== 群组数据 ===') {
+                                currentSection = 'groups';
+                                continue;
+                            } else if (trimmedLine === '=== 链接对数据 ===') {
+                                currentSection = 'links';
+                                continue;
+                            } else if (trimmedLine.startsWith('===')) {
+                                currentSection = null;
+                                continue;
+                            }
+                            
+                            if (trimmedLine.includes('名称,标识,ID') || trimmedLine.includes('ID,CID,图片尺寸')) {
+                                // 跳过表头
+                                continue;
+                            }
+                            
+                            if (currentSection === 'groups' && trimmedLine.includes(',')) {
+                                const values = trimmedLine.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+                                
+                                if (values.length >= 14) {
+                                    const group = {
+                                        id: values[2],
+                                        name: values[0],
+                                        channel: values[1],
+                                        cids: values[3] ? values[3].split(',').filter(c => c) : [],
+                                        sizes: values[4] ? values[4].split(',').filter(s => s) : [],
+                                        mentionUsers: values[5] ? values[5].split(',').filter(u => u) : [],
+                                        mentionDelay: parseInt(values[6]) || 3,
+                                        mentionTemplate: values[7] || 'template1',
+                                        mentionMessage: values[8] || '',
+                                        tags: values[9] ? values[9].split(',').filter(t => t) : [],
+                                        bound: values[10] === '是',
+                                        boundDate: values[11] || '',
+                                        lastSent: values[12] || null,
+                                        createdAt: values[13] || new Date().toISOString(),
+                                        selected: false
+                                    };
+                                    importedGroups.push(group);
+                                }
+                            } else if (currentSection === 'links' && trimmedLine.includes(',')) {
+                                const values = trimmedLine.split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+                                
+                                if (values.length >= 6) {
+                                    const link = {
+                                        id: values[0] || generateId(),
+                                        cid: values[1] || null,
+                                        sizes: values[2] ? values[2].split(',').filter(s => s) : [],
+                                        oldUrl: values[3],
+                                        newUrl: values[4],
+                                        createdAt: values[5] || new Date().toISOString()
+                                    };
+                                    importedLinks.push(link);
+                                }
+                            }
+                        }
+                    } else if (fileExtension === 'txt') {
+                        const lines = fileContent.split('\n');
+                        let currentSection = null;
+                        
+                        for (const line of lines) {
+                            const trimmedLine = line.trim();
+                            if (!trimmedLine) continue;
+                            
+                            if (trimmedLine.includes('========== 群组列表 ==========')) {
+                                currentSection = 'groups';
+                                continue;
+                            } else if (trimmedLine.includes('========== 链接对列表 ==========')) {
+                                currentSection = 'links';
+                                continue;
+                            } else if (trimmedLine.startsWith('==========')) {
+                                currentSection = null;
+                                continue;
+                            }
+                            
+                            if (currentSection === 'groups' && trimmedLine.match(/^\d+\./)) {
+                                // 这是一个群组条目
+                                const group = { selected: false };
+                                let currentGroupLine = trimmedLine;
+                                let nextLineIndex = lines.indexOf(line) + 1;
+                                
+                                while (nextLineIndex < lines.length) {
+                                    const nextLine = lines[nextLineIndex].trim();
+                                    if (!nextLine || nextLine.match(/^\d+\./) || nextLine.startsWith('==========')) {
+                                        break;
+                                    }
+                                    
+                                    currentGroupLine += ' ' + nextLine;
+                                    nextLineIndex++;
+                                }
+                                
+                                // 简单解析群组信息（这是一个简化的解析，实际可能需要更复杂的逻辑）
+                                const nameMatch = currentGroupLine.match(/^\d+\.\s*(.+?)\s*\(/);
+                                if (nameMatch) {
+                                    group.name = nameMatch[1];
+                                }
+                                
+                                const channelMatch = currentGroupLine.match(/\((.+?)\)/);
+                                if (channelMatch) {
+                                    group.channel = channelMatch[1];
+                                }
+                                
+                                const idMatch = currentGroupLine.match(/ID:\s*([^\s,]+)/);
+                                if (idMatch) {
+                                    group.id = idMatch[1];
+                                }
+                                
+                                const cidMatch = currentGroupLine.match(/CID:\s*([^,]+)/);
+                                if (cidMatch) {
+                                    group.cids = cidMatch[1].split(',').map(c => c.trim()).filter(c => c);
+                                }
+                                
+                                const sizeMatch = currentGroupLine.match(/尺寸:\s*([^,]+)/);
+                                if (sizeMatch) {
+                                    group.sizes = sizeMatch[1].split(',').map(s => s.trim()).filter(s => s);
+                                }
+                                
+                                const mentionMatch = currentGroupLine.match(/@人物:\s*([^,]+)/);
+                                if (mentionMatch) {
+                                    group.mentionUsers = mentionMatch[1].split(',').map(u => u.trim().replace('@', '')).filter(u => u);
+                                }
+                                
+                                const delayMatch = currentGroupLine.match(/\((\d+)\s*秒后\)/);
+                                if (delayMatch) {
+                                    group.mentionDelay = parseInt(delayMatch[1]);
+                                }
+                                
+                                const boundMatch = currentGroupLine.match(/绑定:\s*(是|否)/);
+                                if (boundMatch) {
+                                    group.bound = boundMatch[1] === '是';
+                                }
+                                
+                                if (group.id && group.name) {
+                                    group.createdAt = new Date().toISOString();
+                                    importedGroups.push(group);
+                                }
+                            } else if (currentSection === 'links' && trimmedLine.match(/^\d+\./)) {
+                                // 这是一个链接对条目（简化解析）
+                                const link = {};
+                                const cidMatch = trimmedLine.match(/CID:\s*(\d+)/);
+                                const sizeMatch = trimmedLine.match(/尺寸:\s*([^,]+)/);
+                                
+                                if (cidMatch) {
+                                    link.cid = cidMatch[1];
+                                } else if (sizeMatch) {
+                                    link.sizes = sizeMatch[1].split(',').map(s => s.trim()).filter(s => s);
+                                } else {
+                                    link.sizes = [];
+                                }
+                                
+                                // 获取下一行（旧链接）
+                                const nextLineIndex = lines.indexOf(line) + 1;
+                                if (nextLineIndex < lines.length) {
+                                    const oldUrlLine = lines[nextLineIndex].trim();
+                                    const oldUrlMatch = oldUrlLine.match(/旧链接:\s*(.+)/);
+                                    if (oldUrlMatch) {
+                                        link.oldUrl = oldUrlMatch[1];
+                                    }
+                                    
+                                    // 获取下下行（新链接）
+                                    const newUrlLineIndex = nextLineIndex + 1;
+                                    if (newUrlLineIndex < lines.length) {
+                                        const newUrlLine = lines[newUrlLineIndex].trim();
+                                        const newUrlMatch = newUrlLine.match(/新链接:\s*(.+)/);
+                                        if (newUrlMatch) {
+                                            link.newUrl = newUrlMatch[1];
+                                        }
+                                        
+                                        if (link.oldUrl && link.newUrl) {
+                                            link.id = generateId();
+                                            link.createdAt = new Date().toISOString();
+                                            importedLinks.push(link);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 合并数据
+                    if (action === 'merge') {
+                        // 合并群组（根据ID去重）
+                        const existingIds = new Set(groups.map(g => g.id));
+                        importedGroups.forEach(group => {
+                            if (!existingIds.has(group.id)) {
+                                groups.push(group);
+                            }
+                        });
+                        
+                        // 合并链接对（根据内容和CID/尺寸去重）
+                        importedLinks.forEach(link => {
+                            const existingIndex = linkPairs.findIndex(pair => 
+                                ((link.cid && pair.cid === link.cid) || 
+                                 (link.sizes.length > 0 && JSON.stringify(pair.sizes.sort()) === JSON.stringify(link.sizes.sort()))) && 
+                                pair.oldUrl === link.oldUrl && 
+                                pair.newUrl === link.newUrl
+                            );
+                            
+                            if (existingIndex === -1) {
+                                linkPairs.push(link);
+                            }
+                        });
+                    } else {
+                        // 替换模式
+                        groups = importedGroups;
+                        linkPairs = importedLinks;
+                    }
+                    
+                    saveToStorage();
+                    
+                    // 重新渲染所有界面
+                    renderManageGroupsByTag();
+                    renderSendGroupsByTag();
+                    renderCurrentLinks();
+                    renderLinkPairs();
+                    renderBindHistory();
+                    renderGroupSelectOptions();
+                    updateBadges();
+                    updateStorageInfo();
+                    updateBindStats();
+                    updateLinkMatchStats();
+                    updateLinksStats();
+                    updateMessagePreview();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
+                    
+                    showNotification('导入成功', `导入了 ${importedGroups.length} 个群组和 ${importedLinks.length} 个链接对`, 'success');
+                    
+                    // 清空文件输入
+                    fileInput.value = '';
+                    document.getElementById('importFileName').textContent = '';
+                } catch (error) {
+                    console.error('导入失败:', error);
+                    showNotification('导入失败', '文件格式错误或解析失败', 'error');
+                }
+            });
+            
+            // 清除所有数据
+            document.getElementById('clearStorage').addEventListener('click', function() {
+                if (confirm('确定要清除所有数据吗？此操作不可恢复，所有群组和链接对都将被删除。')) {
+                    localStorage.clear();
+                    groups = [];
+                    linkPairs = [];
+                    
+                    // 重新初始化
+                    initSampleGroups();
+                    initSampleLinkPairs();
+                    initManualBatchAdd();
+                    
+                    // 重新渲染所有界面
+                    renderManageGroupsByTag();
+                    renderSendGroupsByTag();
+                    renderCurrentLinks();
+                    renderLinkPairs();
+                    renderBindHistory();
+                    renderGroupSelectOptions();
+                    updateBadges();
+                    updateStorageInfo();
+                    updateBindStats();
+                    updateLinkMatchStats();
+                    updateLinksStats();
+                    updateMessagePreview();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
+                    
+                    showNotification('数据已清除', '所有数据已被清除，已恢复示例数据', 'success');
+                }
+            });
+            
+            // 恢复示例数据
+            document.getElementById('resetStorage').addEventListener('click', function() {
+                if (confirm('确定要恢复示例数据吗？当前数据将被覆盖。')) {
+                    initSampleGroups();
+                    initSampleLinkPairs();
+                    initManualBatchAdd();
+                    
+                    // 重新渲染所有界面
+                    renderManageGroupsByTag();
+                    renderSendGroupsByTag();
+                    renderCurrentLinks();
+                    renderLinkPairs();
+                    renderBindHistory();
+                    renderGroupSelectOptions();
+                    updateBadges();
+                    updateStorageInfo();
+                    updateBindStats();
+                    updateLinkMatchStats();
+                    updateLinksStats();
+                    updateMessagePreview();
+                    updateExportGroupOptions();
+                    updateSendGroupOptions();
+                    
+                    showNotification('示例数据已恢复', '已恢复为示例数据', 'success');
+                }
+            });
+            
+            // 读取文件为文本
+            function readFileAsText(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = event => resolve(event.target.result);
+                    reader.onerror = reject;
+                    reader.readAsText(file);
+                });
+            }
+            
+            // 单个链接输入时显示提取结果
+            singleOldUrlInput.addEventListener('input', function() {
+                const url = this.value.trim();
+                if (!url) {
+                    singleExtractResult.style.display = 'none';
+                    return;
+                }
+                
+                const info = extractInfoFromUrl(url);
+                
+                singleExtractedCid.textContent = info.cid || '无';
+                singleExtractedSize.textContent = info.sizes.length > 0 ? info.sizes.join(', ') : '无';
+                
+                // 检查是否有匹配的群组
+                const matchedGroups = groups.filter(group => {
+                    if (info.cid && group.cids && group.cids.includes(info.cid)) {
+                        return true;
+                    }
+                    if (info.sizes.length > 0 && group.sizes && group.sizes.length > 0) {
+                        return sizesMatch(info.sizes, group.sizes);
+                    }
+                    return false;
+                });
+                
+                singleMatchedGroups.textContent = matchedGroups.length > 0 ? 
+                    `匹配 ${matchedGroups.length} 个群组: ${matchedGroups.map(g => g.name).join(', ')}` : 
+                    '无匹配群组';
+                
+                singleMatchStatus.textContent = matchedGroups.length > 0 ? '有匹配' : '无匹配';
+                
+                singleExtractResult.style.display = 'block';
+            });
+            
+            // 批量链接输入时显示提取结果
+            batchOldUrlsInput.addEventListener('input', updateBatchExtractResult);
+            batchNewUrlsInput.addEventListener('input', updateBatchExtractResult);
+            
+            function updateBatchExtractResult() {
+                const oldUrlsText = batchOldUrlsInput.value.trim();
+                const newUrlsText = batchNewUrlsInput.value.trim();
+                
+                if (!oldUrlsText && !newUrlsText) {
+                    batchExtractResult.style.display = 'none';
+                    return;
+                }
+                
+                // 提取所有CID和尺寸
+                const allCids = new Set();
+                const allSizes = new Set();
+                
+                const processUrls = (urlsText) => {
+                    const urls = urlsText.split('\n').map(url => url.trim()).filter(url => url);
+                    urls.forEach(url => {
+                        const info = extractInfoFromUrl(url);
+                        if (info.cid) {
+                            allCids.add(info.cid);
+                        }
+                        info.sizes.forEach(size => allSizes.add(size));
+                    });
+                };
+                
+                processUrls(oldUrlsText);
+                processUrls(newUrlsText);
+                
+                batchExtractedCids.textContent = allCids.size > 0 ? Array.from(allCids).join(', ') : '无';
+                batchExtractedSizes.textContent = allSizes.size > 0 ? Array.from(allSizes).join(', ') : '无';
+                
+                // 统计匹配的群组
+                const matchedGroups = groups.filter(group => {
+                    // 检查CID匹配
+                    const hasCidMatch = Array.from(allCids).some(cid => 
+                        group.cids && group.cids.includes(cid)
+                    );
+                    
+                    // 检查尺寸匹配
+                    const hasSizeMatch = Array.from(allSizes).some(size => 
+                        group.sizes && group.sizes.includes(size)
+                    );
+                    
+                    return hasCidMatch || hasSizeMatch;
+                });
+                
+                batchSuccessCount.textContent = `可匹配 ${matchedGroups.length} 个群组`;
+                batchUnmatchedCount.textContent = groups.length - matchedGroups.length;
+                
+                batchExtractResult.style.display = 'block';
+            }
+            
+            // 加载数据
+            loadFromStorage();
+            
+            // 初始化预览
+            updateMentionMessagePreview();
         });
     </script>
 </body>
