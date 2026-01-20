@@ -7009,8 +7009,6 @@ ${matchedPairs.map(pair => `${linkPrefix} 旧 ${pair.oldUrl}\n${linkPrefix} 新 
                             selectedTags.push(checkbox.getAttribute('data-tag'));
                         });
                         
-                        if (selectedTags.length === 0)
-                        
                         if (selectedTags.length === 0) {
                             showNotification('请选择分组', '请至少选择一个分组', 'warning');
                             return;
