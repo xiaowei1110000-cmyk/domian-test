@@ -2027,6 +2027,247 @@
             padding: 10px;
             background-color: white;
         }
+        
+        /* 新增：发送格式选项样式 */
+        .send-format-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .send-format-option {
+            background-color: white;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #ddd;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .send-format-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .send-format-option.selected {
+            background-color: #e3f2fd;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .send-format-option i {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+        
+        /* 新增：话术模板选择样式 */
+        .mention-template-selector {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+        
+        .mention-template-selector h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .template-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .template-option {
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .template-option:hover {
+            border-color: var(--primary-color);
+            background-color: #e3f2fd;
+        }
+        
+        .template-option.selected {
+            border-color: var(--primary-color);
+            background-color: #e3f2fd;
+        }
+        
+        .template-option h5 {
+            margin-bottom: 8px;
+            color: var(--dark-color);
+        }
+        
+        .template-option p {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .template-option .template-preview {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            font-family: monospace;
+            line-height: 1.4;
+        }
+        
+        .custom-mention-template {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+            border: 2px solid #e3f2fd;
+        }
+        
+        .custom-mention-template h5 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        /* 新增：批量添加链接格式选择 */
+        .batch-link-type-selector {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+        }
+        
+        .batch-link-type-selector h5 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .batch-link-type-options {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .batch-link-type-option {
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .batch-link-type-option:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .batch-link-type-option.selected {
+            background-color: #e3f2fd;
+            border-color: var(--primary-color);
+        }
+        
+        /* 新增：消息发送后清空选项 */
+        .send-clear-options {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+            border-left: 4px solid var(--warning-color);
+        }
+        
+        .send-clear-options h5 {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        
+        .send-clear-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .send-clear-checkbox input {
+            width: auto;
+            transform: scale(1.2);
+        }
+        
+        /* 新增：批量手动添加表单 */
+        .batch-manual-add-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ddd;
+            margin-top: 15px;
+        }
+        
+        .batch-manual-add-form h5 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .manual-add-pairs {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .manual-add-pair {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+        }
+        
+        .manual-add-pair .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .manual-add-pair .btn {
+            padding: 8px 12px;
+            min-width: 40px;
+        }
+        
+        /* 新增：消息预览样式（格式a和格式b） */
+        .message-format-preview {
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-top: 15px;
+            white-space: pre-wrap;
+        }
+        
+        .message-format-preview .channel-name {
+            color: #4fc3f7;
+            font-weight: bold;
+        }
+        
+        .message-format-preview .promo-url {
+            color: #ff9800;
+        }
+        
+        .message-format-preview .image-url {
+            color: #4caf50;
+        }
     </style>
 </head>
 <body>
@@ -2120,11 +2361,11 @@
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label for="groupName">渠道名称</label>
-                                        <input type="text" id="groupName" placeholder="例如: 爱液">
+                                        <input type="text" id="groupName" placeholder="例如: 小狼狗">
                                     </div>
                                     <div class="form-group">
                                         <label for="channelName">渠道标识</label>
-                                        <input type="text" id="channelName" placeholder="例如: aiyec">
+                                        <input type="text" id="channelName" placeholder="例如: xiaolangou">
                                     </div>
                                 </div>
                                 
@@ -2246,11 +2487,26 @@
                                             <input type="number" id="mentionDelay" class="mention-delay-input" value="3" min="1" max="60">
                                             <small>发送链接消息后等待多少秒再@人物</small>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="mentionMessage">@人物消息</label>
-                                            <input type="text" id="mentionMessage" value="链接已更新，请相关人员查看">
-                                            <small>@人物时发送的消息内容</small>
-                                        </div>
+                                    </div>
+                                    
+                                    <!-- 新增：话术模板选择 -->
+                                    <div class="form-group">
+                                        <label for="mentionTemplate"><i class="fas fa-comment-alt"></i> @人物话术模板</label>
+                                        <select id="mentionTemplate">
+                                            <option value="custom">自定义话术</option>
+                                            <option value="template1">话术1: 链接已更新，请相关人员查看</option>
+                                            <option value="template2">话术2: 新链接已发布，请及时查看</option>
+                                            <option value="template3">话术3: 链接已更新，请尽快处理</option>
+                                            <option value="template4">话术4: 新内容已上线，请相关人员跟进</option>
+                                            <option value="template5">话术5: 链接已更换，请及时更新</option>
+                                        </select>
+                                        <small>选择预定义的话术模板或使用自定义话术</small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="mentionMessage">@人物消息</label>
+                                        <input type="text" id="mentionMessage" value="链接已更新，请相关人员查看">
+                                        <small>@人物时发送的消息内容</small>
                                     </div>
                                     
                                     <div class="form-group">
@@ -2299,17 +2555,18 @@
                             <div class="bind-method-content active" id="textBind">
                                 <div class="form-group">
                                     <label for="batchGroupInput"><i class="fas fa-users"></i> 批量添加群组</label>
-                                    <textarea id="batchGroupInput" placeholder="每行一个群组，格式：渠道名称|渠道标识|Chat ID|CID列表(多个用逗号分隔)|图片尺寸(多个用逗号分隔)|@人物(多个用逗号分隔)|@延迟(秒)|@消息|分组标签(多个用逗号分隔)
+                                    <textarea id="batchGroupInput" placeholder="每行一个群组，格式：渠道名称|渠道标识|Chat ID|CID列表(多个用逗号分隔)|图片尺寸(多个用逗号分隔)|@人物(多个用逗号分隔)|@延迟(秒)|@话术模板|@消息|分组标签(多个用逗号分隔)
 例如：
-爱液|aiyec|-1001234567890|5100525,5100526,5100527|100-100,200-200|admin1,manager|3|链接已更新，请相关人员查看|group1,group2
-悟空站|wukong|-1009876543210|5547607,5547608|300-250,728-90|admin1|5|新链接已发布|group1
-八戒站|bajie|-1001122334455|5547609,5547610|468-60,320-50,250-250|user1,user2,user3|2|请查看最新链接|group2,group3
+小狼狗|xiaolangou|-1001234567890|5100525,5100526,5100527|100-100,200-200|admin1,manager|3|template1|链接已更新，请相关人员查看|group1,group2
+悟空站|wukong|-1009876543210|5547607,5547608|300-250,728-90|admin1|5|template2|新链接已发布|group1
+八戒站|bajie|-1001122334455|5547609,5547610|468-60,320-50,250-250|user1,user2,user3|2|template3|链接已更换，请及时更新|group2,group3
 ..."></textarea>
                                     <small>Chat ID必须是负数（Telegram群组ID格式）</small>
                                     <small>CID列表：多个CID用逗号分隔</small>
                                     <small>图片尺寸格式：宽度-高度（多个用逗号分隔）</small>
                                     <small>@人物：多个用户名用逗号分隔，不需要@符号</small>
                                     <small>@延迟：发送链接后等待多少秒再@人物（1-60秒）</small>
+                                    <small>@话术模板：template1, template2, template3, template4, template5 或 custom</small>
                                     <small>@消息：@人物时发送的消息内容</small>
                                     <small>分组标签：多个分组用逗号分隔（如：group1,group2）</small>
                                 </div>
@@ -2338,12 +2595,13 @@ JSON格式示例：
   \"groups\": [
     {
       \"id\": \"-1001234567890\",
-      \"name\": \"爱液\",
-      \"channel\": \"aiyec\",
+      \"name\": \"小狼狗\",
+      \"channel\": \"xiaolangou\",
       \"cids\": [\"5100525\", \"5100526\", \"5100527\"],
       \"sizes\": [\"100-100\", \"200-200\"],
       \"mentionUsers\": [\"admin1\", \"manager\"],
       \"mentionDelay\": 3,
+      \"mentionTemplate\": \"template1\",
       \"mentionMessage\": \"链接已更新，请相关人员查看\",
       \"tags\": [\"group1\", \"group2\"],
       \"bound\": true,
@@ -2353,11 +2611,11 @@ JSON格式示例：
 }
 
 CSV格式示例：
-渠道名称,渠道标识,Chat ID,CID列表,图片尺寸,@人物,@延迟,@消息,分组标签,绑定状态,绑定日期
-爱液,aiyec,-1001234567890,5100525,5100526,5100527,100-100,200-200,admin1,manager,3,链接已更新，请相关人员查看,group1,group2,是,2023-10-01
+渠道名称,渠道标识,Chat ID,CID列表,图片尺寸,@人物,@延迟,@话术模板,@消息,分组标签,绑定状态,绑定日期
+小狼狗,xiaolangou,-1001234567890,5100525,5100526,5100527,100-100,200-200,admin1,manager,3,template1,链接已更新，请相关人员查看,group1,group2,是,2023-10-01
 
 TXT格式示例：
-爱液|aiyec|-1001234567890|5100525,5100526,5100527|100-100,200-200|admin1,manager|3|链接已更新，请相关人员查看|group1,group2|是|2023-10-01"></textarea>
+小狼狗|xiaolangou|-1001234567890|5100525,5100526,5100527|100-100,200-200|admin1,manager|3|template1|链接已更新，请相关人员查看|group1,group2|是|2023-10-01"></textarea>
                                         <small>支持JSON、CSV、TXT格式，系统会自动识别格式</small>
                                     </div>
                                     
@@ -2370,6 +2628,7 @@ TXT格式示例：
                                             <li><strong>TXT格式：</strong>竖线分隔的群组数据，每行一个群组</li>
                                         </ol>
                                         <p>分组标签字段为可选，多个标签用逗号分隔</p>
+                                        <p>话术模板字段：template1, template2, template3, template4, template5 或 custom</p>
                                     </div>
                                     
                                     <div class="batch-add-export-actions">
@@ -2392,7 +2651,7 @@ TXT格式示例：
                                         <ul>
                                             <li>JSON文件：包含群组信息的JSON数组</li>
                                             <li>CSV文件：逗号分隔的群组数据</li>
-                                            <li>TXT文件：每行一个群组（名称|标识|ID|CID列表|尺寸|@人物|延迟|消息|分组标签）</li>
+                                            <li>TXT文件：每行一个群组（名称|标识|ID|CID列表|尺寸|@人物|延迟|话术模板|消息|分组标签）</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -2494,10 +2753,27 @@ TXT格式示例：
                     <div class="card">
                         <h2><i class="fas fa-cogs"></i> 消息配置</h2>
                         
+                        <!-- 新增：发送格式选项 -->
+                        <div class="form-group">
+                            <label><i class="fas fa-format"></i> 发送格式选择</label>
+                            <div class="send-format-options">
+                                <div class="send-format-option selected" data-format="promo">
+                                    <i class="fas fa-bullhorn"></i>
+                                    <div>A推广</div>
+                                </div>
+                                <div class="send-format-option" data-format="image">
+                                    <i class="fas fa-image"></i>
+                                    <div>B图片</div>
+                                </div>
+                            </div>
+                            <small>选择发送消息的格式：A推广格式或B图片格式</small>
+                        </div>
+                        
                         <!-- 链接输入选项卡 -->
                         <div class="link-tabs">
                             <div class="link-tab active" data-tab="single">单个添加</div>
                             <div class="link-tab" data-tab="batch">批量添加</div>
+                            <div class="link-tab" data-tab="manual-batch">手动批量</div>
                             <div class="link-tab" data-tab="manage-links">链接管理</div>
                         </div>
                         
@@ -2623,6 +2899,38 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                             </button>
                         </div>
                         
+                        <!-- 手动批量添加 -->
+                        <div class="link-tab-content" id="manual-batchLinkTab">
+                            <div class="batch-manual-add-form">
+                                <h5><i class="fas fa-hand-pointer"></i> 手动批量添加链接对</h5>
+                                
+                                <div id="manualAddPairsContainer">
+                                    <div class="manual-add-pair">
+                                        <div class="form-group">
+                                            <label>旧链接</label>
+                                            <input type="text" class="manual-old-url" placeholder="https://example.com/old1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>新链接</label>
+                                            <input type="text" class="manual-new-url" placeholder="https://example.com/new1">
+                                        </div>
+                                        <button class="btn btn-danger remove-pair-btn">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="btn-group" style="margin-top: 15px;">
+                                    <button class="btn" id="addManualPair">
+                                        <i class="fas fa-plus"></i> 添加一行
+                                    </button>
+                                    <button class="btn btn-success" id="saveManualPairs">
+                                        <i class="fas fa-save"></i> 保存所有链接对
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <!-- 链接管理 -->
                         <div class="link-tab-content" id="manageLinksTab">
                             <div class="link-pairs-section">
@@ -2657,10 +2965,37 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         <!-- 消息预览 -->
                         <div class="form-group">
                             <label><i class="fas fa-eye"></i> 消息预览</label>
-                            <div class="message-preview-box" id="messagePreview">
+                            <div class="message-format-preview" id="messagePreview">
                                 <!-- 预览内容将通过JavaScript动态生成 -->
                             </div>
                             <small>最终发送的消息将以此格式显示，基于群组CID或图片尺寸匹配的链接对</small>
+                        </div>
+                        
+                        <!-- 新增：@人物话术选择 -->
+                        <div class="mention-template-selector">
+                            <h4><i class="fas fa-comments"></i> @人物话术选择</h4>
+                            
+                            <div class="form-group">
+                                <label for="sendMentionTemplate">选择@人物话术</label>
+                                <select id="sendMentionTemplate">
+                                    <option value="use-group">使用群组绑定的话术</option>
+                                    <option value="template1">话术1: 链接已更新，请相关人员查看</option>
+                                    <option value="template2">话术2: 新链接已发布，请及时查看</option>
+                                    <option value="template3">话术3: 链接已更新，请尽快处理</option>
+                                    <option value="template4">话术4: 新内容已上线，请相关人员跟进</option>
+                                    <option value="template5">话术5: 链接已更换，请及时更新</option>
+                                    <option value="custom">自定义话术</option>
+                                </select>
+                                <small>选择发送时使用的@人物话术，可选择使用群组绑定的话术或单独设置</small>
+                            </div>
+                            
+                            <div id="customMentionTemplate" class="custom-mention-template" style="display: none;">
+                                <h5><i class="fas fa-edit"></i> 自定义@人物话术</h5>
+                                <div class="form-group">
+                                    <label for="customMentionMessage">自定义话术内容</label>
+                                    <input type="text" id="customMentionMessage" placeholder="输入自定义的@人物话术">
+                                </div>
+                            </div>
                         </div>
                         
                         <!-- 批量发送选项 -->
@@ -2710,6 +3045,16 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                                 <small>每条消息之间的延迟时间，避免发送过快被封禁</small>
                             </div>
                             
+                            <!-- 新增：发送后清空选项 -->
+                            <div class="send-clear-options">
+                                <h5><i class="fas fa-trash-alt"></i> 发送后清空选项</h5>
+                                <div class="send-clear-checkbox">
+                                    <input type="checkbox" id="clearAfterSend" checked>
+                                    <label for="clearAfterSend">发送完成后自动清空所有链接对数据</label>
+                                </div>
+                                <small>勾选后，发送完成后将自动清空所有链接对，避免重复发送</small>
+                            </div>
+                            
                             <div class="btn-group">
                                 <button class="btn btn-success" id="sendBatchBtn">
                                     <i class="fas fa-paper-plane"></i> 开始批量发送
@@ -2754,10 +3099,14 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         
                         <div class="channel-example">
                             <h4>发送格式说明：</h4>
-                            <p>消息将按照以下格式发送：</p>
-                            <pre>渠道名称
-旧 旧链接
-新 新链接</pre>
+                            <p><strong>A推广格式：</strong></p>
+                            <pre>小狼狗
+推广链接 旧 https://example.com/old
+推广链接 新 https://example.com/new</pre>
+                            <p><strong>B图片格式：</strong></p>
+                            <pre>小狼狗
+图片链接 旧 https://example.com/old.jpg
+图片链接 新 https://example.com/new.jpg</pre>
                             <p><strong>二次@人物：</strong>发送链接消息后，等待指定秒数再发送@人物消息</p>
                             <p><strong>匹配逻辑：</strong></p>
                             <ul>
@@ -3054,18 +3403,18 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                                 <li>如果既无CID也无尺寸，发送到所有群组</li>
                             </ol>
                             <p><strong>例如：</strong></p>
-                            <p>群组"握草"的CID是2860906,5100525，图片尺寸是100-100,200-200</p>
+                            <p>群组"小狼狗"的CID是2860906,5100525，图片尺寸是100-100,200-200</p>
                             <p>系统会查找所有CID为2860906或5100525或尺寸包含100-100或200-200的链接对</p>
                             <p>将生成的消息格式：</p>
-                            <pre>握草
-旧 https://7147niredb.effectsk.com/imp04/?cid=2860906
-新 https://4ipt8ik9v4.yearsc.com/imp04/?cid=2860906
+                            <pre>小狼狗
+推广链接 旧 https://7147niredb.effectsk.com/imp04/?cid=2860906
+推广链接 新 https://4ipt8ik9v4.yearsc.com/imp04/?cid=2860906
 
-旧 https://example.com/100-100/image.gif
-新 https://newexample.com/100-100/image.gif
+推广链接 旧 https://example.com/100-100/image.gif
+推广链接 新 https://newexample.com/100-100/image.gif
 
-旧 https://example.com/200-200/banner.jpg
-新 https://newexample.com/200-200/banner.jpg</pre>
+推广链接 旧 https://example.com/200-200/banner.jpg
+推广链接 新 https://newexample.com/200-200/banner.jpg</pre>
                         </div>
                     </div>
                 </div>
@@ -3241,6 +3590,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             let stopSending = false;
             let currentBindMethod = 'single';
             let currentSendMethod = 'selected';
+            let currentSendFormat = 'promo'; // 新增：发送格式，默认为推广格式
             let telegramBot = null;
             let selectedSizes = []; // 存储当前选中的尺寸
             let selectedMentions = []; // 存储当前选中的@人物
@@ -3248,6 +3598,16 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             let selectedGroupTags = []; // 存储当前选中的分组标签
             let availableGroupTags = ['group1', 'group2', 'group3', 'group4', 'group5', 'group6']; // 可用分组标签
             let currentExportFormat = 'json'; // 当前导出格式
+            
+            // 新增：话术模板定义
+            const mentionTemplates = {
+                'template1': '链接已更新，请相关人员查看',
+                'template2': '新链接已发布，请及时查看',
+                'template3': '链接已更新，请尽快处理',
+                'template4': '新内容已上线，请相关人员跟进',
+                'template5': '链接已更换，请及时更新',
+                'custom': '自定义话术'
+            };
             
             // DOM元素
             const bindTabBadge = document.getElementById('bindTabBadge');
@@ -3277,6 +3637,23 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
             const bindMethodContents = document.querySelectorAll('.bind-method-content');
             const bindMethodSelect = document.getElementById('bindMethod');
             const sendMethodOptions = document.querySelectorAll('.send-method-option');
+            
+            // 新增：发送格式选项
+            const sendFormatOptions = document.querySelectorAll('.send-format-option');
+            
+            // 新增：话术模板选择
+            const mentionTemplateSelect = document.getElementById('mentionTemplate');
+            const sendMentionTemplateSelect = document.getElementById('sendMentionTemplate');
+            const customMentionTemplateDiv = document.getElementById('customMentionTemplate');
+            const customMentionMessageInput = document.getElementById('customMentionMessage');
+            
+            // 新增：发送后清空选项
+            const clearAfterSendCheckbox = document.getElementById('clearAfterSend');
+            
+            // 新增：手动批量添加相关元素
+            const manualAddPairsContainer = document.getElementById('manualAddPairsContainer');
+            const addManualPairBtn = document.getElementById('addManualPair');
+            const saveManualPairsBtn = document.getElementById('saveManualPairs');
             
             // 分组相关DOM元素
             const groupTagSelect = document.getElementById('groupTagSelect');
@@ -3520,6 +3897,19 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 });
             });
             
+            // 新增：发送格式选择
+            sendFormatOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const format = this.getAttribute('data-format');
+                    
+                    sendFormatOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    currentSendFormat = format;
+                    updateMessagePreview();
+                });
+            });
+            
             // 绑定方式切换
             bindMethodSelect.addEventListener('change', function() {
                 const method = this.value;
@@ -3565,6 +3955,129 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     if (radio) radio.checked = true;
                 });
             });
+            
+            // 新增：话术模板选择
+            mentionTemplateSelect.addEventListener('change', function() {
+                const template = this.value;
+                if (template !== 'custom' && mentionTemplates[template]) {
+                    mentionMessageInput.value = mentionTemplates[template];
+                    updateMentionMessagePreview();
+                }
+            });
+            
+            // 新增：发送话术模板选择
+            sendMentionTemplateSelect.addEventListener('change', function() {
+                const template = this.value;
+                if (template === 'custom') {
+                    customMentionTemplateDiv.style.display = 'block';
+                } else {
+                    customMentionTemplateDiv.style.display = 'none';
+                }
+            });
+            
+            // 新增：手动批量添加功能
+            addManualPairBtn.addEventListener('click', function() {
+                addManualPairRow();
+            });
+            
+            saveManualPairsBtn.addEventListener('click', function() {
+                saveManualPairs();
+            });
+            
+            // 初始化手动批量添加的第一行
+            function initManualBatchAdd() {
+                manualAddPairsContainer.innerHTML = '';
+                addManualPairRow();
+            }
+            
+            // 添加手动批量添加行
+            function addManualPairRow() {
+                const pairDiv = document.createElement('div');
+                pairDiv.className = 'manual-add-pair';
+                pairDiv.innerHTML = `
+                    <div class="form-group">
+                        <label>旧链接</label>
+                        <input type="text" class="manual-old-url" placeholder="https://example.com/old">
+                    </div>
+                    <div class="form-group">
+                        <label>新链接</label>
+                        <input type="text" class="manual-new-url" placeholder="https://example.com/new">
+                    </div>
+                    <button class="btn btn-danger remove-pair-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                manualAddPairsContainer.appendChild(pairDiv);
+                
+                // 添加删除按钮事件
+                pairDiv.querySelector('.remove-pair-btn').addEventListener('click', function() {
+                    if (manualAddPairsContainer.children.length > 1) {
+                        pairDiv.remove();
+                    } else {
+                        // 如果是最后一行，清空输入框
+                        pairDiv.querySelector('.manual-old-url').value = '';
+                        pairDiv.querySelector('.manual-new-url').value = '';
+                    }
+                });
+            }
+            
+            // 保存手动批量添加的链接对
+            function saveManualPairs() {
+                const pairs = [];
+                const rows = manualAddPairsContainer.querySelectorAll('.manual-add-pair');
+                
+                rows.forEach(row => {
+                    const oldUrl = row.querySelector('.manual-old-url').value.trim();
+                    const newUrl = row.querySelector('.manual-new-url').value.trim();
+                    
+                    if (oldUrl && newUrl) {
+                        const validation = validateLinkPair(oldUrl, newUrl);
+                        
+                        if (validation.valid) {
+                            // 检查是否已存在
+                            const existingIndex = linkPairs.findIndex(pair => 
+                                ((validation.cid && pair.cid === validation.cid) || 
+                                 (validation.sizes.length > 0 && JSON.stringify(pair.sizes.sort()) === JSON.stringify(validation.sizes.sort()))) && 
+                                pair.oldUrl === oldUrl && 
+                                pair.newUrl === newUrl
+                            );
+                            
+                            if (existingIndex === -1) {
+                                pairs.push({
+                                    id: generateId(),
+                                    cid: validation.cid,
+                                    sizes: validation.sizes,
+                                    oldUrl: oldUrl,
+                                    newUrl: newUrl,
+                                    createdAt: new Date().toISOString()
+                                });
+                            }
+                        }
+                    }
+                });
+                
+                if (pairs.length > 0) {
+                    // 添加到现有链接对
+                    linkPairs.push(...pairs);
+                    saveToStorage();
+                    renderCurrentLinks();
+                    renderLinkPairs();
+                    updateLinksStats();
+                    updateLinkMatchStats();
+                    updateMessagePreview();
+                    
+                    // 清空输入框
+                    rows.forEach(row => {
+                        row.querySelector('.manual-old-url').value = '';
+                        row.querySelector('.manual-new-url').value = '';
+                    });
+                    
+                    showNotification('保存成功', `成功添加 ${pairs.length} 个链接对`, 'success');
+                } else {
+                    showNotification('没有有效数据', '请填写有效的链接对', 'warning');
+                }
+            }
             
             // 分组标签管理功能
             function updateGroupTags() {
@@ -3992,6 +4505,10 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                                 if (!group.tags) {
                                     group.tags = [];
                                 }
+                                // 确保每个群组都有mentionTemplate字段
+                                if (!group.mentionTemplate) {
+                                    group.mentionTemplate = 'template1';
+                                }
                             });
                             showNotification('数据加载成功', `已加载 ${groups.length} 个群组`, 'success', 3000);
                         } catch (parseError) {
@@ -4055,6 +4572,9 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     updateMentionMessagePreview();
                     updateExportGroupOptions();
                     updateSendGroupOptions();
+                    
+                    // 初始化手动批量添加
+                    initManualBatchAdd();
                 } catch (error) {
                     console.error('加载数据失败:', error);
                     showNotification('数据加载失败', '可能数据已损坏，将使用默认数据', 'error', 5000);
@@ -4062,6 +4582,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     linkPairs = [];
                     initSampleGroups();
                     initSampleLinkPairs();
+                    initManualBatchAdd();
                 }
             }
             
@@ -4105,12 +4626,13 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 groups = [
                     { 
                         id: "-1001234567890", 
-                        name: "爱液", 
-                        channel: "aiyec",
+                        name: "小狼狗", 
+                        channel: "xiaolangou",
                         cids: ["5100525", "5100526", "5100527"],
                         sizes: ["100-100", "200-200"],
                         mentionUsers: ["admin1", "manager"],
                         mentionDelay: 3,
+                        mentionTemplate: "template1",
                         mentionMessage: "链接已更新，请相关人员查看",
                         tags: ["group1", "group2"],
                         bound: true,
@@ -4127,6 +4649,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         sizes: ["300-250", "728-90"],
                         mentionUsers: ["admin1"],
                         mentionDelay: 5,
+                        mentionTemplate: "template2",
                         mentionMessage: "新链接已发布",
                         tags: ["group1"],
                         bound: true,
@@ -4143,40 +4666,9 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         sizes: ["468-60", "320-50"],
                         mentionUsers: ["user1", "user2", "user3"],
                         mentionDelay: 2,
+                        mentionTemplate: "template3",
                         mentionMessage: "请查看最新链接",
                         tags: ["group2", "group3"],
-                        bound: false,
-                        boundDate: null,
-                        selected: false,
-                        lastSent: null,
-                        createdAt: new Date().toISOString()
-                    },
-                    { 
-                        id: "-1002233445566", 
-                        name: "沙僧站", 
-                        channel: "shaseng",
-                        cids: ["2860906"],
-                        sizes: ["728-90"],
-                        mentionUsers: [],
-                        mentionDelay: 3,
-                        mentionMessage: "链接已更新",
-                        tags: ["group3"],
-                        bound: true,
-                        boundDate: "2023-10-03",
-                        selected: false,
-                        lastSent: null,
-                        createdAt: new Date().toISOString()
-                    },
-                    { 
-                        id: "-1003344556677", 
-                        name: "唐僧站", 
-                        channel: "tangseng",
-                        cids: ["6358945", "6358946"],
-                        sizes: ["100-100", "250-250", "120-600"],
-                        mentionUsers: [],
-                        mentionDelay: 3,
-                        mentionMessage: "链接已更新",
-                        tags: ["group4", "group5"],
                         bound: false,
                         boundDate: null,
                         selected: false,
@@ -4213,14 +4705,6 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         sizes: ["200-200"],
                         oldUrl: "https://example.com/200-200/banner.jpg",
                         newUrl: "https://newexample.com/200-200/banner.jpg",
-                        createdAt: new Date().toISOString()
-                    },
-                    {
-                        id: generateId(),
-                        cid: null,
-                        sizes: ["100-100", "200-200"],
-                        oldUrl: "https://example.com/multi-size.gif",
-                        newUrl: "https://newexample.com/multi-size.gif",
                         createdAt: new Date().toISOString()
                     }
                 ];
@@ -4766,6 +5250,9 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                     return;
                 }
                 
+                // 根据当前发送格式选择前缀
+                const linkPrefix = currentSendFormat === 'promo' ? '推广链接' : '图片链接';
+                
                 let previewHTML = `
                     <div style="margin-bottom: 15px;">
                         <h4 style="color: var(--primary-color); margin-bottom: 10px;">
@@ -4784,8 +5271,8 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                 matchedPairs.forEach((pair, index) => {
                     previewHTML += `
                         <div style="margin-bottom: ${index < matchedPairs.length - 1 ? '15px' : '0'};">
-                            <div style="color: #ff9800;">旧 ${pair.oldUrl}</div>
-                            <div style="color: #4caf50;">新 ${pair.newUrl}</div>
+                            <div style="color: #ff9800;">${linkPrefix} 旧 ${pair.oldUrl}</div>
+                            <div style="color: #4caf50;">${linkPrefix} 新 ${pair.newUrl}</div>
                             ${pair.cid ? `<div style="color: #4fc3f7; font-size: 0.9rem;">CID: ${pair.cid}</div>` : ''}
                             ${pair.sizes && pair.sizes.length > 0 ? `<div style="color: #ffc107; font-size: 0.9rem;">尺寸: ${pair.sizes.join(', ')}</div>` : ''}
                         </div>
@@ -4798,7 +5285,7 @@ https://newexample2.com/200-200/banner.jpg"></textarea>
                         <strong>发送的消息格式：</strong><br>
                         <pre style="background-color: #f1f1f1; padding: 10px; border-radius: 4px; margin-top: 5px;">
 ${group.name}
-${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n')}</pre>
+${matchedPairs.map(pair => `${linkPrefix} 旧 ${pair.oldUrl}\n${linkPrefix} 新 ${pair.newUrl}`).join('\n\n')}</pre>
                     </div>
                 `;
                 
@@ -4823,12 +5310,15 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     return;
                 }
                 
+                // 根据当前发送格式选择前缀
+                const linkPrefix = currentSendFormat === 'promo' ? '推广链接' : '图片链接';
+                
                 let preview = '';
                 
                 if (examplePairs.length > 0) {
                     preview += `${exampleGroup.name}\n`;
                     examplePairs.forEach(pair => {
-                        preview += `旧 ${pair.oldUrl}\n新 ${pair.newUrl}\n`;
+                        preview += `${linkPrefix} 旧 ${pair.oldUrl}\n${linkPrefix} 新 ${pair.newUrl}\n`;
                         if (pair !== examplePairs[examplePairs.length - 1]) {
                             preview += '\n';
                         }
@@ -4848,8 +5338,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 
                 const highlightedPreview = preview
                     .replace(exampleGroup.name, `<span class="channel-name">${exampleGroup.name}</span>`)
-                    .replace(/旧 (https?:\/\/[^\s]+)/g, `<span class="old-url">旧 $1</span>`)
-                    .replace(/新 (https?:\/\/[^\s]+)/g, `<span class="new-url">新 $1</span>`)
+                    .replace(new RegExp(`${linkPrefix} 旧 (https?://[^\\s]+)`, 'g'), `<span class="promo-url">${linkPrefix} 旧 $1</span>`)
+                    .replace(new RegExp(`${linkPrefix} 新 (https?://[^\\s]+)`, 'g'), `<span class="image-url">${linkPrefix} 新 $1</span>`)
                     .replace(/--- 二次@人物 \([\d]+秒后\) ---/g, '<span style="color: #bb86fc;">--- 二次@人物 ---</span>')
                     .replace(/@([\w_]+)/g, '<span class="mention-users">@$1</span>')
                     .replace(/\n/g, '<br>');
@@ -4983,6 +5473,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                     <i class="fas fa-clock"></i>
                                     <span>${group.mentionDelay || 3}秒后@</span>
                                 </div>
+                                <div class="group-detail">
+                                    <i class="fas fa-comment-alt"></i>
+                                    <span>话术: ${group.mentionTemplate || 'template1'}</span>
+                                </div>
                             `;
                         }
                         
@@ -5076,6 +5570,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                 <div class="group-detail">
                                     <i class="fas fa-clock"></i>
                                     <span>${group.mentionDelay || 3}秒后@</span>
+                                </div>
+                                <div class="group-detail">
+                                    <i class="fas fa-comment-alt"></i>
+                                    <span>话术: ${group.mentionTemplate || 'template1'}</span>
                                 </div>
                             `;
                         }
@@ -5206,6 +5704,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                     <i class="fas fa-clock"></i>
                                     <span>${group.mentionDelay || 3}秒后@</span>
                                 </div>
+                                <div class="group-detail">
+                                    <i class="fas fa-comment-alt"></i>
+                                    <span>话术: ${group.mentionTemplate || 'template1'}</span>
+                                </div>
                             `;
                         }
                         
@@ -5330,6 +5832,10 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                 <div class="group-detail">
                                     <i class="fas fa-clock"></i>
                                     <span>${group.mentionDelay || 3}秒后@</span>
+                                </div>
+                                <div class="group-detail">
+                                    <i class="fas fa-comment-alt"></i>
+                                    <span>话术: ${group.mentionTemplate || 'template1'}</span>
                                 </div>
                             `;
                         }
@@ -5548,7 +6054,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 const sizes = [...selectedSizes];
                 const mentionUsers = [...selectedMentions];
                 const mentionDelay = parseInt(mentionDelayInput.value) || 3;
-                const mentionMessage = mentionMessageInput.value.trim() || '链接已更新，请相关人员查看';
+                const mentionTemplate = mentionTemplateSelect.value || 'template1';
+                const mentionMessage = mentionMessageInput.value.trim() || mentionTemplates[mentionTemplate] || '链接已更新，请相关人员查看';
                 const tags = [...selectedGroupTags];
                 
                 if (!name || !channel || !chatId) {
@@ -5587,6 +6094,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     groups[existingIndex].sizes = sizes.length > 0 ? sizes : [];
                     groups[existingIndex].mentionUsers = mentionUsers;
                     groups[existingIndex].mentionDelay = mentionDelay;
+                    groups[existingIndex].mentionTemplate = mentionTemplate;
                     groups[existingIndex].mentionMessage = mentionMessage;
                     groups[existingIndex].tags = tags;
                     groups[existingIndex].bound = true;
@@ -5602,6 +6110,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         sizes: sizes,
                         mentionUsers: mentionUsers,
                         mentionDelay: mentionDelay,
+                        mentionTemplate: mentionTemplate,
                         mentionMessage: mentionMessage,
                         tags: tags,
                         bound: true,
@@ -5627,7 +6136,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 updateMentionTags();
                 updateGroupTags();
                 document.getElementById('mentionDelay').value = 3;
-                document.getElementById('mentionMessage').value = '链接已更新，请相关人员查看';
+                document.getElementById('mentionTemplate').value = 'template1';
+                document.getElementById('mentionMessage').value = mentionTemplates.template1;
                 updateMentionMessagePreview();
                 document.getElementById('testMessage').value = '';
                 
@@ -5707,8 +6217,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                     const sizesStr = parts[4] || '';
                     const mentionUsersStr = parts[5] || '';
                     const mentionDelay = parseInt(parts[6]) || 3;
-                    const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
-                    const tagsStr = parts[8] || '';
+                    const mentionTemplate = parts[7] || 'template1';
+                    const mentionMessage = parts[8] || mentionTemplates[mentionTemplate] || '链接已更新，请相关人员查看';
+                    const tagsStr = parts[9] || '';
                     
                     // 验证必填字段
                     if (!name || !channel || !id) {
@@ -5777,6 +6288,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         groups[existingIndex].sizes = sizes.length > 0 ? sizes : [];
                         groups[existingIndex].mentionUsers = mentionUsers;
                         groups[existingIndex].mentionDelay = mentionDelay;
+                        groups[existingIndex].mentionTemplate = mentionTemplate;
                         groups[existingIndex].mentionMessage = mentionMessage;
                         groups[existingIndex].tags = tags;
                         groups[existingIndex].bound = true;
@@ -5791,6 +6303,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                             sizes: sizes,
                             mentionUsers: mentionUsers,
                             mentionDelay: mentionDelay,
+                            mentionTemplate: mentionTemplate,
                             mentionMessage: mentionMessage,
                             tags: tags,
                             bound: true,
@@ -5863,7 +6376,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         groups[existingIndex] = {
                                             ...groups[existingIndex],
                                             ...groupData,
-                                            selected: groups[existingIndex].selected
+                                            selected: groups[existingIndex].selected,
+                                            // 确保有mentionTemplate字段
+                                            mentionTemplate: groupData.mentionTemplate || 'template1'
                                         };
                                         updatedCount++;
                                     } else {
@@ -5876,7 +6391,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                             sizes: groupData.sizes || [],
                                             mentionUsers: groupData.mentionUsers || [],
                                             mentionDelay: groupData.mentionDelay || 3,
-                                            mentionMessage: groupData.mentionMessage || '链接已更新，请相关人员查看',
+                                            mentionTemplate: groupData.mentionTemplate || 'template1',
+                                            mentionMessage: groupData.mentionMessage || mentionTemplates[groupData.mentionTemplate] || '链接已更新，请相关人员查看',
                                             tags: groupData.tags || [],
                                             bound: groupData.bound !== undefined ? groupData.bound : true,
                                             boundDate: groupData.boundDate || new Date().toISOString().split('T')[0],
@@ -5920,10 +6436,11 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         sizes: values[4] ? values[4].split(',').filter(s => s) : [],
                                         mentionUsers: values[5] ? values[5].split(',').filter(u => u) : [],
                                         mentionDelay: parseInt(values[6]) || 3,
-                                        mentionMessage: values[7] || '链接已更新，请相关人员查看',
-                                        tags: values[8] ? values[8].split(',').filter(t => t) : [],
-                                        bound: values[9] === '是' || values[9] === 'true' || values[9] === '1',
-                                        boundDate: values[10] || new Date().toISOString().split('T')[0]
+                                        mentionTemplate: values[7] || 'template1',
+                                        mentionMessage: values[8] || mentionTemplates[values[7]] || '链接已更新，请相关人员查看',
+                                        tags: values[9] ? values[9].split(',').filter(t => t) : [],
+                                        bound: values[10] === '是' || values[10] === 'true' || values[10] === '1',
+                                        boundDate: values[11] || new Date().toISOString().split('T')[0]
                                     };
                                     
                                     if (existingIndex >= 0) {
@@ -5965,10 +6482,11 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                     const sizesStr = parts[4] || '';
                                     const mentionUsersStr = parts[5] || '';
                                     const mentionDelay = parseInt(parts[6]) || 3;
-                                    const mentionMessage = parts[7] || '链接已更新，请相关人员查看';
-                                    const tagsStr = parts[8] || '';
-                                    const boundStr = parts[9] || '是';
-                                    const boundDate = parts[10] || new Date().toISOString().split('T')[0];
+                                    const mentionTemplate = parts[7] || 'template1';
+                                    const mentionMessage = parts[8] || mentionTemplates[mentionTemplate] || '链接已更新，请相关人员查看';
+                                    const tagsStr = parts[9] || '';
+                                    const boundStr = parts[10] || '是';
+                                    const boundDate = parts[11] || new Date().toISOString().split('T')[0];
                                     
                                     const existingIndex = groups.findIndex(g => g.id === id);
                                     
@@ -5980,6 +6498,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                                         sizes: sizesStr.split(',').filter(s => s),
                                         mentionUsers: mentionUsersStr.split(',').filter(u => u),
                                         mentionDelay: mentionDelay,
+                                        mentionTemplate: mentionTemplate,
                                         mentionMessage: mentionMessage,
                                         tags: tagsStr.split(',').filter(t => t),
                                         bound: boundStr === '是' || boundStr === 'true' || boundStr === '1',
@@ -6029,12 +6548,6 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 }
             });
             
-            // 清空批量添加输入
-            clearBatchExportInputBtn.addEventListener('click', function() {
-                batchExportFormatInput.value = '';
-                showNotification('已清空', '输入框已清空', 'info');
-            });
-            
             // 切换群组绑定状态
             function toggleGroupBind(index) {
                 groups[index].bound = !groups[index].bound;
@@ -6071,6 +6584,9 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 
                 const newMentionDelay = prompt('请输入@人物延迟时间 (秒):', group.mentionDelay || 3);
                 if (newMentionDelay === null) return;
+                
+                const newMentionTemplate = prompt('请输入@人物话术模板 (template1, template2, template3, template4, template5 或 custom):', group.mentionTemplate || 'template1');
+                if (newMentionTemplate === null) return;
                 
                 const newMentionMessage = prompt('请输入@人物消息内容:', group.mentionMessage || '链接已更新，请相关人员查看');
                 if (newMentionMessage === null) return;
@@ -6118,6 +6634,7 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                 groups[index].sizes = sizes;
                 groups[index].mentionUsers = mentionUsers;
                 groups[index].mentionDelay = mentionDelay;
+                groups[index].mentionTemplate = newMentionTemplate.trim();
                 groups[index].mentionMessage = newMentionMessage.trim();
                 groups[index].tags = tags;
                 
@@ -6491,6 +7008,8 @@ ${matchedPairs.map(pair => `旧 ${pair.oldUrl}\n新 ${pair.newUrl}`).join('\n\n'
                         exportGroupTagList.querySelectorAll('.group-tag-checkbox:checked').forEach(checkbox => {
                             selectedTags.push(checkbox.getAttribute('data-tag'));
                         });
+                        
+                        if (selectedTags.length === 0)
                         
                         if (selectedTags.length === 0) {
                             showNotification('请选择分组', '请至少选择一个分组', 'warning');
